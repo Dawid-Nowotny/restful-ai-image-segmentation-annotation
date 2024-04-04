@@ -1,4 +1,6 @@
 fastapi[all]
+passlib[bcrypt]
 SQLAlchemy==2.0.28
 psycopg2==2.9.9
 alembic==1.13.1
+validate_email==1.3
