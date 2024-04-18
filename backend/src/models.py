@@ -3,7 +3,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import validates, relationship
 from validate_email import validate_email as validate_email_format
 
-from .database import Base
+from database import Base
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
