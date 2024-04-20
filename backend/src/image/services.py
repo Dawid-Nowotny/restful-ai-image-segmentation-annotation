@@ -5,10 +5,8 @@ from models import Image
 from database import engine
 from .schemas import ImageData
 
-
-
 class UserServices:
-  def updateImage(self, imageData: ImageData, image: UploadFile = File(...)):
+  def add_image_to_database(self, image_data: ImageData, image: UploadFile = File(...)):
 
     stmt = (
       insert(Image).
@@ -17,8 +15,8 @@ class UserServices:
         segmented_image = bytes("TMP_SEGMENTED_IMAGE", "utf-8"),
         coordintes_classes = {"TMP_COORDS": "XYZ"},
         upload_date = date.today(),
-        uploader_id = imageData.uploader_id,
-        moderator_id = imageData.moderator_id
+        uploader_id = image_data.uploader_id,
+        moderator_id = image_data.moderator_id
         )
     )
 
