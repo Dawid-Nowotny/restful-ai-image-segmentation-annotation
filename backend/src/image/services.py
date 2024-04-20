@@ -1,6 +1,6 @@
 from fastapi import UploadFile, File, HTTPException, status
 from typing import IO
-from sqlalchemy import insert
+from sqlalchemy import insert, exc
 from datetime import date
 from models import Image
 from database import engine
@@ -22,9 +22,13 @@ class UserServices:
         )
     )
 
-    with engine.connect() as conn:
-      conn.execute(stmt)
-      conn.commit()
+    try:
+      with engine.connect() as conn:
+        conn.execute(stmt)
+        conn.commit()
+    except exc.SQLAlchemyError as e:
+      print(e._message())
+      raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = e._message())
 
   def validate_file_size_type(self, file: IO):
     FILE_SIZE = 2097152 # 5MB
