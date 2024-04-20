@@ -7,13 +7,10 @@ router = APIRouter()
 
 @router.post("/upload")
 async def upload(imageData: ImageData = Depends(), file: UploadFile = File(...)):
-  #print(ImageSchema)
-  #print(image.filename)
   userServices = UserServices()
-  userServices.updateImage()
+  userServices.updateImage(imageData, file)
   return {
-    "JSON Payload": {"name": "bebe"},
-    "Filename": file.filename
+    "saved_image": file.filename
   }
 
   
