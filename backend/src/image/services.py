@@ -15,7 +15,7 @@ class UserServices:
       values(
         image = image.file.read(),
         segmented_image = bytes("TMP_SEGMENTED_IMAGE", "utf-8"),
-        coordintes_classes = {"TMP_COORDS": "XYZ"},
+        coordinates_classes = {"TMP_COORDS": "XYZ"},
         upload_date = date.today(),
         uploader_id = image_data.uploader_id,
         moderator_id = image_data.moderator_id

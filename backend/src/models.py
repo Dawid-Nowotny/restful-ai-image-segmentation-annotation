@@ -45,7 +45,7 @@ class Image(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     image = Column(LargeBinary, nullable=False)
     segmented_image = Column(LargeBinary, nullable=True)
-    coordintes_classes = Column(JSON, nullable=True)
+    coordinates_classes = Column(JSON, nullable=True)
     upload_date = Column(Date, index=True, nullable=False)
 
     uploader_id = Column(Integer, ForeignKey('User.id'))
