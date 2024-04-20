@@ -31,7 +31,7 @@ class UserServices:
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = e._message())
 
   def validate_file_size_type(self, file: IO):
-    FILE_SIZE = 2097152 # 5MB
+    FILE_SIZE = 5 * 1024 * 1024 # 2MB
     accepted_file_types = ["image/png", "image/jpeg", "image/jpg", "png", "jpeg", "jpg"] 
 
     file_info = filetype.guess(file.file)
@@ -56,4 +56,7 @@ class UserServices:
     for chunk in file.file:
         real_file_size += len(chunk)
         if real_file_size > FILE_SIZE:
-            raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="Too large")
+            raise HTTPException(
+              status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+              detail="Uploaded file is too large. Limit is 5MB"
+            )
