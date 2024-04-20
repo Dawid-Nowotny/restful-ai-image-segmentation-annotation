@@ -6,7 +6,7 @@ from .schemas import ImageData
 router = APIRouter()
 
 @router.post("/upload")
-async def upload(image_data: ImageData = Depends(), file: UploadFile = File(...)):
+def upload(image_data: ImageData = Depends(), file: UploadFile = File(...)):
   userServices = UserServices()
   userServices.validate_file_size_type(file)
   userServices.add_image_to_database(image_data, file)
