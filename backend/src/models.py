@@ -49,11 +49,12 @@ class Image(Base):
     upload_date = Column(Date, index=True, nullable=False)
 
     uploader_id = Column(Integer, ForeignKey('User.id'))
-    moderator_id = Column(Integer, ForeignKey('User.id'))
+    moderator_id = Column(Integer, ForeignKey('User.id'), nullable=True)
 
     comment = relationship("Comment", backref="Image")
-    user_likes = relationship("User", backref="Image")
-
+    user_likes = relationship("User", backref="Image",
+                              primaryjoin=id == image_likes.c.Image,
+                              secondaryjoin=id == image_likes.c.User, secondary=image_likes)
 class User(Base):
     __tablename__ = "User"
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
@@ -63,9 +64,9 @@ class User(Base):
     role = Column(String, index=True, nullable=False)
 
     comment = relationship("Comment", backref="User")
-    image = relationship("Image", backref="User")
-    comment_likes = relationship("Comment", backref="User")
-    comment_user = relationship("Comment", backref="User")
+    image = relationship("Image", backref="Uploader", foreign_keys='[Image.uploader_id]')
+    comment_likes = relationship("Comment", backref="Liked_User")
+    comment_user = relationship("Comment", backref="Related_User")
     
     @validates('username')
     def validate_username(self, key, username):
