@@ -9,7 +9,6 @@ import filetype
 
 class UserServices:
   def add_image_to_database(self, image_data: ImageData, image: UploadFile = File(...)):
-
     stmt = (
       insert(Image).
       values(
@@ -21,7 +20,7 @@ class UserServices:
         moderator_id = image_data.moderator_id
         )
     )
-
+    
     try:
       with engine.connect() as conn:
         conn.execute(stmt)
