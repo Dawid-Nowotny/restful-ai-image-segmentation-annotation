@@ -1,8 +1,12 @@
+import torch
+import requests
+import filetype
+
 from fastapi import UploadFile, File, HTTPException, status
 from sqlalchemy import insert, exc
 from sqlalchemy.orm import Session
-import filetype
 from PIL import Image as PILImage
+from torchvision import models, transforms
 
 from datetime import date
 from typing import IO
@@ -74,3 +78,30 @@ class UserServices:
               status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
               detail="Uploaded file is too large. Limit is 5MB"
             )
+        
+class AiAnnotationServices:
+  def __get_model(self) -> torch.nn.Module:
+     model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
+     model.eval()
+     return model
+  
+  def __get_labels(self) -> list:
+     LABELS_URL = 'https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json'
+     return requests.get(LABELS_URL).json()
+
+  def __get_transforms(self) -> transforms.Compose:
+     return transforms.Compose([
+      transforms.ToTensor(),
+    ])
+  
+  def annotate_image(self, image) -> list:
+      model = self.__get_model()
+      labels = self.__get_labels()
+      preprocess = self.__get_transforms()
+
+      image = preprocess(image).unsqueeze(0)
+      with torch.no_grad():
+          outputs = model(image)
+      _, indices = torch.topk(outputs, 5)
+      annotations = [labels[idx.item()] for idx in indices[0]]
+      return annotations
