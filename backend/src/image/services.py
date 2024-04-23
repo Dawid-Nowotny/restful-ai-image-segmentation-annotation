@@ -5,18 +5,18 @@ import numpy as np
 import cv2
 
 from fastapi import UploadFile, File, HTTPException, status
-from sqlalchemy import insert, exc
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from PIL import Image as PILImage
 from torchvision import models
 
 import random
+import json
 from datetime import date
 from typing import IO, Tuple, List
 from io import BytesIO
 
 from models import Image
-from database import engine
 from .schemas import ImageData
 from .constants import LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 
@@ -32,23 +32,27 @@ class ImageServices:
         return PILImage.open(BytesIO(image_blob))
 
 class UserServices:
-    def add_image_to_database(self, image_data: ImageData, image: UploadFile = File(...)) -> None:
-        stmt = insert(Image).values(
-            image=image.file.read(),
-            segmented_image=bytes("TMP_SEGMENTED_IMAGE", "utf-8"),
-            coordinates_classes={"TMP_COORDS": "XYZ"},
-            upload_date=date.today(),
-            uploader_id=image_data.uploader_id,
-            moderator_id=image_data.moderator_id,
-        )
-
+    def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
         try:
-            with engine.connect() as conn:
-                conn.execute(stmt)
-                conn.commit()
-        except exc.SQLAlchemyError as e:
+            image_bytes = BytesIO()
+            segmented_image.save(image_bytes, format="JPEG")
+
+            db_image = Image(
+                image=image.file.read(),
+                segmented_image=image_bytes.getvalue(),
+                coordinates_classes=json.loads(segmentation_data),
+                upload_date=date.today(),
+                uploader_id=image_data.uploader_id,
+                moderator_id=image_data.moderator_id,
+            )
+
+            db.add(db_image)
+            db.commit()
+            db.refresh(db_image)
+
+        except SQLAlchemyError as e:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e._message()
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
             )
 
     def validate_file_size_type(self, file: IO) -> None:
