@@ -3,7 +3,6 @@ import requests
 import filetype
 import numpy as np
 import cv2
-from matplotlib import pyplot as plt
 
 from fastapi import UploadFile, File, HTTPException, status
 from sqlalchemy import insert, exc
