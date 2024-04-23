@@ -1,20 +1,22 @@
 import torch
 import requests
 import filetype
+import numpy as np
 
 from fastapi import UploadFile, File, HTTPException, status
 from sqlalchemy import insert, exc
 from sqlalchemy.orm import Session
 from PIL import Image as PILImage
-from torchvision import models, transforms
+from torchvision import models
 
 from datetime import date
-from typing import IO
+from typing import IO, Tuple, List
 from io import BytesIO
 
 from models import Image
 from database import engine
 from .schemas import ImageData
+from .constants import LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 
 class ImageServices:
     def get_image_BLOB_by_id(self, image_id: int, db: Session) -> bytes:
@@ -85,25 +87,43 @@ class UserServices:
                     detail="Uploaded file is too large. Limit is 5MB",
                 )
 
+class SegmentationServices:
+    def __get_model(self, device) -> torch.nn.Module:
+        model = models.detection.maskrcnn_resnet50_fpn(pretrained=True)
+        model.eval()
+        return model.to(device)
+
+    def get_prediction(self, file, threshold=0.60) -> Tuple[np.ndarray, List[List[Tuple[int, int]]], List[str]]:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        img = PILImage.open(BytesIO(file.file.read()))
+        transform = TRANSFORMS
+        img = transform(img).to(device)
+        model = self.__get_model(device)
+        pred = model([img])
+        pred_score = list(pred[0]['scores'].detach().cpu().numpy())
+        pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
+        masks = (pred[0]['masks'] > 0.5).squeeze().detach().cpu().numpy()
+        pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cpu().numpy())]
+        pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())]
+        masks = masks[:pred_t + 1]
+        pred_boxes = pred_boxes[:pred_t + 1]
+        pred_class = pred_class[:pred_t + 1]
+        return masks, pred_boxes, pred_class
+
 class AiAnnotationServices:
-    def __get_model(self) -> torch.nn.Module:
+    def __get_model(self, device) -> torch.nn.Module:
         model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
         model.eval()
-        return model
+        return model.to(device)
 
     def __get_labels(self) -> list:
-        LABELS_URL = "https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json"
         return requests.get(LABELS_URL).json()
 
-    def __get_transforms(self) -> transforms.Compose:
-        return transforms.Compose([
-            transforms.ToTensor(),
-        ])
-
     def annotate_image(self, image) -> list:
-        model = self.__get_model()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model = self.__get_model(device)
         labels = self.__get_labels()
-        preprocess = self.__get_transforms()
+        preprocess = TRANSFORMS
 
         image = preprocess(image).unsqueeze(0)
         with torch.no_grad():
