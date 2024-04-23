@@ -4,25 +4,37 @@ from sqlalchemy.orm import Session
 import copy
 import json
 
-from .services import UserServices, ImageServices, AiAnnotationServices
+from .services import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
 from .schemas import ImageData
+from .utils import convert_to_json
 from get_db import get_db
 
 router = APIRouter()
 
 @router.post("/upload")
-def upload(image_data: ImageData = Depends(), file: UploadFile = File(...)):
+def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: Session = Depends(get_db)):
     user_services = UserServices()
+    segmentation_services = SegmentationServices()
+
     file_test = copy.deepcopy(file)
+    file_pred = copy.deepcopy(file)
+    file_seg_output = copy.deepcopy(file)
+
     user_services.validate_file_size_type(file_test)
-    user_services.add_image_to_database(image_data, file)
+    
+    masks, pred_boxes, pred_class = segmentation_services.get_prediction(file_pred, threshold=image_data.iou_threshold)
+    segmented_image = segmentation_services.get_segmented_image(file_seg_output, masks, pred_boxes, pred_class)
+    segmentation_data = convert_to_json(pred_boxes, pred_class)
+
+    user_services.add_image_to_database(db, segmented_image, segmentation_data, image_data, file)
+
     return Response(
         content=json.dumps({"saved_image": file.filename}),
         media_type="application/json",
         status_code=200,
     )
 
-@router.get("/suggest-annotations")
+@router.get("/suggest-annotations/{image_id}")
 def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     image_services = ImageServices()
     ai_annotation_services = AiAnnotationServices()
@@ -31,6 +43,7 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     image = image_services.BLOB_to_image(image_blob)
 
     annotations = ai_annotation_services.annotate_image(image)
+
     return Response(
         content=json.dumps({"annotations": annotations}),
         media_type="application/json",
