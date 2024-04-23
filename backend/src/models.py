@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey,  JSON, Boolean, Date, LargeBinary, Table
 from passlib.context import CryptContext
-from sqlalchemy.orm import validates, relationship
+from sqlalchemy.orm import validates, relationship, Mapped
 from validate_email import validate_email as validate_email_format
+
+from typing import List
 
 from database import Base
 
@@ -10,15 +12,15 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 image_likes = Table(
     "ImageLikes",
     Base.metadata,
-    Column("Image", ForeignKey("Image.id")),
-    Column("User", ForeignKey("User.id")),
+    Column("image_id", ForeignKey("Image.id")),
+    Column("user_id", ForeignKey("User.id")),
 )
 
 comment_likes = Table(
     "CommentLikes",
     Base.metadata,
-    Column("Comment", ForeignKey("Comment.id")),
-    Column("User", ForeignKey("User.id")),
+    Column("comment_id", ForeignKey("Comment.id")),
+    Column("user_id", ForeignKey("User.id")),
 )
 
 class Tag(Base):
@@ -26,7 +28,7 @@ class Tag(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     tag = Column(String, index=True, nullable=False)
 
-    comment = relationship("Comment", backref="Tag")
+    comments: Mapped[List["Comment"]] = relationship(back_populates="tag")
 
 class Comment(Base):
     __tablename__ = "Comment"
@@ -34,11 +36,15 @@ class Comment(Base):
     super_tag = Column(Boolean, index=True, nullable=False)
     comment_date = Column(Date, index=True, nullable=False)
 
+    image_id = Column(Integer, ForeignKey('Image.id'))
     tag_id = Column(Integer, ForeignKey('Tag.id'))
     user_id = Column(Integer, ForeignKey('User.id'))
-    image_id = Column(Integer, ForeignKey('Image.id'))
 
-    user_likes = relationship("User", backref="Comment")
+    image: Mapped["Image"] = relationship(back_populates="comments")
+    tag: Mapped["Tag"] = relationship(back_populates="comments")
+    user: Mapped["User"] = relationship(back_populates="comments")
+    comment_users_likes: Mapped[List["User"]] = relationship(secondary=comment_likes, back_populates="user_comments_likes")
+
 
 class Image(Base):
     __tablename__ = "Image"
@@ -51,10 +57,11 @@ class Image(Base):
     uploader_id = Column(Integer, ForeignKey('User.id'))
     moderator_id = Column(Integer, ForeignKey('User.id'), nullable=True)
 
-    comment = relationship("Comment", backref="Image")
-    user_likes = relationship("User", backref="Image",
-                              primaryjoin=id == image_likes.c.Image,
-                              secondaryjoin=id == image_likes.c.User, secondary=image_likes)
+    comments: Mapped[List["Comment"]] = relationship(back_populates="image")
+    uploader: Mapped["User"] = relationship(back_populates="images", foreign_keys=[uploader_id])
+    moderator: Mapped["User"] = relationship(back_populates="images", foreign_keys=[moderator_id])
+    image_users_likes: Mapped[List["User"]] = relationship(secondary=image_likes, back_populates="user_images_likes")
+
 class User(Base):
     __tablename__ = "User"
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
@@ -63,10 +70,10 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String, index=True, nullable=False)
 
-    comment = relationship("Comment", backref="User")
-    image = relationship("Image", backref="Uploader", foreign_keys='[Image.uploader_id]')
-    comment_likes = relationship("Comment", backref="Liked_User")
-    comment_user = relationship("Comment", backref="Related_User")
+    comments: Mapped[List["Comment"]] = relationship(back_populates="user")
+    images: Mapped[List["Image"]] = relationship(back_populates="uploader")
+    user_comments_likes: Mapped[List["Comment"]] = relationship(secondary=comment_likes, back_populates="comment_users_likes")
+    user_images_likes: Mapped[List["Image"]] = relationship(secondary=image_likes, back_populates="image_users_likes")
     
     @validates('username')
     def validate_username(self, key, username):
