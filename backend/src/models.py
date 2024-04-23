@@ -12,15 +12,15 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 image_likes = Table(
     "ImageLikes",
     Base.metadata,
-    Column("image_id", ForeignKey("Image.id")),
-    Column("user_id", ForeignKey("User.id")),
+    Column("image_id", ForeignKey("Image.id",  name="image_likes_image_id"), primary_key=True),
+    Column("user_id", ForeignKey("User.id", name="image_likes_user_id"), primary_key=True),
 )
 
 comment_likes = Table(
     "CommentLikes",
     Base.metadata,
-    Column("comment_id", ForeignKey("Comment.id")),
-    Column("user_id", ForeignKey("User.id")),
+    Column("comment_id", ForeignKey("Comment.id", name="comment_likes_comment_id"), primary_key=True),
+    Column("user_id", ForeignKey("User.id", name="comment_likes_user_id"), primary_key=True),
 )
 
 class Tag(Base):
@@ -71,7 +71,8 @@ class User(Base):
     role = Column(String, index=True, nullable=False)
 
     comments: Mapped[List["Comment"]] = relationship(back_populates="user")
-    images: Mapped[List["Image"]] = relationship(back_populates="uploader")
+    #tu blad!!!
+    images: Mapped[List["Image"]] = relationship(back_populates="uploader", foreign_keys="[Image.uploader_id]")
     user_comments_likes: Mapped[List["Comment"]] = relationship(secondary=comment_likes, back_populates="comment_users_likes")
     user_images_likes: Mapped[List["Image"]] = relationship(secondary=image_likes, back_populates="image_users_likes")
     
