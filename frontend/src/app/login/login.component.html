@@ -1,0 +1,13 @@
+Login:
+
+<div *ngIf="errorMessage" class="error-message"><p>{{ errorMessage }}</p></div>
+<div *ngIf="successMessage" class="success-message"><p>{{ successMessage }}</p></div>
+<div class="login_form">
+    <form (ngSubmit)="onSubmit()"> 
+        <div class="label" *ngIf="username !== ''">E-mail</div>
+        <input type="text" [(ngModel)]="username" [ngModelOptions]="{ standalone: true }" placeholder="E-mail"  class="form_control"><br /><br />
+        <div class="label" *ngIf="password !== ''">Hasło</div>
+        <input type="password" [(ngModel)]="password" [ngModelOptions]="{ standalone: true }" placeholder="Hasło"  class="form_control"><br /><br />
+        <button type="submit" class="button">Zaloguj się</button><br /><br />
+    </form>
+</div>
