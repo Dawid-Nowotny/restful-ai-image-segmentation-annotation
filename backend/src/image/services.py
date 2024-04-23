@@ -2,6 +2,8 @@ import torch
 import requests
 import filetype
 import numpy as np
+import cv2
+from matplotlib import pyplot as plt
 
 from fastapi import UploadFile, File, HTTPException, status
 from sqlalchemy import insert, exc
@@ -9,6 +11,7 @@ from sqlalchemy.orm import Session
 from PIL import Image as PILImage
 from torchvision import models
 
+import random
 from datetime import date
 from typing import IO, Tuple, List
 from io import BytesIO
@@ -89,9 +92,18 @@ class UserServices:
 
 class SegmentationServices:
     def __get_model(self, device) -> torch.nn.Module:
-        model = models.detection.maskrcnn_resnet50_fpn(pretrained=True)
+        model = models.detection.maskrcnn_resnet50_fpn(pretrained=True, weights="MaskRCNN_ResNet50_FPN_Weights.DEFAULT")
         model.eval()
         return model.to(device)
+
+    def __random_colour_masks(self, img) -> np.ndarray:
+        colours = [[0, 255, 0],[0, 0, 255],[255, 0, 0],[0, 255, 255],[255, 255, 0],[255, 0, 255],[80, 70, 180],[250, 80, 190],[245, 145, 50],[70, 150, 250],[50, 190, 190]]
+        r = np.zeros_like(img).astype(np.uint8)
+        g = np.zeros_like(img).astype(np.uint8)
+        b = np.zeros_like(img).astype(np.uint8)
+        r[img == 1], g[img == 1], b[img == 1] = colours[random.randrange(0,10)]
+        coloured_mask = np.stack([r, g, b], axis=2)
+        return coloured_mask
 
     def get_prediction(self, file, threshold=0.60) -> Tuple[np.ndarray, List[List[Tuple[int, int]]], List[str]]:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -109,6 +121,21 @@ class SegmentationServices:
         pred_boxes = pred_boxes[:pred_t + 1]
         pred_class = pred_class[:pred_t + 1]
         return masks, pred_boxes, pred_class
+    
+    def get_segmented_image(self, file, masks, boxes, pred_cls, rect_th=3, text_size=3, text_th=3) -> PILImage.Image:
+        img_pil = PILImage.open(BytesIO(file.file.read()))
+        img = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+
+        for i in range(len(masks)):
+            rgb_mask = self.__random_colour_masks(masks[i])
+            img = cv2.addWeighted(img, 1, rgb_mask, 0.5, 0)
+            pt1 = tuple(int(coord) for coord in boxes[i][0])
+            pt2 = tuple(int(coord) for coord in boxes[i][1])
+            cv2.rectangle(img, pt1, pt2, color=(0, 255, 0), thickness=rect_th)
+            cv2.putText(img, pred_cls[i], pt1, cv2.FONT_HERSHEY_SIMPLEX, text_size, (0,255,0), thickness=text_th)
+        
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return PILImage.fromarray(img)
 
 class AiAnnotationServices:
     def __get_model(self, device) -> torch.nn.Module:
@@ -126,6 +153,7 @@ class AiAnnotationServices:
         preprocess = TRANSFORMS
 
         image = preprocess(image).unsqueeze(0)
+        image = image.to(device)
         with torch.no_grad():
             outputs = model(image)
         _, indices = torch.topk(outputs, 5)
