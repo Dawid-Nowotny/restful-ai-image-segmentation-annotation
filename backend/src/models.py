@@ -45,7 +45,6 @@ class Comment(Base):
     user: Mapped["User"] = relationship(back_populates="comments")
     comment_users_likes: Mapped[List["User"]] = relationship(secondary=comment_likes, back_populates="user_comments_likes")
 
-
 class Image(Base):
     __tablename__ = "Image"
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
