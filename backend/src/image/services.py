@@ -18,7 +18,7 @@ from io import BytesIO
 
 from models import Image
 from .schemas import ImageData
-from .constants import LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
+from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 
 class ImageServices:
     def get_image_BLOB_by_id(self, image_id: int, db: Session) -> bytes:
@@ -56,7 +56,6 @@ class UserServices:
             )
 
     def validate_file_size_type(self, file: IO) -> None:
-        FILE_SIZE = 5 * 1024 * 1024  # 5MB
         accepted_file_types = [
             "image/png",
             "image/jpeg",
@@ -108,9 +107,9 @@ class SegmentationServices:
         coloured_mask = np.stack([r, g, b], axis=2)
         return coloured_mask
 
-    def get_prediction(self, file, threshold=0.60) -> Tuple[np.ndarray, List[List[Tuple[int, int]]], List[str]]:
+    def get_prediction(self, binary, threshold=0.60) -> Tuple[np.ndarray, List[List[Tuple[int, int]]], List[str]]:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        img = PILImage.open(BytesIO(file.file.read()))
+        img = PILImage.open(BytesIO(binary)).convert("RGB")
         transform = TRANSFORMS
         img = transform(img).to(device)
         model = self.__get_model(device)
@@ -127,8 +126,8 @@ class SegmentationServices:
         pred_class = pred_class[:pred_t + 1]
         return masks, pred_boxes, pred_class
     
-    def get_segmented_image(self, file, masks, boxes, pred_cls, rect_th=3, text_size=3, text_th=3) -> PILImage.Image:
-        img_pil = PILImage.open(BytesIO(file.file.read()))
+    def get_segmented_image(self, binary, masks, boxes, pred_cls, rect_th=3, text_size=3, text_th=3) -> PILImage.Image:
+        img_pil = PILImage.open(BytesIO(binary)).convert("RGB")
         img = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
         for i in range(len(masks)):
@@ -141,7 +140,6 @@ class SegmentationServices:
         
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         return PILImage.fromarray(img)
-
 class AiAnnotationServices:
     def __get_model(self, device) -> torch.nn.Module:
         model = models.resnet50(weights="ResNet50_Weights.DEFAULT")
@@ -157,8 +155,10 @@ class AiAnnotationServices:
         labels = self.__get_labels()
         preprocess = TRANSFORMS
 
-        image = preprocess(image).unsqueeze(0)
+        image = preprocess(image)[:3]
+        image = image.unsqueeze(0)
         image = image.to(device)
+
         with torch.no_grad():
             outputs = model(image)
         _, indices = torch.topk(outputs, 5)

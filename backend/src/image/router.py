@@ -16,14 +16,16 @@ def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: 
     user_services = UserServices()
     segmentation_services = SegmentationServices()
 
-    file_test = copy.deepcopy(file)
-    file_pred = copy.deepcopy(file)
-    file_seg_output = copy.deepcopy(file)
+    binary_pred = file.file.read()
+    file.file.seek(0)
+    binary_seg_output = file.file.read()
+    file.file.seek(0)
 
-    user_services.validate_file_size_type(file_test)
+    user_services.validate_file_size_type(file)
+    file.file.seek(0)
     
-    masks, pred_boxes, pred_class = segmentation_services.get_prediction(file_pred, threshold=image_data.iou_threshold)
-    segmented_image = segmentation_services.get_segmented_image(file_seg_output, masks, pred_boxes, pred_class)
+    masks, pred_boxes, pred_class = segmentation_services.get_prediction(binary_pred, threshold=image_data.iou_threshold)
+    segmented_image = segmentation_services.get_segmented_image(binary_seg_output, masks, pred_boxes, pred_class)
     segmentation_data = convert_to_json(pred_boxes, pred_class)
 
     user_services.add_image_to_database(db, segmented_image, segmentation_data, image_data, file)
