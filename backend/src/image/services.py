@@ -116,6 +116,8 @@ class SegmentationServices:
         model = self.__get_model(device)
         pred = model([img])
         pred_score = list(pred[0]['scores'].detach().cpu().numpy())
+        if not any(x > threshold for x in pred_score):
+            raise HTTPException(status_code=412, detail="No prediction found")
         pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
         masks = (pred[0]['masks'] > 0.5).squeeze().detach().cpu().numpy()
         pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cpu().numpy())]
