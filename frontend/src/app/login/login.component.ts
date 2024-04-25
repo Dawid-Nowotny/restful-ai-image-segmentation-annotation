@@ -27,13 +27,13 @@ export class LoginComponent {
 
   onSubmit() {
     if (!this.username || !this.password) {
-      this.errorMessage = 'Wprowadź nazwę użytkownika i hasło!';
+      this.errorMessage = 'Wprowadź nazwę użytkownika lub email i hasło!';
       return;
     } 
 
     const data = {
-      username: this.username,
-      password: this.password
+      Username: this.username,
+      Password: this.password
     };
   
     this.serverService.postLogin(data).subscribe(
@@ -43,7 +43,7 @@ export class LoginComponent {
           this.errorMessage = '';
           this.router.navigate(['/']);
         } else {
-          this.errorMessage = 'Podano błędny email lub hasło!';
+          this.errorMessage = 'Podano błędną nazwę użytkownika, email lub hasło!';
         }
       },
       (error: HttpErrorResponse) => {

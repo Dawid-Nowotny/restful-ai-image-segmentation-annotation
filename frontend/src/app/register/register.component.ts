@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class RegisterComponent {
   username: string;
+  email: string;
   password: string;
   passwordCheck: string;
   errorMessage: string;
@@ -23,6 +24,7 @@ export class RegisterComponent {
 
   constructor(private serverService: ServerService, private router: Router) {
     this.username = '';
+    this.email = '';
     this.password = '';
     this.passwordCheck = '';
     this.errorMessage = '';
@@ -30,8 +32,11 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    if (!this.username || !this.password || !this.passwordCheck) {
-      this.errorMessage = 'Wprowadź nazwę użytkownika i hasło!';
+    if (!this.username || !this.email || !this.password || !this.passwordCheck) {
+      this.errorMessage = 'Musisz wypełnić wszystkie dane!';
+      return;
+    } else if (!this.isValidEmail(this.email)) {
+      this.errorMessage = 'Podaj poprawny adres email!';
       return;
     } else if (this.password.length < 6) {
       this.errorMessage = 'Hasło musi być dłuższe niż 6 znaków!';
@@ -43,10 +48,11 @@ export class RegisterComponent {
       this.errorMessage = 'Musisz zaznaczyć wymagane zgody!';
       return;
     }
+
     const data = {
-      username: this.username,
-      password: this.password,
-      passwordCheck: this.passwordCheck
+      Username: this.username,
+      Email: this.email,
+      Password: this.password
     };
   
     this.serverService.postRegister(data).subscribe(
@@ -68,4 +74,9 @@ export class RegisterComponent {
       }
     );
   }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
 }
