@@ -1,3 +1,5 @@
 export class UploadImageData {
-  image: any;
+    file: any;
+    uploader: Number = 0;
+    iou_treshold: Number = 0;
 }
