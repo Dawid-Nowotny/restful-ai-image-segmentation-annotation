@@ -32,8 +32,6 @@ export class ServerService {
 
     postImage(data: any): Observable<any> {
         const url = `${this.restUrl}/images/upload`;
-        console.log("data:");
-        console.log(data);
         return this.http.post(url, data);
     }
 }

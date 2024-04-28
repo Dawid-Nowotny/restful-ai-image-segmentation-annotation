@@ -4,7 +4,7 @@
         <div class="form-group">
             <div class="mb-3">
                 <label for="UploadimgControlInput" class="form-label">Upload File/Image</label>
-                <input type="file" class="form-control" id="UploadimgControlInput" formControlName="image" name="image"
+                <input type="file" class="form-control" id="UploadingControlInput" formControlName="image" name="image"
                     (change)="uploadImage($event)" [ngClass]="{ 'is-invalid': submitted && f.image.errors }"
                     placeholder="Upload Image">
                 <div *ngIf="submitted && f.image.errors" class="invalid-feedback">
@@ -12,6 +12,16 @@
                         Image is required
                     </div>
                 </div>
+            </div>
+            <div class="mb-3">
+                <label for="UploadimgControlInput" class="form-label">Threshold value</label>
+                <input type="number" class="form-control" id="UploadingControlInput" formControlName="iou_threshold"
+                    name="iou_threshold" (change)="handleThresholdChange($event)" [ngClass]="{ 'is-invalid': submitted && f.iou_threshold.errors }">
+                    <div *ngIf="f.iou_threshold.errors" class="invalid-feedback">
+                        <div *ngIf="f.iou_threshold.errors.required">
+                            Threshold is required
+                        </div>
+                    </div>
             </div>
             <div class="mb-3">
                 <input type="submit" class="btn btn-success">

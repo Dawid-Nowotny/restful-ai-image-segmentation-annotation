@@ -19,12 +19,11 @@ import { ServerService } from '../server.service';
 export class ImageUploadComponent {
     title = 'Image Upload';
 
-    file: any;
     submitted = false;
 
     form: any;
     uploadImageData = new UploadImageData();
-    data: any;
+
 
     constructor(private formBuilder: FormBuilder, private serverService: ServerService) { }
 
@@ -35,8 +34,7 @@ export class ImageUploadComponent {
     creatForm() {
         this.form = this.formBuilder.group({
             image: [null, Validators.required],
-            uploader_id: [0, Validators.required],
-            iou_treshold: [0.5, Validators.required],
+            iou_threshold: [this.uploadImageData.iou_treshold, Validators.required],
         })
     }
 
@@ -45,8 +43,11 @@ export class ImageUploadComponent {
     }
 
     uploadImage(event: any) {
-        this.file = event.target.files[0];
-        console.log(this.file);
+        this.uploadImageData.file = event.target.files[0];
+    }
+
+    handleThresholdChange(event: any) {
+        this.uploadImageData.iou_treshold = event.target.value
     }
 
     onSubmit() {
@@ -54,25 +55,23 @@ export class ImageUploadComponent {
         if (this.form.invalid) {
             return
         }
-        
+
         const formData = new FormData();
-        formData.append("file", this.file);
-        formData.append("uploader_id", "0");
-        formData.append("moderator_id", "0");
-        formData.append("iou_threshold", "0.5");
+        formData.append("file", this.uploadImageData.file);
+        formData.append("uploader_id", this.uploadImageData.uploader.toString());
+        formData.append("moderator_id", "");
+        formData.append("iou_threshold", this.uploadImageData.iou_treshold.toString());
 
         this.serverService.postImage(formData).subscribe(res => {
-            this.data = res;
-            console.log(this.data)
-            if (this.data.status = true) {
-                console.log("Success: " + this.data.message);
+            if (res.status = true) {
+                console.log("Upload successful");
                 // this.toastr.success(JSON.stringify(this.data.message), '', {
                 //     timeOut: 2000,
                 //     progressBar: true
                 // })
             }
             else {
-                console.log("Fail: " + this.data.message);
+                console.log("upload failed");
                 // this.toastr.error(JSON.stringify(this.data.message), '', {
                 //     timeOut: 2000,
                 //     progressBar: true
