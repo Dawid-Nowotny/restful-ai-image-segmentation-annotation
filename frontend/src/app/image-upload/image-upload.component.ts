@@ -61,13 +61,14 @@ export class ImageUploadComponent {
 
     onSubmit() {
         this.submitted = true;
-        this.submitDisabled = true;
         this.successMessage = "";
         this.errorMessage = "";
-
+        
         if (this.form.invalid) {
             return
         }
+
+        this.submitDisabled = true;
 
         const formData = new FormData();
         formData.append("file", this.uploadImageData.file);
@@ -78,7 +79,7 @@ export class ImageUploadComponent {
         this.serverService.postImage(formData).subscribe(
             {
                 next: (response: any) => {
-                    this.successMessage = "File uploaded successfully!";
+                    this.successMessage = "Zdjęcie zostało dodane!";
                     this.submitted = false;
                     this.submitDisabled = false;
                 },
