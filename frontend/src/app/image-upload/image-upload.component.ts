@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Validators, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UploadImageData } from '../models/upload-image-data.model';
 import { CommonModule } from '@angular/common';
 import { ServerService } from '../server.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -19,13 +20,21 @@ import { ServerService } from '../server.service';
 export class ImageUploadComponent {
     title = 'Image Upload';
 
-    submitted = false;
-
+    submitted: boolean;
+    submitDisabled: boolean;
     form: any;
-    uploadImageData = new UploadImageData();
+    uploadImageData: UploadImageData;
+    successMessage: string;
+    errorMessage: string;
 
+    constructor(private formBuilder: FormBuilder, private serverService: ServerService) {
+        this.submitted = false;
+        this.submitDisabled = false;
+        this.uploadImageData = new UploadImageData();
+        this.successMessage = '';
+        this.errorMessage = '';
 
-    constructor(private formBuilder: FormBuilder, private serverService: ServerService) { }
+    }
 
     ngOnInit() {
         this.creatForm();
@@ -52,6 +61,10 @@ export class ImageUploadComponent {
 
     onSubmit() {
         this.submitted = true;
+        this.submitDisabled = true;
+        this.successMessage = "";
+        this.errorMessage = "";
+
         if (this.form.invalid) {
             return
         }
@@ -62,23 +75,20 @@ export class ImageUploadComponent {
         formData.append("moderator_id", "");
         formData.append("iou_threshold", this.uploadImageData.iou_treshold.toString());
 
-        this.serverService.postImage(formData).subscribe(res => {
-            if (res.status = true) {
-                console.log("Upload successful");
-                // this.toastr.success(JSON.stringify(this.data.message), '', {
-                //     timeOut: 2000,
-                //     progressBar: true
-                // })
+        this.serverService.postImage(formData).subscribe(
+            {
+                next: (response: any) => {
+                    this.successMessage = "File uploaded successfully!";
+                    this.submitted = false;
+                    this.submitDisabled = false;
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.errorMessage = error.error.detail;
+                    this.submitted = false;
+                    this.submitDisabled = false;
+                }
             }
-            else {
-                console.log("upload failed");
-                // this.toastr.error(JSON.stringify(this.data.message), '', {
-                //     timeOut: 2000,
-                //     progressBar: true
-                // })
-            }
-            this.submitted = false;
-            //this.form.get('image').reset();
-        })
+        )
+
     }
 }

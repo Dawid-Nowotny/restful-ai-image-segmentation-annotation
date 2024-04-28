@@ -16,15 +16,22 @@
             <div class="mb-3">
                 <label for="UploadimgControlInput" class="form-label">Threshold value</label>
                 <input type="number" class="form-control" id="UploadingControlInput" formControlName="iou_threshold"
-                    name="iou_threshold" (change)="handleThresholdChange($event)" [ngClass]="{ 'is-invalid': submitted && f.iou_threshold.errors }">
-                    <div *ngIf="f.iou_threshold.errors" class="invalid-feedback">
-                        <div *ngIf="f.iou_threshold.errors.required">
-                            Threshold is required
-                        </div>
+                    name="iou_threshold" (change)="handleThresholdChange($event)"
+                    [ngClass]="{ 'is-invalid': submitted && f.iou_threshold.errors }">
+                <div *ngIf="f.iou_threshold.errors" class="invalid-feedback">
+                    <div *ngIf="f.iou_threshold.errors.required">
+                        Threshold is required
                     </div>
+                </div>
             </div>
             <div class="mb-3">
-                <input type="submit" class="btn btn-success">
+                <input type="submit" [disabled]="submitDisabled" class="btn btn-success">
+            </div>
+            <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                {{ successMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                {{ errorMessage }}
             </div>
         </div>
     </form>
