@@ -1,10 +1,10 @@
 export class UploadImageData {
     file: any;
-    uploader: Number;
+    uploaderId: Number;
     threshold: Number;
 
     constructor() {
-        this.uploader = 0;
+        this.uploaderId = 0;
         this.threshold = 0.5;
     }
 }

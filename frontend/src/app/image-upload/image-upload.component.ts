@@ -63,7 +63,7 @@ export class ImageUploadComponent {
         this.submitted = true;
         this.successMessage = "";
         this.errorMessage = "";
-        
+
         if (this.form.invalid) {
             return
         }
@@ -72,7 +72,7 @@ export class ImageUploadComponent {
 
         const formData = new FormData();
         formData.append("file", this.uploadImageData.file);
-        formData.append("uploader_id", this.uploadImageData.uploader.toString());
+        formData.append("uploader_id", this.uploadImageData.uploaderId.toString());
         formData.append("moderator_id", "");
         formData.append("threshold", this.uploadImageData.threshold.toString());
 
@@ -84,7 +84,12 @@ export class ImageUploadComponent {
                     this.submitDisabled = false;
                 },
                 error: (error: HttpErrorResponse) => {
-                    this.errorMessage = error.error.detail;
+                    if (error.status === 0) {
+                        this.errorMessage = "Wystąpił błąd po stronie serwera.";
+                    } else {
+                        this.errorMessage = error.error.detail;
+                    }
+
                     this.submitted = false;
                     this.submitDisabled = false;
                 }
