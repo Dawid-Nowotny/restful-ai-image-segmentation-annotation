@@ -29,16 +29,16 @@
                     step="0.1"
                     class="form-control" 
                     id="UploadingControlInput" 
-                    formControlName="iou_threshold"
-                    name="iou_threshold" 
+                    formControlName="threshold"
+                    name="threshold" 
                     (change)="handleThresholdChange($event)"
-                    [ngClass]="{ 'is-invalid': submitted && f.iou_threshold.errors }"
+                    [ngClass]="{ 'is-invalid': submitted && f.threshold.errors }"
                 >
-                <div *ngIf="f.iou_threshold.errors" class="invalid-feedback">
-                    <div *ngIf="f.iou_threshold.errors.required">
+                <div *ngIf="f.threshold.errors" class="invalid-feedback">
+                    <div *ngIf="f.threshold.errors.required">
                         Wartosć progowa jest wymagana
                     </div>
-                    <div *ngIf="f.iou_threshold.errors.min || f.iou_threshold.errors.max">
+                    <div *ngIf="f.threshold.errors.min || f.threshold.errors.max">
                         Wartość powinna mieścić się w zakresie pomiędzy 0 a 1
                     </div>
                 </div>

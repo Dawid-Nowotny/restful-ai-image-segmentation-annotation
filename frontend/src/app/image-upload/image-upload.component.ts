@@ -43,7 +43,7 @@ export class ImageUploadComponent {
     creatForm() {
         this.form = this.formBuilder.group({
             image: [null, Validators.required],
-            iou_threshold: [this.uploadImageData.iou_treshold, Validators.required],
+            threshold: [this.uploadImageData.threshold, Validators.required],
         })
     }
 
@@ -56,7 +56,7 @@ export class ImageUploadComponent {
     }
 
     handleThresholdChange(event: any) {
-        this.uploadImageData.iou_treshold = event.target.value
+        this.uploadImageData.threshold = event.target.value
     }
 
     onSubmit() {
@@ -74,7 +74,7 @@ export class ImageUploadComponent {
         formData.append("file", this.uploadImageData.file);
         formData.append("uploader_id", this.uploadImageData.uploader.toString());
         formData.append("moderator_id", "");
-        formData.append("iou_threshold", this.uploadImageData.iou_treshold.toString());
+        formData.append("threshold", this.uploadImageData.threshold.toString());
 
         this.serverService.postImage(formData).subscribe(
             {
