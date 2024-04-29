@@ -1,7 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends, Response
 from sqlalchemy.orm import Session
 
-import copy
 import json
 
 from .services import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
@@ -24,7 +23,7 @@ def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: 
     user_services.validate_file_size_type(file)
     file.file.seek(0)
     
-    masks, pred_boxes, pred_class = segmentation_services.get_prediction(binary_pred, threshold=image_data.iou_threshold)
+    masks, pred_boxes, pred_class = segmentation_services.get_prediction(binary_pred, threshold=image_data.threshold)
     segmented_image = segmentation_services.get_segmented_image(binary_seg_output, masks, pred_boxes, pred_class)
     segmentation_data = convert_to_json(pred_boxes, pred_class)
 
