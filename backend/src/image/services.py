@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from PIL import Image as PILImage
 from torchvision import models
 
+import zipfile
 import random
 import json
 from datetime import date
@@ -27,6 +28,28 @@ class ImageServices:
         if not image_blob:
             raise HTTPException(status_code=404, detail="Image not found")
         return image_blob[0]
+
+    def get_images_BLOBs_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
+        if start_id > end_id:
+            raise HTTPException(status_code=400, detail="Start ID cannot be greater than end ID")
+    
+        images = db.query(Image.id, Image.image).filter(Image.id >= start_id, Image.id <= end_id).all()
+
+        if not images:
+            raise HTTPException(status_code=404, detail="No images found in the given range")
+        
+        images_dict = {}
+        for image_id, image_blob in images:
+            images_dict[image_id] = image_blob
+        return images_dict
+    
+    def zip_images(self, images_dict: dict) -> BytesIO:
+        zip_buffer = BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for image_id, image_blob in images_dict.items():
+                zip_file.writestr(f'{image_id}.jpg', image_blob)
+        zip_buffer.seek(0)
+        return zip_buffer
 
     def BLOB_to_image(self, image_blob) -> PILImage.Image:
         return PILImage.open(BytesIO(image_blob))
@@ -140,6 +163,7 @@ class SegmentationServices:
         
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         return PILImage.fromarray(img)
+
 class AiAnnotationServices:
     def __get_model(self, device) -> torch.nn.Module:
         model = models.resnet50(weights="ResNet50_Weights.DEFAULT")

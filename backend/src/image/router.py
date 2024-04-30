@@ -35,6 +35,20 @@ def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: 
         status_code=200,
     )
 
+@router.get("/get_images/{start_id}/{end_id}")
+def get_images(start_id: int, end_id: int, db: Session = Depends(get_db)):
+    image_service = ImageServices()
+
+    images_dict = image_service.get_images_BLOBs_by_range(start_id, end_id, db)
+    zip_buffer = image_service.zip_images(images_dict)
+
+    return Response(
+        content=zip_buffer.getvalue(), 
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=images.zip"},
+        status_code=200
+        )
+
 @router.get("/suggest-annotations/{image_id}")
 def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     image_services = ImageServices()
