@@ -1,7 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends, Response
 from sqlalchemy.orm import Session
 
-import copy
 import json
 
 from .services import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
@@ -24,7 +23,7 @@ def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: 
     user_services.validate_file_size_type(file)
     file.file.seek(0)
     
-    masks, pred_boxes, pred_class = segmentation_services.get_prediction(binary_pred, threshold=image_data.iou_threshold)
+    masks, pred_boxes, pred_class = segmentation_services.get_prediction(binary_pred, threshold=image_data.threshold)
     segmented_image = segmentation_services.get_segmented_image(binary_seg_output, masks, pred_boxes, pred_class)
     segmentation_data = convert_to_json(pred_boxes, pred_class)
 
@@ -35,6 +34,20 @@ def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: 
         media_type="application/json",
         status_code=200,
     )
+
+@router.get("/get_images/{start_id}/{end_id}")
+def get_images(start_id: int, end_id: int, db: Session = Depends(get_db)):
+    image_service = ImageServices()
+
+    images_dict = image_service.get_images_BLOBs_by_range(start_id, end_id, db)
+    zip_buffer = image_service.zip_images(images_dict)
+
+    return Response(
+        content=zip_buffer.getvalue(), 
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=images.zip"},
+        status_code=200
+        )
 
 @router.get("/suggest-annotations/{image_id}")
 def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
