@@ -9,12 +9,12 @@ class UserServices:
         username = db.query(User).filter(User.username == username).first()
 
         if username:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nazwa użytkownika zajęta")
 
         user_email = db.query(User).filter(User.email == email).first()
 
         if user_email:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already taken")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="E-mail zajęty")
 
     def authenticate_user(self, username: str, password: str, db: Session) -> User:
         is_email = validate_email_format(username)
@@ -25,11 +25,11 @@ class UserServices:
             user = db.query(User).filter(User.username == username).first()
 
         if not user:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Niewłaściwa nazwa użytkownika")
 
         if user and user.verify_password(password):
             return user
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Niepoprawne hasło")
 
     def create_user(self, username: str, email: str, password: str, db: Session) -> User:
         try:
