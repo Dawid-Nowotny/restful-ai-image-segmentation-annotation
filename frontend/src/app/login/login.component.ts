@@ -37,20 +37,14 @@ export class LoginComponent {
         };
 
         this.serverService.postLogin(data).subscribe(
-            (response: any) => {
-                if (response.success == true) {
+            {
+                next: (response: any) => {
                     this.successMessage = 'Zalogowano!';
                     this.errorMessage = '';
                     this.router.navigate(['/']);
-                } else {
-                    this.errorMessage = 'Podano błędną nazwę użytkownika, email lub hasło!';
-                }
-            },
-            (error: HttpErrorResponse) => {
-                if (error.error instanceof ErrorEvent) {
-                    this.errorMessage = 'Wystąpił błąd po stronie klienta!';
-                } else {
-                    this.errorMessage = 'Wystąpił błąd po stronie serwera!';
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.errorMessage = error.error.detail;
                 }
             }
         );

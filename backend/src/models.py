@@ -70,7 +70,6 @@ class User(Base):
     role = Column(String, index=True, nullable=False)
 
     comments: Mapped[List["Comment"]] = relationship(back_populates="user")
-    #tu blad!!!
     images: Mapped[List["Image"]] = relationship(back_populates="uploader", foreign_keys="[Image.uploader_id]")
     user_comments_likes: Mapped[List["Comment"]] = relationship(secondary=comment_likes, back_populates="comment_users_likes")
     user_images_likes: Mapped[List["Image"]] = relationship(secondary=image_likes, back_populates="image_users_likes")
