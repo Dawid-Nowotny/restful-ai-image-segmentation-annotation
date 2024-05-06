@@ -26,17 +26,17 @@ class ImageServices:
         image_blob = db.query(Image.image).filter(Image.id == image_id).first()
 
         if not image_blob:
-            raise HTTPException(status_code=404, detail="Image not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazu")
         return image_blob[0]
 
     def get_images_BLOBs_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
         if start_id > end_id:
-            raise HTTPException(status_code=400, detail="Start ID cannot be greater than end ID")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
     
         images = db.query(Image.id, Image.image).filter(Image.id >= start_id, Image.id <= end_id).all()
 
         if not images:
-            raise HTTPException(status_code=404, detail="No images found in the given range")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów w podanym zakresie")
         
         images_dict = {}
         for image_id, image_blob in images:
@@ -56,28 +56,22 @@ class ImageServices:
 
 class UserServices:
     def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
-        try:
-            image_bytes = BytesIO()
-            segmented_image.save(image_bytes, format="JPEG")
+        image_bytes = BytesIO()
+        segmented_image.save(image_bytes, format="JPEG")
 
-            db_image = Image(
-                image=image.file.read(),
-                segmented_image=image_bytes.getvalue(),
-                coordinates_classes=json.loads(segmentation_data),
-                upload_date=date.today(),
-                uploader_id=image_data.uploader_id,
-                moderator_id=image_data.moderator_id,
-            )
+        db_image = Image(
+            image=image.file.read(),
+            segmented_image=image_bytes.getvalue(),
+            coordinates_classes=json.loads(segmentation_data),
+            upload_date=date.today(),
+            uploader_id=image_data.uploader_id,
+            moderator_id=image_data.moderator_id,
+        )
 
-            db.add(db_image)
-            db.commit()
-            db.refresh(db_image)
-
-        except SQLAlchemyError as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-            )
-
+        db.add(db_image)
+        db.commit()
+        db.refresh(db_image)
+        
     def validate_file_size_type(self, file: IO) -> None:
         accepted_file_types = [
             "image/png",
@@ -92,7 +86,7 @@ class UserServices:
         if file_info is None:
             raise HTTPException(
                 status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-                detail="Unable to determine file type",
+                detail="Nie można określić typu pliku",
             )
 
         detected_content_type = file_info.extension.lower()
@@ -103,7 +97,7 @@ class UserServices:
         ):
             raise HTTPException(
                 status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-                detail="Unsupported file type",
+                detail="Nieobsługiwany typ pliku",
             )
 
         real_file_size = 0
@@ -112,7 +106,7 @@ class UserServices:
             if real_file_size > FILE_SIZE:
                 raise HTTPException(
                     status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                    detail="Uploaded file is too large. Limit is 5MB",
+                    detail="Przesłany plik jest za duży. Limit wynosi 5MB",
                 )
 
 class SegmentationServices:
@@ -139,7 +133,7 @@ class SegmentationServices:
         pred = model([img])
         pred_score = list(pred[0]['scores'].detach().cpu().numpy())
         if not any(x > threshold for x in pred_score):
-            raise HTTPException(status_code=412, detail="No prediction found")
+            raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail="Nie znaleziono predykcji")
         pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
         masks = (pred[0]['masks'] > 0.5).squeeze().detach().cpu().numpy()
         pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cpu().numpy())]

@@ -50,28 +50,21 @@ export class RegisterComponent {
         }
 
         const data = {
-            Username: this.username,
-            Email: this.email,
-            Password: this.password
+            username: this.username,
+            email: this.email,
+            password: this.password
         };
 
-        this.serverService.postRegister(data).subscribe(
-            (response: any) => {
-                if (response.success == true) {
-                    this.successMessage = 'Zarejestrowano!';
-                    this.errorMessage = '';
-                    this.router.navigate(['/']);
-                } else {
-                    this.errorMessage = response.message;
-                }
+        this.serverService.postRegister(data).subscribe({
+            next: (response: any) => {
+                this.successMessage = 'Zarejestrowano!';
+                this.errorMessage = '';
+                this.router.navigate(['/']);
             },
-            (error: HttpErrorResponse) => {
-                if (error.error instanceof ErrorEvent) {
-                    this.errorMessage = 'Wystąpił błąd po stronie klienta!';
-                } else {
-                    this.errorMessage = 'Wystąpił błąd po stronie serwera!';
-                }
+            error: (error: HttpErrorResponse) => {
+                this.errorMessage = error.error.detail;
             }
+        }
         );
     }
 
