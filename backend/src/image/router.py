@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Depends, Response
+from fastapi import APIRouter, UploadFile, File, Depends, Response, status
 from sqlalchemy.orm import Session
 
 import json
@@ -32,7 +32,7 @@ def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: 
     return Response(
         content=json.dumps({"saved_image": file.filename}),
         media_type="application/json",
-        status_code=200,
+        status_code=status.HTTP_201_CREATED,
     )
 
 @router.get("/get_images/{start_id}/{end_id}")
@@ -46,7 +46,7 @@ def get_images(start_id: int, end_id: int, db: Session = Depends(get_db)):
         content=zip_buffer.getvalue(), 
         media_type="application/zip",
         headers={"Content-Disposition": "attachment; filename=images.zip"},
-        status_code=200
+        status_code=status.HTTP_200_OK
         )
 
 @router.get("/suggest-annotations/{image_id}")
@@ -62,5 +62,5 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     return Response(
         content=json.dumps({"annotations": annotations}),
         media_type="application/json",
-        status_code=200,
+        status_code=status.HTTP_200_OK,
     )

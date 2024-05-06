@@ -26,17 +26,17 @@ class ImageServices:
         image_blob = db.query(Image.image).filter(Image.id == image_id).first()
 
         if not image_blob:
-            raise HTTPException(status_code=404, detail="Image not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
         return image_blob[0]
 
     def get_images_BLOBs_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
         if start_id > end_id:
-            raise HTTPException(status_code=400, detail="Start ID cannot be greater than end ID")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Start ID cannot be greater than end ID")
     
         images = db.query(Image.id, Image.image).filter(Image.id >= start_id, Image.id <= end_id).all()
 
         if not images:
-            raise HTTPException(status_code=404, detail="No images found in the given range")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No images found in the given range")
         
         images_dict = {}
         for image_id, image_blob in images:
@@ -139,7 +139,7 @@ class SegmentationServices:
         pred = model([img])
         pred_score = list(pred[0]['scores'].detach().cpu().numpy())
         if not any(x > threshold for x in pred_score):
-            raise HTTPException(status_code=412, detail="No prediction found")
+            raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail="No prediction found")
         pred_t = [pred_score.index(x) for x in pred_score if x > threshold][-1]
         masks = (pred[0]['masks'] > 0.5).squeeze().detach().cpu().numpy()
         pred_class = [COCO_INSTANCE_CATEGORY_NAMES[i] for i in list(pred[0]['labels'].cpu().numpy())]
