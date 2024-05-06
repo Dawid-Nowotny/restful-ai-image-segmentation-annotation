@@ -32,8 +32,8 @@ export class LoginComponent {
         }
 
         const data = {
-            Username: this.username,
-            Password: this.password
+            username: this.username,
+            password: this.password
         };
 
         this.serverService.postLogin(data).subscribe(

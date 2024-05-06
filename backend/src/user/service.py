@@ -1,28 +1,44 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from validate_email import validate_email as validate_email_format
 
 from models import User
 
-class UserService:
-    def __init__(self, db: Session):
-        self.db = db
+class UserServices:
+    def check_if_user_exists(self, username: str, email: str, db: Session) -> None:
+        username = db.query(User).filter(User.username == username).first()
 
-    def check_if_user_exists(self, username: str):
-        user = self.db.query(User).filter(User.username == username).first()
-        if user:
-            return user
-        return False
+        if username:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken")
 
-    def authenticate_user(self, username: str, password: str):
-        user = self.db.query(User).filter(User.username == username).first()
+        user_email = db.query(User).filter(User.email == email).first()
+
+        if user_email:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already taken")
+
+    def authenticate_user(self, username: str, password: str, db: Session) -> User:
+        is_email = validate_email_format(username)
+        
+        if is_email:
+            user = db.query(User).filter(User.email == username).first()
+        else: 
+            user = db.query(User).filter(User.username == username).first()
+
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username")
 
         if user and user.verify_password(password):
             return user
-        return False
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect password")
 
-    def create_user(self, Username: str, Email: str, Password: str):
-        new_User = User(username=Username, email=Email, role="NEW_USER")
-        new_User.set_password(Password)
-        self.db.add(new_User)
-        self.db.commit()
-        self.db.refresh(new_User)
-        return new_User
+    def create_user(self, username: str, email: str, password: str, db: Session) -> User:
+        try:
+            user = User(username=username, email=email, role="User")
+            user.set_password(password)
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            return user
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

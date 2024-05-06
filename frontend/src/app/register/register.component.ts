@@ -50,9 +50,9 @@ export class RegisterComponent {
         }
 
         const data = {
-            Username: this.username,
-            Email: this.email,
-            Password: this.password
+            username: this.username,
+            email: this.email,
+            password: this.password
         };
 
         this.serverService.postRegister(data).subscribe(

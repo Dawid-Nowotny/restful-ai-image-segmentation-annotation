@@ -1,38 +1,36 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
-from .service import UserService
-from .schemas import UserCreateSchema, LoginInfo
+import json
 
+from .service import *
+from .schemas import UserCreateSchema, LoginInfo
 from get_db import get_db
 
 router = APIRouter()
 
-@router.post("/login", status_code=status.HTTP_200_OK)
+@router.post("/login")
 def login(login_info: LoginInfo, db: Session = Depends(get_db)):
-    service = UserService(db)
+    user_service = UserServices()
 
-    user = service.authenticate_user(login_info.Username, login_info.Password)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    user = user_service.authenticate_user(login_info.username, login_info.password, db)
     
-    return {"access_token": user.username}
+    return Response(
+        content=json.dumps({"id": user.id, "username": user.username, "email": user.email}),
+        media_type="application/json",
+        status_code=status.HTTP_200_OK,
+    )
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 def register(user: UserCreateSchema, db: Session = Depends(get_db)):
-    service = UserService(db)
+    user_service = UserServices()
 
-    if service.check_if_user_exists(user.Username):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+    user_service.check_if_user_exists(user.username, user.email, db)
 
-    new_user = service.create_user(user.Username, user.Email, user.Password)
+    user = user_service.create_user(user.username, user.email, user.password, db)
 
-    return {
-        "username": new_user.username,
-        "email": new_user.email,
-    }
+    return Response(
+        content=json.dumps({"id": user.id, "username": user.username, "email": user.email}),
+        media_type="application/json",
+        status_code=status.HTTP_201_CREATED,
+    )
