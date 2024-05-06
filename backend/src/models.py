@@ -76,12 +76,12 @@ class User(Base):
     
     @validates('username')
     def validate_username(self, key, username):
-        assert 4 <= len(username) <= 20, "Username length must be between 4 and 20 characters"
+        assert 4 <= len(username) <= 20, "Długość nazwy użytkownika musi wynosić od 4 do 20 znaków"
         return username
 
     @validates("email")
     def validate_email(self, key, email):
-        assert validate_email_format(email), "Invalid email address"
+        assert validate_email_format(email), "Niepoprawny adres email"
         return email
 
     def set_password(self, password):
