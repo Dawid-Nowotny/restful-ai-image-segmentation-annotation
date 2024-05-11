@@ -1,14 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wyświetlanie obrazków</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    .image-container {
+        margin-bottom: 20px;
+    }
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+</head>
+<body>
 <main>
-  <div class="container mt-4">
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Wyszukaj...">
-          <div class="input-group-append">
-            <button class="btn btn-primary" type="button">Szukaj</button>
-          </div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Wyszukaj...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">Szukaj</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  </main>
+    <div class="container mt-4">
+        <div class="row" id="image-list">
+            
+        </div>
+    </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', fetchAndDisplayImages);
+
+function fetchAndDisplayImages() {
+    fetch('/api/get_images/1/100')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();
+        })
+        .then(imagesZipBlob => {
+            const imageListDiv = document.getElementById('image-list');
+            imageListDiv.innerHTML = ''; 
+
+            return JSZip.loadAsync(imagesZipBlob);
+        })
+        .then(zip => {
+            zip.forEach((relativePath, file) => {
+                if (/\.(jpg|jpeg|png|gif)$/i.test(relativePath)) {
+                    file.async('blob').then(blob => {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(blob);
+                        img.classList.add('img-fluid');
+                        const imageContainer = document.createElement('div');
+                        imageContainer.classList.add('col-md-3', 'image-container');
+                        imageContainer.appendChild(img);
+                        document.getElementById('image-list').appendChild(imageContainer);
+                    });
+                }
+            });
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+</script>
+</body>
+</html>
