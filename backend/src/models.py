@@ -1,11 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,  JSON, Boolean, Date, LargeBinary, Table
+from sqlalchemy import Column, Integer, String, ForeignKey,  JSON, Boolean, Date, LargeBinary, Table, Float
 from passlib.context import CryptContext
 from sqlalchemy.orm import validates, relationship, Mapped
 from validate_email import validate_email as validate_email_format
 
 from typing import List
-
-from database import Base
+try:
+    from database import Base
+except:
+    from .database import Base
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -51,6 +53,7 @@ class Image(Base):
     image = Column(LargeBinary, nullable=False)
     segmented_image = Column(LargeBinary, nullable=True)
     coordinates_classes = Column(JSON, nullable=True)
+    threshold = Column(Float, nullable=False, index=True)
     upload_date = Column(Date, index=True, nullable=False)
 
     uploader_id = Column(Integer, ForeignKey('User.id'))

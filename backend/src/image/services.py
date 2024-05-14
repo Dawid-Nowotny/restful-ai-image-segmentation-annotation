@@ -63,6 +63,7 @@ class UserServices:
             image=image.file.read(),
             segmented_image=image_bytes.getvalue(),
             coordinates_classes=json.loads(segmentation_data),
+            threshold=image_data.threshold,
             upload_date=date.today(),
             uploader_id=image_data.uploader_id,
             moderator_id=image_data.moderator_id,
