@@ -23,8 +23,17 @@
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Wyszukaj...">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button">Szukaj</button>
+                        <button 
+                            class="btn btn-primary" 
+                            type="button"
+                            (click)="getImages()"
+                        >
+                            Szukaj
+                        </button>
                     </div>
+                    <div *ngFor="let image of imagesArray">
+                        <img [src]="image.url" [alt]="image.name">
+                      </div>
                 </div>
             </div>
         </div>
@@ -35,43 +44,5 @@
         </div>
     </div>
 </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', fetchAndDisplayImages);
-
-function fetchAndDisplayImages() {
-    fetch('/api/get_images/1/100')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.blob();
-        })
-        .then(imagesZipBlob => {
-            const imageListDiv = document.getElementById('image-list');
-            imageListDiv.innerHTML = ''; 
-
-            return JSZip.loadAsync(imagesZipBlob);
-        })
-        .then(zip => {
-            zip.forEach((relativePath, file) => {
-                if (/\.(jpg|jpeg|png|gif)$/i.test(relativePath)) {
-                    file.async('blob').then(blob => {
-                        const img = document.createElement('img');
-                        img.src = URL.createObjectURL(blob);
-                        img.classList.add('img-fluid');
-                        const imageContainer = document.createElement('div');
-                        imageContainer.classList.add('col-md-3', 'image-container');
-                        imageContainer.appendChild(img);
-                        document.getElementById('image-list').appendChild(imageContainer);
-                    });
-                }
-            });
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-}
-</script>
 </body>
 </html>
