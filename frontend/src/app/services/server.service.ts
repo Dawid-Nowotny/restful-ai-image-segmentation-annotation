@@ -30,4 +30,9 @@ export class ServerService {
         const url = `${this.restUrl}/images/upload`;
         return this.http.post(url, data);
     }
+
+    getImagesAsZip(startId: number, endId: number) {
+        const url = `${this.restUrl}/images/get_images/${startId}/${endId}`;
+        return this.http.get(url, { responseType: "arraybuffer" });
+    }
 }
