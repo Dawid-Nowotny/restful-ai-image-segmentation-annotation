@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { ServerService } from '../server.service';
+import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import JSZip from 'jszip';
 import { CommonModule } from '@angular/common';
@@ -21,8 +21,11 @@ export class MainPageComponent {
         this.imagesArray = [];
     }
 
-    getImages() {
+    ngOnInit() {
+        this.getImages();
+    }
 
+    getImages() {
         this.serverService.getImagesAsZip(30, 40).subscribe({
             next: async (response: any) => {
                 let blob = new Blob([response], { type: 'application/zip' });
@@ -33,5 +36,4 @@ export class MainPageComponent {
             }
         })
     }
-
 }

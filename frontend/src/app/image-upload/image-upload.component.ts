@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Validators, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UploadImageData } from '../models/upload-image-data.model';
 import { CommonModule } from '@angular/common';
-import { ServerService } from '../server.service';
+import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 
