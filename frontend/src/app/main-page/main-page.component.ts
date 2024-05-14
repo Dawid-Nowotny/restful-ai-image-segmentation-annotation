@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { ServerService } from '../server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import JSZip from 'jszip';
 import { CommonModule } from '@angular/common';
+import { ImageFileData, ImageService } from '../services/image.service';
 
 @Component({
     selector: 'app-main-page',
@@ -14,32 +15,18 @@ import { CommonModule } from '@angular/common';
 })
 export class MainPageComponent {
 
-    imagesArray: any[];
-    constructor(private serverService: ServerService){ 
+    imagesArray: ImageFileData[];
+
+    constructor(private serverService: ServerService, private imageService: ImageService) {
         this.imagesArray = [];
     }
 
-    getImages(){
-        const jsZipService = new JSZip();
+    getImages() {
 
         this.serverService.getImagesAsZip(30, 40).subscribe({
             next: async (response: any) => {
                 let blob = new Blob([response], { type: 'application/zip' });
-
-                jsZipService.loadAsync(blob).then(async(zip) => {
-                    zip.forEach(async (relativePath, file) => {
-                        let imageBlob = await file.async('blob');
-                        let imageURL = URL.createObjectURL(imageBlob)
-                        let imageFile = new File([imageBlob], file.name, { type: 'image/jpeg' });
-
-                        this.imagesArray.push({
-                            name: file.name,
-                            url: imageURL,
-                            file: imageFile,
-                        });
-                    })
-                })
-                
+                this.imagesArray = this.imageService.getImagesArrayFromZip(blob);
             },
             error: (error: HttpErrorResponse) => {
                 console.log(error);
