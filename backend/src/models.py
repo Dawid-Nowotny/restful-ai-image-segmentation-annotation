@@ -1,11 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey,  JSON, Boolean, Date, LargeBinary, Table
+from sqlalchemy import Column, Integer, String, ForeignKey,  JSON, Boolean, Date, LargeBinary, Table, Float
 from passlib.context import CryptContext
 from sqlalchemy.orm import validates, relationship, Mapped
 from validate_email import validate_email as validate_email_format
 
 from typing import List
-
-from database import Base
+try:
+    from database import Base
+except:
+    from .database import Base
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -51,6 +53,7 @@ class Image(Base):
     image = Column(LargeBinary, nullable=False)
     segmented_image = Column(LargeBinary, nullable=True)
     coordinates_classes = Column(JSON, nullable=True)
+    threshold = Column(Float, nullable=False, index=True)
     upload_date = Column(Date, index=True, nullable=False)
 
     uploader_id = Column(Integer, ForeignKey('User.id'))
@@ -73,16 +76,6 @@ class User(Base):
     images: Mapped[List["Image"]] = relationship(back_populates="uploader", foreign_keys="[Image.uploader_id]")
     user_comments_likes: Mapped[List["Comment"]] = relationship(secondary=comment_likes, back_populates="comment_users_likes")
     user_images_likes: Mapped[List["Image"]] = relationship(secondary=image_likes, back_populates="image_users_likes")
-    
-    @validates('username')
-    def validate_username(self, key, username):
-        assert 4 <= len(username) <= 20, "Długość nazwy użytkownika musi wynosić od 4 do 20 znaków"
-        return username
-
-    @validates("email")
-    def validate_email(self, key, email):
-        assert validate_email_format(email), "Niepoprawny adres email"
-        return email
 
     def set_password(self, password):
         self.password_hash = pwd_context.hash(password)

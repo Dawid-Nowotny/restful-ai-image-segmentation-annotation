@@ -5,7 +5,6 @@ import numpy as np
 import cv2
 
 from fastapi import UploadFile, File, HTTPException, status
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from PIL import Image as PILImage
 from torchvision import models
@@ -17,7 +16,10 @@ from datetime import date
 from typing import IO, Tuple, List
 from io import BytesIO
 
-from models import Image
+try:
+    from models import Image
+except:
+    from src.models import Image
 from .schemas import ImageData
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 
@@ -63,6 +65,7 @@ class UserServices:
             image=image.file.read(),
             segmented_image=image_bytes.getvalue(),
             coordinates_classes=json.loads(segmentation_data),
+            threshold=image_data.threshold,
             upload_date=date.today(),
             uploader_id=image_data.uploader_id,
             moderator_id=image_data.moderator_id,

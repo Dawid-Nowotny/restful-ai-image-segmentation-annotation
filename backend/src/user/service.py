@@ -2,7 +2,10 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from validate_email import validate_email as validate_email_format
 
-from models import User
+try:
+    from models import User
+except:
+    from src.models import User
 
 class UserServices:
     def check_if_user_exists(self, username: str, email: str, db: Session) -> None:
@@ -32,13 +35,9 @@ class UserServices:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Niepoprawne hasło")
 
     def create_user(self, username: str, email: str, password: str, db: Session) -> User:
-        try:
-            user = User(username=username, email=email, role="User")
-            user.set_password(password)
-            db.add(user)
-            db.commit()
-            db.refresh(user)
-            return user
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+        user = User(username=username, email=email, role="User")
+        user.set_password(password)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
