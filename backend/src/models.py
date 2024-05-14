@@ -76,16 +76,6 @@ class User(Base):
     images: Mapped[List["Image"]] = relationship(back_populates="uploader", foreign_keys="[Image.uploader_id]")
     user_comments_likes: Mapped[List["Comment"]] = relationship(secondary=comment_likes, back_populates="comment_users_likes")
     user_images_likes: Mapped[List["Image"]] = relationship(secondary=image_likes, back_populates="image_users_likes")
-    
-    @validates('username')
-    def validate_username(self, key, username):
-        assert 4 <= len(username) <= 20, "Długość nazwy użytkownika musi wynosić od 4 do 20 znaków"
-        return username
-
-    @validates("email")
-    def validate_email(self, key, email):
-        assert validate_email_format(email), "Niepoprawny adres email"
-        return email
 
     def set_password(self, password):
         self.password_hash = pwd_context.hash(password)

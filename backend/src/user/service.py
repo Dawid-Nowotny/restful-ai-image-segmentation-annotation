@@ -32,13 +32,9 @@ class UserServices:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Niepoprawne hasło")
 
     def create_user(self, username: str, email: str, password: str, db: Session) -> User:
-        try:
-            user = User(username=username, email=email, role="User")
-            user.set_password(password)
-            db.add(user)
-            db.commit()
-            db.refresh(user)
-            return user
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+        user = User(username=username, email=email, role="User")
+        user.set_password(password)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
