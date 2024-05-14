@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 import json
 
-from .services import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
+from .service import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
 from .schemas import ImageData
 from .utils import convert_to_json
 from get_db import get_db

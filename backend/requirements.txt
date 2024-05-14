@@ -8,6 +8,7 @@ filetype==1.2.0
 pillow==10.3.0
 requests==2.31.0
 opencv-python==4.9.0.80
+pytest==8.2.0
 
 --extra-index-url https://download.pytorch.org/whl/cu121
 torch==2.2.2+cu121

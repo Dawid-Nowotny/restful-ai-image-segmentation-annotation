@@ -2,7 +2,10 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from validate_email import validate_email as validate_email_format
 
-from models import User
+try:
+    from models import User
+except:
+    from src.models import User
 
 class UserServices:
     def check_if_user_exists(self, username: str, email: str, db: Session) -> None:
