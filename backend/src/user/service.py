@@ -53,7 +53,7 @@ class UserServices:
         return user
     
     @staticmethod
-    def get_user_by_username(username, db: Session) -> User: 
+    def __get_user_by_username(username, db: Session) -> User: 
         user = db.query(User).filter(User.username == username).first()
         return user
     
@@ -83,7 +83,7 @@ class UserServices:
         except JWTError:
             raise credentials_exception
         
-        user = UserServices.get_user_by_username(token_data.username, db)
+        user = UserServices.__get_user_by_username(token_data.username, db)
         
         if user is None:
             raise credentials_exception
