@@ -9,11 +9,13 @@ from typing import Annotated
 
 from .jwt_config import SECRET_KEY, ALGORITHM
 from .schemas import TokenData, UserOut
-from get_db import get_db
+
 try:
     from models import User
+    from get_db import get_db
 except:
     from src.models import User
+    from src.get_db import get_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

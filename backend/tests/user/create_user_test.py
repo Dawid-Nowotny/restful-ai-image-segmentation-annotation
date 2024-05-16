@@ -7,14 +7,15 @@ from src.user.service import UserServices
 def mock_db():
     return MagicMock()
 
-def test_create_user(mock_db):
+@pytest.mark.asyncio
+async def test_create_user(mock_db):
     username = "test_user"
     email = "test@example.com"
     password = "test_password"
 
     user_services = UserServices()
 
-    user = user_services.create_user(username, email, password, mock_db)
+    user = await user_services.create_user(username, email, password, mock_db)
 
     mock_db.add.assert_called_once_with(user)
     mock_db.commit.assert_called_once()

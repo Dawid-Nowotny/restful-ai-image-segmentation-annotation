@@ -1,4 +1,7 @@
-from database import SessionLocal
+try:
+    from database import SessionLocal
+except:
+    from .database import SessionLocal
 
 def get_db():
     db = SessionLocal()
