@@ -1,8 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends, Response, status
 from sqlalchemy.orm import Session
 
-import json
-
 from .service import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
 from .schemas import ImageData
 from .utils import convert_to_json
@@ -10,8 +8,8 @@ from get_db import get_db
 
 router = APIRouter()
 
-@router.post("/upload")
-def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: Session = Depends(get_db)):
+@router.post("/upload", status_code=status.HTTP_201_CREATED)
+async def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: Session = Depends(get_db)):
     user_services = UserServices()
     segmentation_services = SegmentationServices()
 
@@ -20,20 +18,16 @@ def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: 
     binary_seg_output = file.file.read()
     file.file.seek(0)
 
-    user_services.validate_file_size_type(file)
+    await user_services.validate_file_size_type(file)
     file.file.seek(0)
     
     masks, pred_boxes, pred_class = segmentation_services.get_prediction(binary_pred, threshold=image_data.threshold)
     segmented_image = segmentation_services.get_segmented_image(binary_seg_output, masks, pred_boxes, pred_class)
     segmentation_data = convert_to_json(pred_boxes, pred_class)
 
-    user_services.add_image_to_database(db, segmented_image, segmentation_data, image_data, file)
+    await user_services.add_image_to_database(db, segmented_image, segmentation_data, image_data, file)
 
-    return Response(
-        content=json.dumps({"saved_image": file.filename}),
-        media_type="application/json",
-        status_code=status.HTTP_201_CREATED,
-    )
+    return {"saved_image": file.filename}
 
 @router.get("/get_images/{start_id}/{end_id}")
 def get_images(start_id: int, end_id: int, db: Session = Depends(get_db)):
@@ -46,7 +40,6 @@ def get_images(start_id: int, end_id: int, db: Session = Depends(get_db)):
         content=zip_buffer.getvalue(), 
         media_type="application/zip",
         headers={"Content-Disposition": "attachment; filename=images.zip"},
-        status_code=status.HTTP_200_OK
         )
 
 @router.get("/suggest-annotations/{image_id}")
@@ -59,8 +52,4 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
 
     annotations = ai_annotation_services.annotate_image(image)
 
-    return Response(
-        content=json.dumps({"annotations": annotations}),
-        media_type="application/json",
-        status_code=status.HTTP_200_OK,
-    )
+    return {"annotations": annotations}

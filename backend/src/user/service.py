@@ -44,7 +44,7 @@ class UserServices:
             return user
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Niepoprawne hasło")
 
-    def create_user(self, username: str, email: str, password: str, db: Session) -> User:
+    async def create_user(self, username: str, email: str, password: str, db: Session) -> User:
         user = User(username=username, email=email, role="User")
         user.set_password(password)
         db.add(user)

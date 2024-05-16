@@ -57,7 +57,7 @@ class ImageServices:
         return PILImage.open(BytesIO(image_blob))
 
 class UserServices:
-    def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
+    async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
         image_bytes = BytesIO()
         segmented_image.save(image_bytes, format="JPEG")
 
@@ -75,7 +75,7 @@ class UserServices:
         db.commit()
         db.refresh(db_image)
         
-    def validate_file_size_type(self, file: IO) -> None:
+    async def validate_file_size_type(self, file: IO) -> None:
         accepted_file_types = [
             "image/png",
             "image/jpeg",
