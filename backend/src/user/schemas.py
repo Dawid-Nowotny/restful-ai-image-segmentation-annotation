@@ -5,6 +5,10 @@ class UserCreateSchema(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6,max_length=32)
 
-class LoginInfo(BaseModel):
+class UserOut(BaseModel):
     username: str
-    password: str
+    email: str
+    role: str
+
+class TokenData(BaseModel):
+    username: str | None = None
