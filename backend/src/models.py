@@ -71,6 +71,7 @@ class User(Base):
     email = Column(String, index=True, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
     role = Column(String, index=True, nullable=False)
+    secret_key = Column(String, index=False, nullable=True)
 
     comments: Mapped[List["Comment"]] = relationship(back_populates="user")
     images: Mapped[List["Image"]] = relationship(back_populates="uploader", foreign_keys="[Image.uploader_id]")
