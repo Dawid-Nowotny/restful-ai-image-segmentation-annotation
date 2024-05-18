@@ -101,7 +101,7 @@ class UserServices:
         return current_user
     
 class TOTPServices:
-    def generate_secret_key(self) -> str:
+    async def generate_secret_key(self) -> str:
         return pyotp.random_base32()
 
     def generate_qr_code(self, username: str, secret_key: str) -> bytes:
@@ -111,8 +111,15 @@ class TOTPServices:
         qr_code.png(buffer, scale=5)
         return buffer.getvalue()
         
-    def set_secret_key(self, user: User, secret_key: str, db: Session) -> None:
+    async def set_secret_key(self, user: User, secret_key: str, db: Session) -> None:
         user.secret_key = secret_key
         db.add(user)
         db.commit()
         db.refresh(user)
+
+    async def verify_2fa_token(self, token: str, user: User) -> None:
+        totp = pyotp.TOTP(user.secret_key)
+        valid = totp.verify(token)
+
+        if not valid:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Nieprawidłowy kod 2FA")

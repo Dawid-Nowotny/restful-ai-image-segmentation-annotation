@@ -16,5 +16,5 @@ app.add_middleware(
     # allow_headers=["*"],
 )
 
-app.include_router(image_router.router, prefix="/images", tags=["image"])
+app.include_router(image_router.router, prefix="/images", tags=["Image"])
 app.include_router(user_router.router, prefix="/user", tags=["User"])
