@@ -1,14 +1,18 @@
+import pyotp
+import pyqrcode
 from fastapi import HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from validate_email import validate_email as validate_email_format
 from jose import JWTError, jwt
 
+import io
+
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from .jwt_config import SECRET_KEY, ALGORITHM
-from .schemas import TokenData, UserOut
+from .schemas import TokenData
 
 try:
     from models import User
@@ -70,7 +74,7 @@ class UserServices:
         return encoded_jwt
 
     @staticmethod
-    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserOut:
+    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -90,9 +94,25 @@ class UserServices:
         if user is None:
             raise credentials_exception
         
-        user_out = UserOut(username=user.username, email=user.email, role=user.role)
-        return user_out
+        return user
     
     @staticmethod
-    async def get_current_active_user(current_user: Annotated[UserOut, Depends(get_current_user)]) -> UserOut:
+    async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]) -> User:
         return current_user
+    
+class TOTPServices:
+    def generate_secret_key(self) -> str:
+        return pyotp.random_base32()
+
+    def generate_qr_code(self, username: str, secret_key: str) -> bytes:
+        uri = pyotp.totp.TOTP(secret_key).provisioning_uri(username, issuer_name="RAISA")
+        qr_code = pyqrcode.create(uri)
+        buffer = io.BytesIO()
+        qr_code.png(buffer, scale=5)
+        return buffer.getvalue()
+        
+    def set_secret_key(self, user: User, secret_key: str, db: Session) -> None:
+        user.secret_key = secret_key
+        db.add(user)
+        db.commit()
+        db.refresh(user)
