@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -29,6 +29,21 @@ async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
 
 @router.get("/me")
 async def read_users_me(
-    current_user: Annotated[UserOut, Depends(UserServices.get_current_active_user)], 
+    current_user: Annotated[User, Depends(UserServices.get_current_active_user)], 
 ):
-    return current_user
+    return UserOut(username=current_user.username, email=current_user.email, role=current_user.role)
+
+@router.post("/generate-qr", status_code=status.HTTP_201_CREATED)
+async def generate_qr(
+    current_user: Annotated[User, Depends(UserServices.get_current_active_user)], db: Session = Depends(get_db)
+    ):
+    totp_service = TOTPServices()
+
+    secret_key = totp_service.generate_secret_key()
+    totp_service.set_secret_key(current_user, secret_key, db)
+    qr_code = totp_service.generate_qr_code(current_user.username, secret_key)
+
+    return Response(
+        content=qr_code, 
+        media_type="image/png"
+        )
