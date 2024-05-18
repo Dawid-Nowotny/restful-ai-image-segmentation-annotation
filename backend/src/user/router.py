@@ -39,6 +39,9 @@ async def generate_qr(
     ):
     totp_service = TOTPServices()
 
+    if current_user.secret_key is not None:
+        return {"message": "Konto posiada już weryfikację dwuetapową"}
+
     secret_key = await totp_service.generate_secret_key()
     await totp_service.set_secret_key(current_user, secret_key, db)
     qr_code = totp_service.generate_qr_code(current_user.username, secret_key)
@@ -50,9 +53,13 @@ async def generate_qr(
 
 @router.post("/verify-code")
 async def verify_2fa(
-    token: str, current_user: UserOut = Depends(UserServices.get_current_user)
+    token: str, current_user: User = Depends(UserServices.get_current_user)
     ):
     totp_service = TOTPServices()
+
+    if current_user.secret_key is None:
+        return {"message": "Konto nie posiada weryfikacji dwuetapowej"}
+
     await totp_service.verify_2fa_token(token, current_user)
 
     return {"message": "Kod 2FA został pomyślnie zweryfikowany"}
