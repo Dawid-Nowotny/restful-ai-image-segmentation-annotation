@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 const httpOptions = {
@@ -16,8 +16,14 @@ export class ServerService {
 
     /** POST LOGIN */
     postLogin(data: any): Observable<any> {
+
+        const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
         const url = `${this.restUrl}/user/login`;
-        return this.http.post(url, data, httpOptions);
+        const body = new HttpParams()
+        .set('username', data.username)
+        .set('password', data.password);
+
+        return this.http.post(url, body, { headers });
     }
 
     /** POST REGISTER */
