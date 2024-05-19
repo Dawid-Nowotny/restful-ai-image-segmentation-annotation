@@ -20,10 +20,20 @@ export class ServerService {
         const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
         const url = `${this.restUrl}/user/login`;
         const body = new HttpParams()
-        .set('username', data.username)
-        .set('password', data.password);
+            .set('username', data.username)
+            .set('password', data.password);
 
         return this.http.post(url, body, { headers });
+    }
+
+    getLoggedUserCredentials(JWTToken: string): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${JWTToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/user/me`;
+
+        return this.http.get(url, { headers });
     }
 
     /** POST REGISTER */

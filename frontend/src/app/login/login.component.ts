@@ -35,13 +35,22 @@ export class LoginComponent {
             username: this.username,
             password: this.password
         };
-
+        
         this.serverService.postLogin(data).subscribe(
             {
                 next: (response: any) => {
-                    this.successMessage = 'Zalogowano!';
-                    this.errorMessage = '';
-                    this.router.navigate(['/']);
+                    this.serverService.getLoggedUserCredentials(response.access_token).subscribe(
+                        {
+                            next: (response: any) => {
+                                this.successMessage = 'Zalogowano!';
+                                this.errorMessage = '';
+                                this.router.navigate(['/']);
+                            },
+                            error: (error: HttpErrorResponse) => {
+                                this.errorMessage = error.error.detail;
+                            }
+                        }
+                    )
                 },
                 error: (error: HttpErrorResponse) => {
                     this.errorMessage = error.error.detail;
