@@ -30,8 +30,11 @@ async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
 @router.get("/me")
 async def read_users_me(
     current_user: Annotated[User, Depends(UserServices.get_current_active_user)], 
-):
-    return UserOut(username=current_user.username, email=current_user.email, role=current_user.role)
+):  
+    if current_user.secret_key is not None:
+        return UserOut(id=current_user.id, username=current_user.username, email=current_user.email, role=current_user.role, totp_enabled=True)
+    else:
+        return UserOut(id=current_user.id, username=current_user.username, email=current_user.email, role=current_user.role, totp_enabled=False)
 
 @router.post("/generate-qr", status_code=status.HTTP_201_CREATED)
 async def generate_qr(
@@ -56,10 +59,6 @@ async def verify_2fa(
     token: str, current_user: User = Depends(UserServices.get_current_user)
     ):
     totp_service = TOTPServices()
-
-    if current_user.secret_key is None:
-        return {"message": "Konto nie posiada weryfikacji dwuetapowej"}
-
     await totp_service.verify_2fa_token(token, current_user)
 
     return {"message": "Kod 2FA został pomyślnie zweryfikowany"}

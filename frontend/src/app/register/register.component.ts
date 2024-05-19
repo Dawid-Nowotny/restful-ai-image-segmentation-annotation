@@ -64,12 +64,14 @@ export class RegisterComponent {
                         next: (userDataResponse: any) => {
                             this.loggedUserService.saveLoggedUserData({
                                 JWTToken: registerResponse.access_token,
+                                id: userDataResponse.id,
                                 username: userDataResponse.username,
                                 email: userDataResponse.email,
-                                role: userDataResponse.role
+                                role: userDataResponse.role,
+                                totp_enabled: userDataResponse.totp_enabled,
                             });
 
-                            this.successMessage = 'Zalogowano!';
+                            this.successMessage = 'Zarejestrowano!';
                             this.errorMessage = '';
                             this.router.navigate(['/']);
                         },
@@ -78,9 +80,6 @@ export class RegisterComponent {
                         }
                     }
                 )
-                // this.successMessage = 'Zarejestrowano!';
-                // this.errorMessage = '';
-                // this.router.navigate(['/']);
             },
             error: (error: HttpErrorResponse) => {
                 this.errorMessage = error.error.detail;

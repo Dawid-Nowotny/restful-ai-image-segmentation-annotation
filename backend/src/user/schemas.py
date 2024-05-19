@@ -6,9 +6,11 @@ class UserCreateSchema(BaseModel):
     password: str = Field(min_length=6,max_length=32)
 
 class UserOut(BaseModel):
+    id: int
     username: str
     email: str
     role: str
+    totp_enabled: bool
 
 class TokenData(BaseModel):
     username: str | None = None

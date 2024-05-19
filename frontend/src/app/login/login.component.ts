@@ -45,9 +45,11 @@ export class LoginComponent {
                             next: (userDataResponse: any) => {
                                 this.loggedUserService.saveLoggedUserData({
                                     JWTToken: loginResponse.access_token,
+                                    id: userDataResponse.id,
                                     username: userDataResponse.username,
                                     email: userDataResponse.email,
-                                    role: userDataResponse.role
+                                    role: userDataResponse.role,
+                                    totp_enabled: userDataResponse.totp_enabled,
                                 });
 
                                 this.successMessage = 'Zalogowano!';
