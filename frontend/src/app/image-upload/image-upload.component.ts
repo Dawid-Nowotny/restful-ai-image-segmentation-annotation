@@ -4,6 +4,7 @@ import { UploadImageData } from '../models/upload-image-data.model';
 import { CommonModule } from '@angular/common';
 import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoggedUserService } from '../services/logged-user.service';
 
 
 @Component({
@@ -27,10 +28,14 @@ export class ImageUploadComponent {
     successMessage: string;
     errorMessage: string;
 
-    constructor(private formBuilder: FormBuilder, private serverService: ServerService) {
+    constructor(
+        private formBuilder: FormBuilder,
+        private serverService: ServerService,
+        private loggedUserService: LoggedUserService
+    ) {
         this.submitted = false;
         this.submitDisabled = false;
-        this.uploadImageData = new UploadImageData();
+        this.uploadImageData = new UploadImageData(loggedUserService.getId());
         this.successMessage = '';
         this.errorMessage = '';
 
