@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { LoggedUserService } from '../services/logged-user.service';
 
 @Component({
     selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginComponent {
     errorMessage: string;
     successMessage: string;
 
-    constructor(private serverService: ServerService, private router: Router) {
+    constructor(private serverService: ServerService, private router: Router, private loggedUserService: LoggedUserService) {
         this.username = '';
         this.password = '';
         this.errorMessage = '';
@@ -35,13 +36,20 @@ export class LoginComponent {
             username: this.username,
             password: this.password
         };
-        
+
         this.serverService.postLogin(data).subscribe(
             {
-                next: (response: any) => {
-                    this.serverService.getLoggedUserCredentials(response.access_token).subscribe(
+                next: (loginResponse: any) => {
+                    this.serverService.getLoggedUserCredentials(loginResponse.access_token).subscribe(
                         {
-                            next: (response: any) => {
+                            next: (userDataResponse: any) => {
+                                this.loggedUserService.saveLoggedUserData({
+                                    JWTToken: loginResponse.access_token,
+                                    username: userDataResponse.username,
+                                    email: userDataResponse.email,
+                                    role: userDataResponse.role
+                                });
+
                                 this.successMessage = 'Zalogowano!';
                                 this.errorMessage = '';
                                 this.router.navigate(['/']);
