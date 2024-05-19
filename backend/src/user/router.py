@@ -11,10 +11,15 @@ router = APIRouter()
 @router.post("/login")
 def login(login_info: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
     user_service = UserServices()
+    totp_en = False
+
     user = user_service.authenticate_user(login_info.username, login_info.password, db)
     access_token = user_service.create_access_token(data={"sub": user.username})
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    if user.secret_key is not None:
+        totp_en = True
+
+    return {"access_token": access_token, "token_type": "bearer", "totp_enabled": totp_en}
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
