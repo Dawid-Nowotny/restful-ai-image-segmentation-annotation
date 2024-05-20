@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoginService } from '../services/login.service';
 
 @Component({
 	selector: 'app-totp-modal',
@@ -16,13 +17,11 @@ export class TotpModalComponent {
 	isOpen: boolean;
 	accessToken: string;
 	verificationCode: string;
-	handleSuccessfulVerification: (JWTToken: string) => void;
 
-	constructor(private serverService: ServerService) {
+	constructor(private serverService: ServerService, private loginService: LoginService) {
 		this.isOpen = false;
 		this.accessToken = '';
 		this.verificationCode = '';
-		this.handleSuccessfulVerification = () => {};
 	}
 
 	openModal() {
@@ -33,19 +32,8 @@ export class TotpModalComponent {
 		this.isOpen = false;
 	}
 
-	handleVeryfication(){
-		const data = {
-			JWTToken: this.accessToken,
-			verificationCode: this.verificationCode,
-		}
-		this.serverService.verify2FA(data).subscribe({
-			next: (response: any) => {
-				this.handleSuccessfulVerification(this.accessToken);
-			},
-			error: (error: HttpErrorResponse) => {
-				console.log(error);
-			}
-		})
+	onSubmit(){
+		this.loginService.handleVeryfication(this.verificationCode)
 	}
 
 }

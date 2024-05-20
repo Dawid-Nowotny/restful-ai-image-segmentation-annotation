@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { LoggedUserService } from '../services/logged-user.service';
 import { TotpModalComponent } from '../totp-modal/totp-modal.component';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { LoginService } from '../services/login.service';
 
 @Component({
     selector: 'app-login',
@@ -23,36 +24,14 @@ export class LoginComponent {
     @ViewChild(TotpModalComponent) totpModalComponent!: TotpModalComponent;
 
 
-    constructor(private serverService: ServerService, private router: Router, private loggedUserService: LoggedUserService) {
+    constructor(
+        private serverService: ServerService,
+        private loginService: LoginService,
+    ) {
         this.username = '';
         this.password = '';
         this.errorMessage = '';
         this.successMessage = '';
-    }
-
-    passUserIn: (JWTToken: string) => void = (JWTToken) => {
-        this.serverService.getLoggedUserCredentials(JWTToken).subscribe(
-            {
-                next: (userDataResponse: any) => {
-                    this.loggedUserService.saveLoggedUserData({
-                        JWTToken: JWTToken,
-                        id: userDataResponse.id,
-                        username: userDataResponse.username,
-                        email: userDataResponse.email,
-                        role: userDataResponse.role,
-                        totp_enabled: userDataResponse.totp_enabled,
-                    });
-
-                    this.successMessage = 'Zalogowano!';
-                    this.errorMessage = '';
-                    this.router.navigate(['/']);
-                },
-                error: (error: HttpErrorResponse) => {
-                    this.errorMessage = error.error.detail;
-                }
-            }
-
-        )
     }
 
     onSubmit() {
@@ -70,11 +49,10 @@ export class LoginComponent {
             {
                 next: (loginResponse: any) => {
                     if (loginResponse.totp_enabled == true) {
-                        this.totpModalComponent.accessToken = loginResponse.access_token;
-                        this.totpModalComponent.handleSuccessfulVerification = this.passUserIn;
+                        this.loginService.saveAccessToken(loginResponse.access_token);
                         this.totpModalComponent.openModal();
                     } else {
-                        this.passUserIn(loginResponse.access_token);
+                        this.loginService.getLoggedUserDetails(loginResponse.access_token);
                     }
                 },
                 error: (error: HttpErrorResponse) => {
