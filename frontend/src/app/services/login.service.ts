@@ -30,6 +30,7 @@ export class LoginService {
 				this.getLoggedUserDetails(this.accessToken);
 			},
 			error: (error: HttpErrorResponse) => {
+                this.errorMessage = error.error.detail;
 				console.log(error);
 			}
 		})
@@ -61,5 +62,10 @@ export class LoginService {
 
     saveAccessToken(accessToken: string): void {
         this.accessToken = accessToken;
+    }
+
+    resetMessages(): void {
+        this.successMessage = '';
+        this.errorMessage = '';
     }
 }

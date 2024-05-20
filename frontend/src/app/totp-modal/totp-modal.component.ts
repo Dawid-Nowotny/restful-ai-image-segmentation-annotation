@@ -15,12 +15,10 @@ import { LoginService } from '../services/login.service';
 export class TotpModalComponent {
 
 	isOpen: boolean;
-	accessToken: string;
 	verificationCode: string;
 
-	constructor(private serverService: ServerService, private loginService: LoginService) {
+	constructor(public loginService: LoginService) {
 		this.isOpen = false;
-		this.accessToken = '';
 		this.verificationCode = '';
 	}
 
@@ -30,6 +28,8 @@ export class TotpModalComponent {
 
 	closeModal() {
 		this.isOpen = false;
+		this.verificationCode = '';
+		this.loginService.resetMessages();
 	}
 
 	onSubmit(){

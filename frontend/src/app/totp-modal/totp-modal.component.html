@@ -15,7 +15,14 @@
               class="form-control" placeholder="Kod weryfikacyjny" aria-label="Kod weryfikacyjny"
               aria-describedby="basic-addon1">
           </div>
-
+        </div>
+        <div *ngIf="loginService.errorMessage" class="alert alert-danger d-flex align-items-center" role="alert">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+            <use xlink:href="#exclamation-triangle-fill" />
+          </svg>
+          <div>
+            {{ loginService.errorMessage }}
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
