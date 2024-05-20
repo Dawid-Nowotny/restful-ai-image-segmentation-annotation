@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import JSZip from 'jszip';
@@ -9,15 +9,15 @@ import { ImageFileData, ImageService } from '../services/image.service';
 @Component({
     selector: 'app-main-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+    imports: [CommonModule],
     templateUrl: './main-page.component.html',
-    styleUrl: './main-page.component.css'
+    styleUrls: ['./main-page.component.css']
 })
 export class MainPageComponent {
 
     imagesArray: ImageFileData[];
 
-    constructor(private serverService: ServerService, private imageService: ImageService) {
+    constructor(private router: Router, private serverService: ServerService, private imageService: ImageService) {
         this.imagesArray = [];
     }
 
@@ -35,5 +35,9 @@ export class MainPageComponent {
                 console.log(error);
             }
         })
+    }
+
+    navigateToImageView(imageId: number) {
+        this.router.navigate(['/image-view', imageId]);
     }
 }
