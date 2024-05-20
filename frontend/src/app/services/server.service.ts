@@ -36,6 +36,16 @@ export class ServerService {
         return this.http.get(url, { headers });
     }
 
+    verify2FA(data: any): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${data.JWTToken}`,
+            'Content-Type': 'application/json'
+        });
+        const queryParam = `token=${data.verificationCode}`
+        const url = `${this.restUrl}/user/verify-code?${queryParam}`;
+
+        return this.http.post(url, {}, { headers });
+    }
     /** POST REGISTER */
     postRegister(data: any): Observable<any> {
         const url = `${this.restUrl}/user/register`;

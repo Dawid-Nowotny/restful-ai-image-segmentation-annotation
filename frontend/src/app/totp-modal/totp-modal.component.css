@@ -1,0 +1,12 @@
+.modal.show {
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    animation-name: example;
+    animation-duration: 0.3s;
+  }
+
+  @keyframes example {
+    /* 0%   {transform: scale(0.5)} */
+    75%  {transform: scale(1.1)}
+    100% {transform: scale(1)}
+  }

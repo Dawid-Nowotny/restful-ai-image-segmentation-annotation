@@ -1,0 +1,26 @@
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" [class.show]="isOpen"
+  [style.display]="isOpen ? 'block' : 'none'" aria-hidden="!isOpen">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Autoryzacja Dwuskładnikowa</h1>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Wpisz kod:</p>
+        <div class="login_form">
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-user"></i></span>
+            <input type="text" [(ngModel)]="verificationCode" [ngModelOptions]="{ standalone: true }"
+              class="form-control" placeholder="Kod weryfikacyjny" aria-label="Kod weryfikacyjny"
+              aria-describedby="basic-addon1">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+          <button type="button" class="btn btn-primary" (click)="handleVeryfication()">Verify</button>
+        </div>
+      </div>
+    </div>
+  </div>
