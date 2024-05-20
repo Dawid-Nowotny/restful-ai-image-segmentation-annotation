@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { LoggedUserService } from '../services/logged-user.service';
 
 @Component({
     selector: 'app-register',
@@ -22,7 +23,7 @@ export class RegisterComponent {
     agreedToTerms: boolean = false;
     userId: string | null = null;
 
-    constructor(private serverService: ServerService, private router: Router) {
+    constructor(private serverService: ServerService, private router: Router, private loggedUserService: LoggedUserService) {
         this.username = '';
         this.email = '';
         this.password = '';
@@ -56,10 +57,29 @@ export class RegisterComponent {
         };
 
         this.serverService.postRegister(data).subscribe({
-            next: (response: any) => {
-                this.successMessage = 'Zarejestrowano!';
-                this.errorMessage = '';
-                this.router.navigate(['/']);
+            next: (registerResponse: any) => {
+
+                this.serverService.getLoggedUserCredentials(registerResponse.access_token).subscribe(
+                    {
+                        next: (userDataResponse: any) => {
+                            this.loggedUserService.saveLoggedUserData({
+                                accessToken: registerResponse.access_token,
+                                id: userDataResponse.id,
+                                username: userDataResponse.username,
+                                email: userDataResponse.email,
+                                role: userDataResponse.role,
+                                totp_enabled: userDataResponse.totp_enabled,
+                            });
+
+                            this.successMessage = 'Zarejestrowano!';
+                            this.errorMessage = '';
+                            this.router.navigate(['/']);
+                        },
+                        error: (error: HttpErrorResponse) => {
+                            this.errorMessage = error.error.detail;
+                        }
+                    }
+                )
             },
             error: (error: HttpErrorResponse) => {
                 this.errorMessage = error.error.detail;

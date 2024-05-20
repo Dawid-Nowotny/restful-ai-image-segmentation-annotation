@@ -3,8 +3,8 @@ export class UploadImageData {
     uploaderId: Number;
     threshold: Number;
 
-    constructor() {
-        this.uploaderId = 0;
+    constructor(uploaderId: number) {
+        this.uploaderId = uploaderId;
         this.threshold = 0.5;
     }
 }
