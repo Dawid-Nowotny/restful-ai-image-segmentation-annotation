@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
 
 type LoggedUserData = {
-	JWTToken: string,
+	accessToken: string,
 	id: number,
 	username: string,
 	email: string,
@@ -18,7 +18,7 @@ export class LoggedUserService {
 	constructor(private localStorageService: LocalStorageService) { }
 
 	saveLoggedUserData(LoggedUserData: LoggedUserData): void {
-		this.localStorageService.setItem('JWTToken', LoggedUserData.JWTToken);
+		this.localStorageService.setItem('access_token', LoggedUserData.accessToken);
 		this.localStorageService.setItem('id', LoggedUserData.id.toString());
 		this.localStorageService.setItem('username', LoggedUserData.username);
 		this.localStorageService.setItem('email', LoggedUserData.email);
@@ -26,8 +26,8 @@ export class LoggedUserService {
 		this.localStorageService.setItem('totp_enabled', LoggedUserData.totp_enabled.toString());
 	}
 
-	getJWTToken(): string {
-		return this.localStorageService.getItem('JWTToken') ?? "";
+	getAccessToken(): string {
+		return this.localStorageService.getItem('access_token') ?? "";
 	}
 
 	getId(): number {

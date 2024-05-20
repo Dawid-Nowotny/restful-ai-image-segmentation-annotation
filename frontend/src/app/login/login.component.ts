@@ -1,13 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LoggedUserService } from '../services/logged-user.service';
-import { TotpModalComponent } from '../totp-modal/totp-modal.component';
-import { bootstrapApplication } from '@angular/platform-browser';
 import { LoginService } from '../services/login.service';
+import { ServerService } from '../services/server.service';
+import { TotpModalComponent } from '../totp-modal/totp-modal.component';
 
 @Component({
     selector: 'app-login',
@@ -49,6 +46,7 @@ export class LoginComponent {
             {
                 next: (loginResponse: any) => {
                     if (loginResponse.totp_enabled == true) {
+                        console.log(loginResponse.access_token);
                         this.loginService.saveAccessToken(loginResponse.access_token);
                         this.totpModalComponent.openModal();
                     } else {

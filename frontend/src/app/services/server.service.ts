@@ -36,9 +36,9 @@ export class ServerService {
         return this.http.get(url, { headers });
     }
 
-    verify2FA(data: any): Observable<any> {
+    verifyTOTP(data: any): Observable<any> {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${data.JWTToken}`,
+            'Authorization': `Bearer ${data.accessToken}`,
             'Content-Type': 'application/json'
         });
         const queryParam = `token=${data.verificationCode}`

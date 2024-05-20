@@ -21,10 +21,11 @@ export class LoginService {
 
     handleVeryfication(verificationCode: string) {
 		const data = {
-			JWTToken: this.accessToken,
+			accessToken: this.accessToken,
 			verificationCode: verificationCode,
 		}
-		this.serverService.verify2FA(data).subscribe({
+        console.log()
+		this.serverService.verifyTOTP(data).subscribe({
 			next: (response: any) => {
 				this.getLoggedUserDetails(this.accessToken);
 			},
@@ -34,12 +35,12 @@ export class LoginService {
 		})
 	}
 
-    getLoggedUserDetails: (JWTToken: string) => void = (JWTToken) => {
-        this.serverService.getLoggedUserCredentials(JWTToken).subscribe(
+    getLoggedUserDetails: (accessToken: string) => void = (accessToken) => {
+        this.serverService.getLoggedUserCredentials(accessToken).subscribe(
             {
                 next: (userDataResponse: any) => {
                     this.loggedUserService.saveLoggedUserData({
-                        JWTToken: JWTToken,
+                        accessToken: accessToken,
                         id: userDataResponse.id,
                         username: userDataResponse.username,
                         email: userDataResponse.email,
