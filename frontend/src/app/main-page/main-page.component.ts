@@ -26,7 +26,7 @@ export class MainPageComponent {
     }
 
     getImages() {
-        this.serverService.getImagesAsZip(30, 40).subscribe({
+        this.serverService.getImagesAsZip(1, 100).subscribe({
             next: async (response: any) => {
                 let blob = new Blob([response], { type: 'application/zip' });
                 this.imagesArray = this.imageService.getImagesArrayFromZip(blob);
