@@ -55,6 +55,12 @@ class ImageServices:
 
     def BLOB_to_image(self, image_blob) -> PILImage.Image:
         return PILImage.open(BytesIO(image_blob))
+    
+    def BLOB_to_bytes(self, image_blob: bytes) -> bytes:
+        image = PILImage.open(BytesIO(image_blob)).convert('RGB')
+        byte_arr = BytesIO()
+        image.save(byte_arr, format='JPEG')
+        return byte_arr.getvalue()
 
 class UserServices:
     async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:

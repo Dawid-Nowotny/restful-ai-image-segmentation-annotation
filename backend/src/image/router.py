@@ -53,3 +53,14 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     annotations = ai_annotation_services.annotate_image(image)
 
     return {"annotations": annotations}
+
+@router.get("/get-image/{image_id}")
+def get_image(image_id: int, db: Session = Depends(get_db)):
+    image_Services = ImageServices()
+    image_blob = image_Services.get_image_BLOB_by_id(image_id, db)
+    image = image_Services.BLOB_to_bytes(image_blob)
+    
+    return Response(
+        content=image, 
+        media_type="image/jpg"
+        )
