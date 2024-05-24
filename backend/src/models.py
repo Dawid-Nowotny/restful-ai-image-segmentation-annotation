@@ -26,11 +26,12 @@ comment_likes = Table(
 )
 
 class Tag(Base):
-    __tablename__ = "Tag"
+    __tablename__ = "Tag" 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     tag = Column(String, index=True, nullable=False)
 
-    comments: Mapped[List["Comment"]] = relationship(back_populates="tag")
+    comment_id = Column(Integer, ForeignKey('Comment.id'))
+    comment: Mapped["Comment"] = relationship(back_populates="tags")
 
 class Comment(Base):
     __tablename__ = "Comment"
@@ -39,13 +40,12 @@ class Comment(Base):
     comment_date = Column(Date, index=True, nullable=False)
 
     image_id = Column(Integer, ForeignKey('Image.id'))
-    tag_id = Column(Integer, ForeignKey('Tag.id'))
     user_id = Column(Integer, ForeignKey('User.id'))
 
     image: Mapped["Image"] = relationship(back_populates="comments")
-    tag: Mapped["Tag"] = relationship(back_populates="comments")
     user: Mapped["User"] = relationship(back_populates="comments")
     comment_users_likes: Mapped[List["User"]] = relationship(secondary=comment_likes, back_populates="user_comments_likes")
+    tags: Mapped[List["Tag"]] = relationship("Tag", back_populates="comment")
 
 class Image(Base):
     __tablename__ = "Image"
