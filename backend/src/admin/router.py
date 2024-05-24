@@ -29,3 +29,17 @@ def make_moderator(
     admin_service.make_moderator(username, db)
 
     return {"message": "Rola moderatora została pomyślnie nadana"}
+
+@router.put("/assign-moderator/{image_id}/{username}")
+def assign_moderator_to_image(
+    image_id: int,
+    username: str,
+    current_user: User = Depends(UserServices.get_current_user),
+    db: Session = Depends(get_db)
+    ):
+    admin_service = AdminServices()
+
+    admin_service.check_if_admin(current_user)
+    admin_service.assign_moderator_to_image(image_id, username, db)
+
+    return {"message": "Moderator został nadany do obrazka"}
