@@ -13,7 +13,7 @@ class UserOut(BaseModel):
     totp_enabled: bool
 
     class Config:
-        orm_mode = True
-
+        from_attributes = True
+        
 class TokenData(BaseModel):
     username: str | None = None

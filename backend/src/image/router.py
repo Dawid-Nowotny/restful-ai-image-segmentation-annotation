@@ -55,9 +55,9 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     image_services = ImageServices()
     ai_annotation_services = AiAnnotationServices()
 
-    image_blob = image_services.get_image_BLOB_by_id(image_id, db)
-    image = image_services.BLOB_to_image(image_blob)
+    image = image_services.get_single_image(image_id, db)
+    unblobed_image = image_services.BLOB_to_image(image.image)
 
-    annotations = ai_annotation_services.annotate_image(image)
+    annotations = ai_annotation_services.annotate_image(unblobed_image)
 
     return {"annotations": annotations}

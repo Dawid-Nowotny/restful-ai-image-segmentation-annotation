@@ -1,7 +1,8 @@
 from pydantic import BaseModel
+from typing import List
 
 class ModeratorResponse(BaseModel):
     username: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

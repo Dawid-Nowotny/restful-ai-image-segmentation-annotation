@@ -41,5 +41,9 @@ class AdminServices:
 
 class ModeratorServices:
     def check_if_admin_or_moderator(self, user) -> None:
-        if user.role != "Admin" or "Moderator":
+        if user.role != "Admin" and user.role != "Moderator":
             raise HTTPException(status_code=403, detail="Dostęp tylko dla administratora lub moderatora")
+        
+    def check_if_moderator_is_assigned_to_image(self, image, user) -> None:
+        if user.id != image.moderator_id and user.role != "Admin":
+            raise HTTPException(status_code=403, detail="Nie masz permisji do dodania super-tagów do tego obrazu")
