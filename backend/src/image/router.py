@@ -42,6 +42,13 @@ def get_images(start_id: int, end_id: int, db: Session = Depends(get_db)):
         headers={"Content-Disposition": "attachment; filename=images.zip"},
         )
 
+@router.get("/get_images_number")
+def get_images_number(db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    number_of_images = image_service.get_images_number(db)
+
+    return {"number_of_images": number_of_images}
+
 @router.get("/suggest-annotations/{image_id}")
 def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     image_services = ImageServices()

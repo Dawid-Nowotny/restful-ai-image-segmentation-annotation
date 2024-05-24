@@ -55,6 +55,9 @@ class ImageServices:
 
     def BLOB_to_image(self, image_blob) -> PILImage.Image:
         return PILImage.open(BytesIO(image_blob))
+    
+    def get_images_number(self, db: Session) -> int:
+        return db.query(Image).count()
 
 class UserServices:
     async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
