@@ -9,7 +9,9 @@ from get_db import get_db
 router = APIRouter()
 
 @router.post("/login")
-def login(login_info: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
+def login(
+    login_info: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
+    ):
     user_service = UserServices()
     totp_en = False
 
@@ -32,18 +34,19 @@ async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/me")
+@router.get("/me", response_model=UserOut)
 async def read_users_me(
-    current_user: Annotated[User, Depends(UserServices.get_current_active_user)], 
-):  
-    if current_user.secret_key is not None:
-        return UserOut(id=current_user.id, username=current_user.username, email=current_user.email, role=current_user.role, totp_enabled=True)
-    else:
-        return UserOut(id=current_user.id, username=current_user.username, email=current_user.email, role=current_user.role, totp_enabled=False)
+    current_user: Annotated[User, Depends(UserServices.get_current_active_user)]
+    ):  
+    totp_enabled = current_user.secret_key is not None
+    user_data = current_user.__dict__
+    user_data['totp_enabled'] = totp_enabled
+    return user_data
 
 @router.post("/generate-qr", status_code=status.HTTP_201_CREATED)
 async def generate_qr(
-    current_user: Annotated[User, Depends(UserServices.get_current_active_user)], db: Session = Depends(get_db)
+    current_user: Annotated[User, Depends(UserServices.get_current_active_user)], 
+    db: Session = Depends(get_db)
     ):
     totp_service = TOTPServices()
 

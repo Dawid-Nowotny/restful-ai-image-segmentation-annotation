@@ -12,5 +12,8 @@ class UserOut(BaseModel):
     role: str
     totp_enabled: bool
 
+    class Config:
+        orm_mode = True
+
 class TokenData(BaseModel):
     username: str | None = None

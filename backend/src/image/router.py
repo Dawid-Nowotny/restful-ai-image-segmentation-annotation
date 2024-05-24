@@ -9,7 +9,11 @@ from get_db import get_db
 router = APIRouter()
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
-async def upload(image_data: ImageData = Depends(), file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload(
+    image_data: ImageData = Depends(), 
+    file: UploadFile = File(...), 
+    db: Session = Depends(get_db)
+    ):
     user_services = UserServices()
     segmentation_services = SegmentationServices()
 
@@ -30,7 +34,11 @@ async def upload(image_data: ImageData = Depends(), file: UploadFile = File(...)
     return {"saved_image": file.filename}
 
 @router.get("/get_images/{start_id}/{end_id}")
-def get_images(start_id: int, end_id: int, db: Session = Depends(get_db)):
+def get_images(
+    start_id: int, 
+    end_id: int, 
+    db: Session = Depends(get_db)
+    ):
     image_service = ImageServices()
 
     images_dict = image_service.get_images_BLOBs_by_range(start_id, end_id, db)

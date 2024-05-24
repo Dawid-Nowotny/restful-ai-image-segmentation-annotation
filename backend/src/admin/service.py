@@ -7,6 +7,10 @@ class AdminServices:
         if user.role != "Admin":
             raise HTTPException(status_code=403, detail="Tylko administrator może nadać rolę moderatora")
         
+    def get_moderators(self, db):
+        moderators = db.query(User).filter(User.role == "Moderator").all()
+        return moderators
+        
     def make_moderator(self, username, db):
         user = db.query(User).filter(User.username == username).first()
         if not user:
