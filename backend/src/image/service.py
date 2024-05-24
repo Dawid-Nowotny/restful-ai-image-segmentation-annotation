@@ -207,3 +207,12 @@ class CommentServices:
         db.add(comment)
         db.commit()
         db.refresh(comment)
+
+    def check_if_image_has_supertags(self, image, db):
+        supertag_comments = db.query(Comment).filter(
+            Comment.image_id == image.id,
+            Comment.super_tag == True
+        ).all()
+
+        if supertag_comments:
+            raise HTTPException(status_code=400, detail="To zdjęcie już ma supertagi")

@@ -56,14 +56,15 @@ def create_comment_super_tag(
     ):
     moderator_service = ModeratorServices()
     image_service = ImageServices()
-    comment_services = CommentServices()
-
-    moderator_service.check_if_admin_or_moderator(current_user)
+    comment_service = CommentServices()
+    
     image = image_service.get_single_image(image_id, db)
+    comment_service.check_if_image_has_supertags(image, db)
+    moderator_service.check_if_admin_or_moderator(current_user)
     moderator_service.check_if_moderator_is_assigned_to_image(image, current_user)
 
-    tags = [comment_services.create_tag(tag_data.tag, db) for tag_data in comment_data.tags]
+    tags = [comment_service.create_tag(tag_data.tag, db) for tag_data in comment_data.tags]
 
-    comment_services.create_comment(image_id, current_user, comment_data, tags, db)
+    comment_service.create_comment(image_id, current_user, comment_data, tags, db)
 
     return {"message": "Super tag został dodany do obrazka"}
