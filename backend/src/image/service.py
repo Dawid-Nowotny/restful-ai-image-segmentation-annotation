@@ -17,19 +17,19 @@ from typing import IO, Tuple, List
 from io import BytesIO
 
 try:
-    from models import Image
+    from models import Image, Tag, Comment
 except:
-    from src.models import Image
+    from src.models import Image, Tag, Comment
 from .schemas import ImageData
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 
 class ImageServices:
-    def get_image_BLOB_by_id(self, image_id: int, db: Session) -> bytes:
-        image_blob = db.query(Image.image).filter(Image.id == image_id).first()
+    def get_single_image(self, image_id: int, db: Session) -> bytes:
+        image = db.query(Image).filter(Image.id == image_id).first()
 
-        if not image_blob:
+        if not image:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazu")
-        return image_blob[0]
+        return image
 
     def get_images_BLOBs_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
         if start_id > end_id:
@@ -185,3 +185,34 @@ class AiAnnotationServices:
         _, indices = torch.topk(outputs, 5)
         annotations = [labels[idx.item()] for idx in indices[0]]
         return annotations
+
+class CommentServices:
+    def create_tag(self, tag_name, db) -> Tag:
+        tag = Tag(tag=tag_name)
+        db.add(tag)
+        db.commit()
+        db.refresh(tag)
+        return tag
+
+    def create_comment(self, image_id, user, comment_data, tags, db) -> None:
+        comment = Comment(
+            super_tag=comment_data.super_tag,
+            comment_date=date.today(),
+            image_id=image_id,
+            user_id=user.id
+        )
+
+        comment.tags.extend(tags)
+
+        db.add(comment)
+        db.commit()
+        db.refresh(comment)
+
+    def check_if_image_has_supertags(self, image, db):
+        supertag_comments = db.query(Comment).filter(
+            Comment.image_id == image.id,
+            Comment.super_tag == True
+        ).all()
+
+        if supertag_comments:
+            raise HTTPException(status_code=400, detail="To zdjęcie już ma supertagi")
