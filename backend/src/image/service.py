@@ -17,9 +17,9 @@ from typing import IO, Tuple, List
 from io import BytesIO
 
 try:
-    from models import Image
+    from models import Image, User, Comment
 except:
-    from src.models import Image
+    from src.models import Image, User
 from .schemas import ImageData
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 
@@ -61,6 +61,18 @@ class ImageServices:
         byte_arr = BytesIO()
         image.save(byte_arr, format='JPEG')
         return byte_arr.getvalue()
+    
+    def get_uploader_by_image(self, image_id: int, db: Session) -> str:
+        result = db.query(User.username).join(Image, User.id == Image.uploader_id).filter(Image.id == image_id).first()
+        return result[0]
+    
+    def get_supertag_author_by_image(self, image_id: int, db: Session) -> str:
+        result = db.query(User.username).join(Comment, Comment.user_id == User.id).join(
+            Image, Image.id == Comment.image_id).filter(Image.id == image_id).first()
+        if result:
+            return result[0]
+        else:
+            return ""
 
 class UserServices:
     async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:

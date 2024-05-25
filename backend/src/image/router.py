@@ -64,3 +64,12 @@ def get_image(image_id: int, db: Session = Depends(get_db)):
         content=image, 
         media_type="image/jpg"
         )
+
+@router.get("/image-data/{image_id}")
+def get_image_data(image_id: int, db: Session = Depends(get_db)):
+    image_Services = ImageServices()
+    image_uploader = image_Services.get_uploader_by_image(image_id, db)
+    super_tag_author = image_Services.get_supertag_author_by_image(image_id, db)
+    
+    return {"image_uploader": image_uploader,
+            "super_tag_author": super_tag_author}
