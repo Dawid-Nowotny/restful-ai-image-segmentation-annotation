@@ -24,8 +24,10 @@ from .schemas import ImageData
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 
 class ImageServices:
-    def get_single_image(self, image_id: int, db: Session) -> bytes:
+
+    def get_single_image(self, image_id: int, db: Session) -> Image:
         image = db.query(Image).filter(Image.id == image_id).first()
+        print(image)
 
         if not image:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazu")

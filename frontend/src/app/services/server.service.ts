@@ -57,6 +57,11 @@ export class ServerService {
         return this.http.post(url, data);
     }
 
+    getImage(id: number){
+        const url = `${this.restUrl}/images/get_image/${id}`;
+        return this.http.get(url, {responseType: "blob"});
+    }
+
     getImagesAsZip(startId: number, endId: number) {
         const url = `${this.restUrl}/images/get_images/${startId}/${endId}`;
         return this.http.get(url, { responseType: "arraybuffer" });
