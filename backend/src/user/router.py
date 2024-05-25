@@ -43,15 +43,24 @@ async def read_users_me(
     user_data['totp_enabled'] = totp_enabled
     return user_data
 
+@router.get("/get-profile-info/{username}")
+def profile_info(username: str, db: Session = Depends(get_db)):
+    user_service = UserServices()
+    user = user_service.get_user_by_username(username, db)
+    images_count = user_service.count_user_images(user, db)
+
+    return {
+        "username": user.username, 
+        "role": user.role, 
+        "images_count": images_count
+    }
+
 @router.post("/generate-qr", status_code=status.HTTP_201_CREATED)
 async def generate_qr(
     current_user: Annotated[User, Depends(UserServices.get_current_active_user)], 
     db: Session = Depends(get_db)
     ):
     totp_service = TOTPServices()
-
-    if current_user.secret_key is not None:
-        return {"message": "Konto posiada już weryfikację dwuetapową"}
 
     secret_key = await totp_service.generate_secret_key()
     await totp_service.set_secret_key(current_user, secret_key, db)
