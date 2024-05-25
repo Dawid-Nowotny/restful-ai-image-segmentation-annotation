@@ -4,12 +4,12 @@
             <div class="col-lg-9 col-md-12 col-sm-12 rounded" style="background-color: rgb(231, 231, 231);">
                 <div class="row p-3">
                     <div class="col-md-8 ps-0">
-                        <img [src]="imageUrl" class="fit-image rounded">
+                        <img [src]="image" class="fit-image rounded">
                     </div>
                     <div class="col-md-4 pe-0">
                         <div class="row">
                             <div class="col">
-                                <button class="btn btn-success btn-rg">Wyświetl adnotacje</button>
+                                <button class="btn btn-success btn-rg" (click)="changeImage()">{{ buttonLabel }}</button>
                             </div>
                             <div class="col-auto">
                                 <button class="btn btn-success btn-rg">Zapisz zdjęcie</button>

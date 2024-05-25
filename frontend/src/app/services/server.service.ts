@@ -66,4 +66,14 @@ export class ServerService {
         const url = `${this.restUrl}/images/get-image/${image_id}`;
         return this.http.get(url, { responseType: 'blob' })
     }
+
+    getSegmentedImage(image_id: number): Observable<Blob> {
+        const url = `${this.restUrl}/images/get-segmented-image/${image_id}`;
+        return this.http.get(url, { responseType: 'blob' })
+    }
+
+    getImageAndSuperTagsAuthors(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-data/${image_id}`;
+        return this.http.get(url)
+    }
 }

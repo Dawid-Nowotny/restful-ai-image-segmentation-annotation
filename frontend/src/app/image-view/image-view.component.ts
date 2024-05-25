@@ -15,30 +15,69 @@ export class ImageViewComponent implements OnInit {
     imageAutor: string = '';
     superTagsAutor: string = '';
     image_id: number = 0;
-    imageUrl: string | ArrayBuffer | null = null;
-    
+    imageURL: string | ArrayBuffer | null = null;
+    segmentedImageURL: string | ArrayBuffer | null = null;
+    image: string | ArrayBuffer | null = null;
+    buttonLabel: string = 'Wyświetl segmentację';
+
     constructor(private route: ActivatedRoute, private serverService: ServerService) { }
 
     ngOnInit() {
-        this.imageAutor = 'Jan Nowak';
-        this.superTagsAutor = 'Adam Nowak';
-        this.route.params.subscribe(params => {
-            this.image_id = params['id'];
-        })
+      this.route.params.subscribe(params => {
+          this.image_id = params['id'];
+      })
 
-        this.getImage(this.image_id)
+      this.getImages(this.image_id);
+      this.getImageAndSuperTagsAuthors(this.image_id);
     }
 
-    getImage(imageId: number): void {
-        this.serverService.getImage(imageId).subscribe(
-          (blob: Blob) => {
-            const reader = new FileReader();
-            reader.onload = () => this.imageUrl = reader.result;
-            reader.readAsDataURL(blob);
-          },
-          error => {
-            console.error('Error fetching image:', error);
+    getImages(imageId: number): void {
+      this.serverService.getImage(imageId).subscribe({
+        next: (blob: Blob) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.imageURL = reader.result;
+            this.image = reader.result;
           }
-        );
+          reader.readAsDataURL(blob);
+        },
+        error: (error: Error)=> {
+          console.error('Error fetching image:', error);
+        }
+      });
+
+      this.serverService.getSegmentedImage(imageId).subscribe({
+        next: (blob: Blob) => {
+          const reader = new FileReader();
+          reader.onload = () => this.segmentedImageURL = reader.result;
+          reader.readAsDataURL(blob);
+        },
+        error: (error: Error)=> {
+          console.error('Error fetching segmented image:', error);
+        }
+      });
+    }
+
+    getImageAndSuperTagsAuthors(imageId: number) {
+      this.serverService.getImageAndSuperTagsAuthors(imageId).subscribe({
+        next: (result: any) => {
+          this.imageAutor = result.image_uploader;
+          this.superTagsAutor = result.super_tag_author;
+        },
+        error: (error: Error)=> {
+          console.error('Error fetching authors', error);
+        }
+      });
+    }
+
+    changeImage(): void {
+      if(this.image == this.imageURL) {
+        this.image = this.segmentedImageURL;
+        this.buttonLabel = 'Wyświetl oryginał';
       }
+      else {
+        this.image = this.imageURL;
+        this.buttonLabel = 'Wyświetl segmentację';
+      }
+    }
 }
