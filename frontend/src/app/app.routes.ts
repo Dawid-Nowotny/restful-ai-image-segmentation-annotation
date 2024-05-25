@@ -6,14 +6,18 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { ImageViewComponent } from './image-view/image-view.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { UserPanelComponent } from './user-panel/user-panel.component';
+import { AdminMainPageComponent } from './admin-main-page/admin-main-page.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'image-view/:id', component: ImageViewComponent },
-    { path: 'image-upload', component: ImageUploadComponent},
+    { path: 'image-upload', component: ImageUploadComponent },
     { path: 'user/:id', component: UserPanelComponent },
-    { path: '**', pathMatch: 'full', 
-        component: NotFoundComponent },
-  ];
+    { path: 'admin', component: AdminMainPageComponent },
+    {
+        path: '**', pathMatch: 'full',
+        component: NotFoundComponent
+    },
+];
