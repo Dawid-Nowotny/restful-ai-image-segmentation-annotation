@@ -214,14 +214,14 @@ class AiAnnotationServices:
         return annotations
 
 class CommentServices:
-    def create_tag(self, tag_name, db) -> Tag:
+    async def create_tag(self, tag_name, db) -> Tag:
         tag = Tag(tag=tag_name)
         db.add(tag)
         db.commit()
         db.refresh(tag)
         return tag
 
-    def create_comment(self, image_id, user, comment_data, tags, db) -> None:
+    async def create_comment(self, image_id, user, comment_data, tags, db) -> None:
         comment = Comment(
             super_tag=comment_data.super_tag,
             comment_date=date.today(),
