@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import JSZip from 'jszip';
+import JSZip, { file } from 'jszip';
 
 export type ImageFileData = {
-    name: string,
+    id: string,
+    extension: string,
     url: string,
     file: File
 }
@@ -23,11 +24,12 @@ export class ImageService {
             zip.forEach(async (relativePath, file) => {
                 let imageBlob = await file.async('blob');
                 let imageURL = URL.createObjectURL(imageBlob)
-                let imageExtension = this.getExtensionFromName(file.name);
+                let imageExtension = this.getExtension(file.name);
                 let imageFile = new File([imageBlob], file.name, { type: `image/${imageExtension}` });
 
                 imagesArray.push({
-                    name: file.name,
+                    id: this.getId(file.name),
+                    extension: this.getExtension(file.name),
                     url: imageURL,
                     file: imageFile,
                 });
@@ -37,7 +39,11 @@ export class ImageService {
         return imagesArray;
     }
 
-    getExtensionFromName(name: string){
-        return name.split('.').pop();
+    getId(fileName: string){
+        return fileName.split('.')[0];
+    }
+
+    getExtension(fileName: string){
+        return fileName.split('.')[1];
     }
 }

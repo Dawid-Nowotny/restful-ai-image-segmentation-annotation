@@ -27,13 +27,12 @@ export class AdminMainPageComponent implements OnInit {
 			next: (response: any) => {
 				const blob = new Blob([response], { type: 'application/zip' });
 				this.imagesArray = this.imageService.getImagesArrayFromZip(blob);
-				console.log(this.imagesArray);
 			}
 		})
 	}
 
-	navigateToImageDetails(imageDetails: ImageFileData) {
-		this.router.navigate(['admin/image-view/:id']); //imageDetails.id
+	navigateToImageDetails(image: ImageFileData) {
+		this.router.navigate(['admin/image-view/', image.id]); //imageDetails.id
 	}
 
 
