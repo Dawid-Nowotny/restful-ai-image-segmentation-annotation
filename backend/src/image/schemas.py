@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator, Field, model_validator
-from fastapi import Form, HTTPException, Query
+from fastapi import Form, HTTPException, Query, status
 
 from dataclasses import dataclass
 from typing import Optional, List
@@ -30,20 +30,20 @@ class ImageFilterParams(BaseModel):
         try:
             threshold_range_list = [float(x) for x in value.split(',')]
             if len(threshold_range_list) > 2:
-                raise HTTPException(status_code=400, detail='Zakres może mieć maksymalnie 2 wartości')
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Zakres może mieć maksymalnie 2 wartości')
 
             if not all(0.01 <= x <= 1.0 for x in threshold_range_list):
-                raise HTTPException(status_code=400, detail='Wartości zakresu muszą mieścić się w przedziale od 0.01 do 1')
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Wartości zakresu muszą mieścić się w przedziale od 0.01 do 1')
 
             if len(threshold_range_list) == 2 and threshold_range_list[0] >= threshold_range_list[1]:
-                raise HTTPException(status_code=400, detail='Dolna granica zakresu musi być mniejsza niż górna granica')
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Dolna granica zakresu musi być mniejsza niż górna granica')
 
         except ValueError:
-            raise HTTPException(status_code=400, detail='Zakres musi być listą wartości zmiennoprzecinkowych rozdzielonych przecinkami')
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Zakres musi być listą wartości zmiennoprzecinkowych rozdzielonych przecinkami')
 
         return threshold_range_list
     
     @model_validator(mode='after')
-    def check_at_least_one_field(cls, values) -> 'ImageFilterParams':
+    def check_at_least_one_field(cls, values) -> None:
         if not any(getattr(values, field) is not None for field in ['threshold_range', 'tags', 'classes']):
-            raise HTTPException(status_code=400, detail='Przynajmniej jedna z filtrów musi mieć wartość')
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Przynajmniej jedna z filtrów musi mieć wartość')

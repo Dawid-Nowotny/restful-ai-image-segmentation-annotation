@@ -23,7 +23,7 @@ except:
     from src.models import Image, Tag, Comment
 from .schemas import ImageData, ImageFilterParams
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
-from .utils import create_images_dict
+from .utils import create_images_dict, check_start_end_id
 
 class ImageServices:
     def get_single_image(self, image_id: int, db: Session) -> bytes:
@@ -34,7 +34,7 @@ class ImageServices:
         return image
 
     def get_images_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
-        if start_id > end_id:
+        if check_start_end_id(start_id, end_id):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
     
         images = db.query(Image).filter(Image.id >= start_id, Image.id <= end_id).all()
@@ -45,7 +45,7 @@ class ImageServices:
         images_dict = create_images_dict(images)
         return images_dict
     
-    def get_filtered_images_by_range(self, filters: ImageFilterParams, db: Session) -> dict:
+    def get_filtered_images_by_range(self, filters: ImageFilterParams, start_id: int, end_id: int, db: Session) -> dict:
         query = db.query(Image).options(joinedload(Image.comments).joinedload(Comment.tags))
         
         if filters.threshold_range:
@@ -58,9 +58,13 @@ class ImageServices:
         if filters.classes:
             class_filters = [Image.coordinates_classes.op('->>')('pred_class').contains(c) for c in filters.classes]
             query = query.filter(or_(*class_filters))
-        
+
         images = query.all()
 
+        if check_start_end_id(start_id, end_id):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
+        
+        images = images[start_id:end_id]
         images_dict = create_images_dict(images)
 
         if not images_dict:

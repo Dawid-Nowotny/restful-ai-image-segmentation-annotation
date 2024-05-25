@@ -50,14 +50,16 @@ def get_images(
         headers={"Content-Disposition": "attachment; filename=images.zip"},
         )
 
-@router.get("/get-filtered-images/{filters}")
+@router.get("/get-filtered-images/{filters}/{start_id}/{end_id}")
 def get_filtered_images(
+    start_id: int, 
+    end_id: int, 
     filters: ImageFilterParams = Depends(),
     db: Session = Depends(get_db),
     ):
     image_service = ImageServices()
 
-    images_dict = image_service.get_filtered_images_by_range(filters, db)
+    images_dict = image_service.get_filtered_images_by_range(filters, start_id, end_id, db)
     zip_buffer = image_service.zip_images(images_dict)
 
     return Response(

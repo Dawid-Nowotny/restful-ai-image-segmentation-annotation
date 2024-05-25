@@ -17,3 +17,6 @@ def create_images_dict(images) -> dict:
         images_dict[image.id] = image.image
 
     return images_dict
+
+def check_start_end_id(start_id, end_id) -> bool:
+    return start_id < 0 or end_id < 0 or start_id > end_id
