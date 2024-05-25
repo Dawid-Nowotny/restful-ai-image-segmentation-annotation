@@ -65,6 +65,17 @@ def get_image(image_id: int, db: Session = Depends(get_db)):
         media_type="image/jpg"
         )
 
+@router.get("/get-segmented-image/{image_id}")
+def get_image(image_id: int, db: Session = Depends(get_db)):
+    image_Services = ImageServices()
+    image_blob = image_Services.get_segmented_image_BLOB_by_id(image_id, db)
+    image = image_Services.BLOB_to_bytes(image_blob)
+    
+    return Response(
+        content=image, 
+        media_type="image/jpg"
+        )
+
 @router.get("/image-data/{image_id}")
 def get_image_data(image_id: int, db: Session = Depends(get_db)):
     image_Services = ImageServices()

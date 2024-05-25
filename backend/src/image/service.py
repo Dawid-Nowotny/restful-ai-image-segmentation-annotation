@@ -30,6 +30,13 @@ class ImageServices:
         if not image_blob:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazu")
         return image_blob[0]
+    
+    def get_segmented_image_BLOB_by_id(self, image_id: int, db: Session) -> bytes:
+        image_blob = db.query(Image.segmented_image).filter(Image.id == image_id).first()
+
+        if not image_blob:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazu")
+        return image_blob[0]
 
     def get_images_BLOBs_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
         if start_id > end_id:
