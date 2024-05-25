@@ -16,7 +16,9 @@ export class ImageViewComponent implements OnInit {
     superTagsAutor: string = '';
     image_id: number = 0;
     imageURL: string | ArrayBuffer | null = null;
+    imageBLOB: Blob | null = null;
     segmentedImageURL: string | ArrayBuffer | null = null;
+    segmentedImageBLOB: Blob | null = null;
     image: string | ArrayBuffer | null = null;
     buttonLabel: string = 'Wyświetl segmentację';
 
@@ -34,6 +36,7 @@ export class ImageViewComponent implements OnInit {
     getImages(imageId: number): void {
       this.serverService.getImage(imageId).subscribe({
         next: (blob: Blob) => {
+          this.imageBLOB = blob;
           const reader = new FileReader();
           reader.onload = () => {
             this.imageURL = reader.result;
@@ -48,6 +51,7 @@ export class ImageViewComponent implements OnInit {
 
       this.serverService.getSegmentedImage(imageId).subscribe({
         next: (blob: Blob) => {
+          this.segmentedImageBLOB = blob;
           const reader = new FileReader();
           reader.onload = () => this.segmentedImageURL = reader.result;
           reader.readAsDataURL(blob);
@@ -71,7 +75,7 @@ export class ImageViewComponent implements OnInit {
     }
 
     changeImage(): void {
-      if(this.image == this.imageURL) {
+      if (this.image == this.imageURL) {
         this.image = this.segmentedImageURL;
         this.buttonLabel = 'Wyświetl oryginał';
       }
@@ -79,5 +83,32 @@ export class ImageViewComponent implements OnInit {
         this.image = this.imageURL;
         this.buttonLabel = 'Wyświetl segmentację';
       }
+    }
+
+    downloadImage(): void {
+      let blob: Blob | null = null;
+      let fileName: string = '';
+
+      if (this.image == this.imageURL && this.imageBLOB) {
+        blob = this.imageBLOB;
+        fileName = `${this.image_id}.jpg`;
+      }
+      else if (this.image == this.segmentedImageURL && this.segmentedImageBLOB) {
+        blob = this.segmentedImageBLOB;
+        fileName = `${this.image_id}-segmented.jpg`;
+      }
+      else {
+        console.error('Nie można zapisać obrazu');
+        return;
+      }
+    
+      const link = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = link;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(link);
     }
 }
