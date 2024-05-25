@@ -61,14 +61,14 @@ class ImageServices:
 
         images = query.all()
 
+        if not images:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów spełniających podane kryteria filtrowania.")
+
         if check_start_end_id(start_id, end_id):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
         
         images = images[start_id:end_id]
         images_dict = create_images_dict(images)
-
-        if not images_dict:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów spełniających podane kryteria filtrowania.")
 
         return images_dict
 
