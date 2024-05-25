@@ -5,7 +5,8 @@ import numpy as np
 import cv2
 
 from fastapi import UploadFile, File, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_
 from PIL import Image as PILImage
 from torchvision import models
 
@@ -20,8 +21,9 @@ try:
     from models import Image, Tag, Comment
 except:
     from src.models import Image, Tag, Comment
-from .schemas import ImageData
+from .schemas import ImageData, ImageFilterParams
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
+from .utils import create_images_dict
 
 class ImageServices:
     def get_single_image(self, image_id: int, db: Session) -> bytes:
@@ -31,20 +33,41 @@ class ImageServices:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazu")
         return image
 
-    def get_images_BLOBs_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
+    def get_images_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
         if start_id > end_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
     
-        images = db.query(Image.id, Image.image).filter(Image.id >= start_id, Image.id <= end_id).all()
+        images = db.query(Image).filter(Image.id >= start_id, Image.id <= end_id).all()
 
         if not images:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów w podanym zakresie")
         
-        images_dict = {}
-        for image_id, image_blob in images:
-            images_dict[image_id] = image_blob
+        images_dict = create_images_dict(images)
         return images_dict
     
+    def get_filtered_images_by_range(self, filters: ImageFilterParams, db: Session) -> dict:
+        query = db.query(Image).options(joinedload(Image.comments).joinedload(Comment.tags))
+        
+        if filters.threshold_range:
+            query = query.filter(Image.threshold.between(*filters.threshold_range))
+        
+        if filters.tags:
+            tag_filters = [Tag.tag.in_(filters.tags)]
+            query = query.filter(Image.comments.any(Comment.tags.any(or_(*tag_filters))))
+
+        if filters.classes:
+            class_filters = [Image.coordinates_classes.op('->>')('pred_class').contains(c) for c in filters.classes]
+            query = query.filter(or_(*class_filters))
+        
+        images = query.all()
+
+        images_dict = create_images_dict(images)
+
+        if not images_dict:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów spełniających podane kryteria filtrowania.")
+
+        return images_dict
+
     def zip_images(self, images_dict: dict) -> BytesIO:
         zip_buffer = BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
@@ -53,7 +76,7 @@ class ImageServices:
         zip_buffer.seek(0)
         return zip_buffer
 
-    def BLOB_to_image(self, image_blob) -> PILImage.Image:
+    def blob_to_image(self, image_blob) -> PILImage.Image:
         return PILImage.open(BytesIO(image_blob))
 
 class UserServices:

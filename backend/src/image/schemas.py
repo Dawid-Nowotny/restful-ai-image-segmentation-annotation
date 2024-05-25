@@ -21,7 +21,6 @@ class ImageFilterParams(BaseModel):
     threshold_range: Optional[str] = Field(Query(None))
     tags: Optional[List[str]] = Field(Query(None))
     classes: Optional[List[str]] = Field(Query(None))
-    date_order: Optional[str] = Field(Query(None, regex="^(asc|desc)$"))
 
     @field_validator('threshold_range')
     def validate_threshold_range(cls, value: Optional[str]) -> Optional[List[float]]:
@@ -46,5 +45,5 @@ class ImageFilterParams(BaseModel):
     
     @model_validator(mode='after')
     def check_at_least_one_field(cls, values) -> 'ImageFilterParams':
-        if not any(getattr(values, field) is not None for field in ['threshold_range', 'tags', 'classes', 'date_order']):
+        if not any(getattr(values, field) is not None for field in ['threshold_range', 'tags', 'classes']):
             raise HTTPException(status_code=400, detail='Przynajmniej jedna z filtrów musi mieć wartość')
