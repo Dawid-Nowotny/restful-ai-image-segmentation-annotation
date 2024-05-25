@@ -14,7 +14,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Wyszukaj...">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button" (click)="getImages()">Szukaj</button>
+                            <button class="btn btn-primary" type="button">Szukaj</button>
                         </div>
                     </div>
                 </div>
@@ -23,21 +23,20 @@
         <div class="container mt-4">
             <div class="row" id="image-list">
                 <div class="col-md-4" *ngFor="let image of imagesArray; let i = index">
-                    <div class="image-container" (click)="navigateToImageView(i + 1)">
+                    <div class="image-container" (click)="navigateToImageView(i)">
                         <img [src]="image.url" [alt]="image.name" class="img-fluid">
                     </div>
-                 </div>   
+                </div>
             </div>
         </div>
         <div class="container mt-4">
             <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <button class="btn btn-primary mr-2" (click)="prevPage()">Poprzednia strona</button>
+                <div class="col-md-6 offset-md-3 text-center">
+                    <button class="btn btn-primary mr-2" (click)="prevPage()" [disabled]="currentPage === 1">Poprzednia strona</button>
                     <button class="btn btn-primary" (click)="nextPage()">Następna strona</button>
                 </div>
             </div>
         </div>
     </main>
-    
 </body>
 </html>
