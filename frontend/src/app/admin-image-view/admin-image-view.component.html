@@ -1,0 +1,30 @@
+<main>
+    <div class="section-ptb">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-md-12 col-sm-12 rounded" style="background-color: rgb(231, 231, 231);">
+                <div class="row p-3">
+                    <div class="col-md-8 ps-0">
+                        <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
+                            class="fit-image rounded">
+                    </div>
+                    <div class="col-md-4 pe-0">
+                        <div class="row">
+                            <h3>Przypisz moderatora dla tego zdjęcia:</h3>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <select class="form-select" aria-label="Default select example" (change)="handleModeratorSelect($event)">
+                                    <option selected> Wybierz moderatora</option>
+                                    <option *ngFor="let moderator of moderatorList">{{ moderator }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <button class="btn btn-success btn-rg" (click)="assignModerator()">Zapisz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

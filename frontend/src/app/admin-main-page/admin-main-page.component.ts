@@ -33,7 +33,7 @@ export class AdminMainPageComponent implements OnInit {
 	}
 
 	navigateToImageDetails(imageDetails: ImageFileData) {
-		this.router.navigate(['admin/image-details', 1]); //imageDetails.id
+		this.router.navigate(['admin/image-view/:id']); //imageDetails.id
 	}
 
 

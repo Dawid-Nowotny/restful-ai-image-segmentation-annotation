@@ -61,4 +61,9 @@ export class ServerService {
         const url = `${this.restUrl}/images/get_images/${startId}/${endId}`;
         return this.http.get(url, { responseType: "arraybuffer" });
     }
+
+    getModerators(): Observable<any> {
+        const url = `${this.restUrl}/admin/moderators-list`;
+        return this.http.get(url);
+    }
 }
