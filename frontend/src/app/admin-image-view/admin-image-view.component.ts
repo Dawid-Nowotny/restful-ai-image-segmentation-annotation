@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { LoggedUserService } from '../services/logged-user.service';
 
 @Component({
 	selector: 'app-admin-image-view',
@@ -17,6 +18,8 @@ export class AdminImageViewComponent implements OnInit {
 	imageUrl: string;
 	moderatorList: string[];
 	selectedModerator: string;
+	successMessage: string;
+	errorMessage: string;
 
 	ngOnInit(): void {
 		this.id = parseInt(this.route.snapshot.paramMap.get('id') ?? "-1");
@@ -25,12 +28,18 @@ export class AdminImageViewComponent implements OnInit {
 		this.getModeratorsList();
 	}
 
-	constructor(private route: ActivatedRoute, private serverService: ServerService) { 
+	constructor(
+		private route: ActivatedRoute, 
+		private serverService: ServerService, 
+		private loggedUserService: LoggedUserService
+	) {
 		this.id = -1;
 		this.moderatorList = [];
 		this.selectedModerator = '';
 		this.image = new Blob();
 		this.imageUrl = '';
+		this.successMessage = '';
+		this.errorMessage = '';
 	}
 
 	fetchImage(){
@@ -58,11 +67,27 @@ export class AdminImageViewComponent implements OnInit {
 	}
 
 	handleModeratorSelect(event: Event) {
+		this.resetMessages();
 		const selectElement = event.target as HTMLSelectElement;
 		this.selectedModerator = selectElement.value;
 	}
 
 	assignModerator() {
-		console.log(this.selectedModerator);
+		this.resetMessages();
+		let accessToken = this.loggedUserService.getAccessToken();
+
+		this.serverService.assignModeratorToImage(accessToken, this.id, this.selectedModerator).subscribe({
+			next: (response: any) => {
+				this.successMessage = response.message;
+			},
+			error: (error: HttpErrorResponse) => {
+				this.errorMessage = error.error.message;
+			}
+		})
+	}
+
+	resetMessages(){
+		this.successMessage = "";
+		this.errorMessage = "";
 	}
 }

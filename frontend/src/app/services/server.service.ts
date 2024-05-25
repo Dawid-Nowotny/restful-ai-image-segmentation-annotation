@@ -71,4 +71,13 @@ export class ServerService {
         const url = `${this.restUrl}/admin/moderators-list`;
         return this.http.get(url);
     }
+
+    assignModeratorToImage(accessToken: string, imageId: number, username: string) {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/admin/assign-moderator/${imageId}/${username}`;
+        return this.http.put(url, {}, { headers });
+    }
 }

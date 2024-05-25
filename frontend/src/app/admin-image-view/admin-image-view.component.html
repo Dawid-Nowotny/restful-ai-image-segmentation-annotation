@@ -4,23 +4,28 @@
             <div class="col-lg-9 col-md-12 col-sm-12 rounded" style="background-color: rgb(231, 231, 231);">
                 <div class="row p-3">
                     <div class="col-md-8 ps-0">
-                        <img [src]="imageUrl"
-                            class="fit-image rounded">
+                        <img [src]="imageUrl" class="fit-image rounded">
                     </div>
                     <div class="col-md-4 pe-0">
                         <div class="row">
                             <h3>Przypisz moderatora dla tego zdjęcia:</h3>
                         </div>
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center pb-2">
                             <div class="col-auto">
-                                <select class="form-select" aria-label="Default select example" (change)="handleModeratorSelect($event)">
-                                    <option selected> Wybierz moderatora</option>
+                                <select class="form-select" aria-label="Default select example"
+                                    (change)="handleModeratorSelect($event)">
                                     <option *ngFor="let moderator of moderatorList">{{ moderator }}</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center pb-2">
                             <button class="btn btn-success btn-rg" (click)="assignModerator()">Zapisz</button>
+                        </div>
+                        <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                            {{ successMessage }}
+                        </div>
+                        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                            {{ errorMessage }}
                         </div>
                     </div>
                 </div>
