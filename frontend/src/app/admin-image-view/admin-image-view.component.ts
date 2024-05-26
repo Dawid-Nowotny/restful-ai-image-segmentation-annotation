@@ -18,6 +18,7 @@ export class AdminImageViewComponent implements OnInit {
 	imageUrl: string;
 	moderatorList: string[];
 	selectedModerator: string;
+	currentModerator: string;
 	successMessage: string;
 	errorMessage: string;
 
@@ -25,6 +26,7 @@ export class AdminImageViewComponent implements OnInit {
 		this.id = parseInt(this.route.snapshot.paramMap.get('id') ?? "-1");
 
 		this.fetchImage();
+		this.getImageModerator();
 		this.getModeratorsList();
 	}
 
@@ -36,6 +38,7 @@ export class AdminImageViewComponent implements OnInit {
 		this.id = -1;
 		this.moderatorList = [];
 		this.selectedModerator = '';
+		this.currentModerator = '';
 		this.image = new Blob();
 		this.imageUrl = '';
 		this.successMessage = '';
@@ -66,6 +69,17 @@ export class AdminImageViewComponent implements OnInit {
 		})
 	}
 
+	getImageModerator() {
+		this.serverService.getImageModerator(this.id).subscribe({
+			next: (response: any) => {
+				this.currentModerator = response.username;
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error);
+			}
+		})
+	}
+
 	handleModeratorSelect(event: Event) {
 		this.resetMessages();
 		const selectElement = event.target as HTMLSelectElement;
@@ -79,6 +93,7 @@ export class AdminImageViewComponent implements OnInit {
 		this.serverService.assignModeratorToImage(accessToken, this.id, this.selectedModerator).subscribe({
 			next: (response: any) => {
 				this.successMessage = response.message;
+				this.getImageModerator();
 			},
 			error: (error: HttpErrorResponse) => {
 				this.errorMessage = error.error.message;

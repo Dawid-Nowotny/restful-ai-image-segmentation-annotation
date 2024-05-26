@@ -7,7 +7,13 @@
                         <img [src]="imageUrl" class="fit-image rounded">
                     </div>
                     <div class="col-md-4 pe-0">
-                        <div class="row">
+                        <div class="row text-center" >
+                            <h3>Obecny moderator zdjęcia:</h3>
+                            <div class="rounded mt-3 mb-5 p-2 text-center  " style="background-color: lightgray;">
+                                <h5>{{ currentModerator }}</h5>
+                            </div>
+                        </div>
+                        <div class="row text-center">
                             <h3>Przypisz moderatora dla tego zdjęcia:</h3>
                         </div>
                         <div class="row justify-content-center pb-2">

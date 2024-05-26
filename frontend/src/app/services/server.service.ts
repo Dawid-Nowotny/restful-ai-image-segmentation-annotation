@@ -72,6 +72,12 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    getImageModerator(imageId: number): Observable<any> {
+        const url = `${this.restUrl}/images/get_image_moderator/${imageId}`;
+        return this.http.get(url);
+        
+    }
+
     assignModeratorToImage(accessToken: string, imageId: number, username: string) {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${accessToken}`,
