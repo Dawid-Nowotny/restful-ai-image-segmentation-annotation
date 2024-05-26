@@ -63,6 +63,16 @@ def get_images(
         headers={"Content-Disposition": "attachment; filename=images.zip"},
         )
 
+@router.get("/get_image_moderator/{image_id}")
+def get_image_moderator(image_id: int, db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    image = image_service.get_single_image(image_id, db)
+    
+    if(image.moderator == None):
+        return {"username": ""}
+    else:
+        return {"username": image.moderator.username}
+
 @router.get("/suggest-annotations/{image_id}")
 def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     image_services = ImageServices()
