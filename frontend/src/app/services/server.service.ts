@@ -83,6 +83,11 @@ export class ServerService {
         return this.http.get(url)
     }
 
+    getImagesNumber(){
+        const url = `${this.restUrl}/images/get_images_number`;
+        return this.http.get(url);
+    }
+
     getModerators(): Observable<any> {
         const url = `${this.restUrl}/admin/moderators-list`;
         return this.http.get(url);
