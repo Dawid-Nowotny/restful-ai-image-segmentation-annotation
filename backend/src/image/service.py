@@ -32,6 +32,14 @@ class ImageServices:
         if not image:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazu")
         return image
+    
+    def get_image_moderator(self, image_id: int, db: Session) -> User:
+        image = self.get_single_image(image_id, db)
+
+        if not image.moderator:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono moderatora dla danego zdjecia")
+        return image.moderator
+            
 
     def get_images_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
         if check_start_end_id(start_id, end_id):
