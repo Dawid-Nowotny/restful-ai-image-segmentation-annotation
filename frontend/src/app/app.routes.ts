@@ -8,6 +8,8 @@ import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { UserPanelComponent } from './user-panel/user-panel.component';
 import { AdminMainPageComponent } from './admin-main-page/admin-main-page.component';
 import { AdminImageViewComponent } from './admin-image-view/admin-image-view.component';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { hasRoleGuard } from './guards/has-role.guard';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent },
@@ -16,8 +18,23 @@ export const routes: Routes = [
     { path: 'image-view/:id', component: ImageViewComponent },
     { path: 'image-upload', component: ImageUploadComponent},
     { path: 'user/:username', component: UserPanelComponent },
-    { path: 'admin', component: AdminMainPageComponent },
-    { path: 'admin/image-view/:id', component: AdminImageViewComponent },
+    { 
+        path: 'admin', 
+        component: AdminMainPageComponent,
+        canActivate: [hasRoleGuard],
+        data: {
+            roles: ['Admin']
+        } 
+    },
+    { 
+        path: 'admin/image-view/:id', 
+        component: AdminImageViewComponent,
+        canActivate: [hasRoleGuard],
+        data: {
+            roles: ['Admin']
+        } 
+    },
+    { path: 'unauthorized', component: UnauthorizedComponent },
     {
         path: '**', pathMatch: 'full',
         component: NotFoundComponent
