@@ -36,6 +36,12 @@ export class ServerService {
         return this.http.get(url, { headers });
     }
 
+    /** GET PROFILE INFO */
+    getProfileInfo(username: string): Observable<any> {
+        const url = `${this.restUrl}/user/get-profile-info/${username}`;
+        return this.http.get(url);
+    }
+
     verifyTOTP(data: any): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${data.accessToken}`,

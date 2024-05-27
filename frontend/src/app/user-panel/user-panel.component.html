@@ -20,7 +20,7 @@
                     </li>
                 </ul>
             </div>
-            <div>
+            <div *ngIf="isLoggedUser">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                         <div class="profile mr-3">
@@ -28,22 +28,20 @@
                         </div>
                     </li>
                     <li class="list-inline-item">
+                      <div class="profile mr-3">
+                          <a href="#" class="btn btn-outline-dark btn-lg btn-block btn-lg-sm">{{authorizationButtonMessage}}</a>
+                      </div>
+                  </li>
+                    <li class="list-inline-item">
                         <div class="profile mr-3">
-                            <a href="#" class="btn btn-outline-dark btn-lg btn-block btn-lg-sm">Dodaj zdjęcie</a>
+                            <a href="/image-upload" class="btn btn-outline-dark btn-lg btn-block btn-lg-sm">Dodaj zdjęcie</a>
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
         
-        
-        <div class="px-4 py-3">
-          <h5 class="mb-0">Opis</h5>
-          <div class="p-4 rounded shadow-sm bg-light">
-            <p class="font-italic mb-0">{{opis}}</p>
 
-          </div>
-        </div>
         <div class="py-4 px-4">
           <div class="d-flex align-items-center justify-content-between mb-3">
             <h5 class="mb-0">Ostatnie zdjęcia</h5>
