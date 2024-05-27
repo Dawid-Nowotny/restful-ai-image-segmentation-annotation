@@ -20,7 +20,7 @@ def get_moderators(db: Session = Depends(get_db)):
 
     return moderators
 
-@router.put("/make_moderator/{username}")
+@router.put("/make-moderator/{username}")
 async def make_moderator(
     username: str,
     current_user: User = Depends(UserServices.get_current_user),

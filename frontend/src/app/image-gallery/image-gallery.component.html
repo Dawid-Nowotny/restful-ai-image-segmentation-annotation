@@ -1,0 +1,22 @@
+<div class="container mt-4">
+    <div class="row justify-content-center text-center">
+        <pagination class="justify-content-center text-primary" [customPreviousTemplate]="previousTemplate" [customNextTemplate]="nextTemplate"
+            [totalItems]="numberOfImages" [itemsPerPage]="itemsPerPage" (pageChanged)="handlePageChange($event)"></pagination>
+    </div>
+
+    <div class="row" id="image-list">
+        <div class="col-md-4" *ngFor="let image of imagesArray;">
+            <div class="image-container" (click)="navigateToImageDetails(image.id)">
+                <img [src]="image.url" [alt]="image.id" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #previousTemplate let-disabled="disabled" let-currentPage="currentPage">
+    Poprzednia
+</ng-template>
+
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    Następna
+</ng-template>

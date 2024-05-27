@@ -34,7 +34,7 @@ async def upload(
 
     return {"saved_image": file.filename}
 
-@router.get("/get_image/{id}")
+@router.get("/get-image/{id}")
 def get_image(id: int, db: Session = Depends(get_db)):
     image_service = ImageServices()
     image = image_service.get_single_image(id, db)
@@ -44,7 +44,7 @@ def get_image(id: int, db: Session = Depends(get_db)):
         media_type="image/jpg"
     )
 
-@router.get("/get_images/{start_id}/{end_id}")
+@router.get("/get-images/{start_id}/{end_id}")
 def get_images(
         start_id: int, 
         end_id: int, 
@@ -61,15 +61,12 @@ def get_images(
         headers={"Content-Disposition": "attachment; filename=images.zip"},
         )
 
-@router.get("/get_image_moderator/{image_id}")
+@router.get("/get-image-moderator/{image_id}")
 def get_image_moderator(image_id: int, db: Session = Depends(get_db)):
     image_service = ImageServices()
-    image = image_service.get_single_image(image_id, db)
+    moderator = image_service.get_image_moderator(image_id, db)
     
-    if(image.moderator == None):
-        return {"username": ""}
-    else:
-        return {"username": image.moderator.username}
+    return {"username": moderator.username}
       
 @router.get("/get-filtered-images/{filters}/{start_id}/{end_id}")
 def get_filtered_images(
@@ -89,7 +86,7 @@ def get_filtered_images(
         headers={"Content-Disposition": "attachment; filename=images.zip"},
         )
 
-@router.get("/get_images_number")
+@router.get("/get-images-number")
 def get_images_number(db: Session = Depends(get_db)):
     image_service = ImageServices()
     number_of_images = image_service.get_images_number(db)

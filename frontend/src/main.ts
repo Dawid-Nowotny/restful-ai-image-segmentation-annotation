@@ -11,6 +11,7 @@ bootstrapApplication(AppComponent, {
     providers: [
         importProvidersFrom(HttpClientModule),
         provideRouter(routes),
-    ]
+    ],
+    
 })
     .catch((err) => console.error(err));
