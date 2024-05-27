@@ -24,7 +24,7 @@
             <div class="row" id="image-list">
                 <div class="col-md-4" *ngFor="let image of imagesArray; let i = index">
                     <div class="image-container" (click)="navigateToImageView(i)">
-                        <img [src]="image.url" [alt]="image.name" class="img-fluid">
+                        <img [src]="image.url" [alt]="image.id" class="img-fluid">
                     </div>
                 </div>
             </div>

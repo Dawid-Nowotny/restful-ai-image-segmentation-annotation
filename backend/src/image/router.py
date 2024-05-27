@@ -1,3 +1,4 @@
+from io import BytesIO
 from fastapi import APIRouter, UploadFile, File, Depends, Response, status
 from sqlalchemy.orm import Session
 
@@ -33,11 +34,23 @@ async def upload(
 
     return {"saved_image": file.filename}
 
+@router.get("/get_image/{id}")
+def get_image(id: int, db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    image = image_service.get_single_image(id, db)
+
+
+    return Response (
+        content=image.image,
+        media_type="image/jpg"
+    )
+
+
 @router.get("/get_images/{start_id}/{end_id}")
 def get_images(
-    start_id: int, 
-    end_id: int, 
-    db: Session = Depends(get_db)
+        start_id: int, 
+        end_id: int, 
+        db: Session = Depends(get_db)
     ):
     image_service = ImageServices()
 
@@ -50,6 +63,16 @@ def get_images(
         headers={"Content-Disposition": "attachment; filename=images.zip"},
         )
 
+@router.get("/get_image_moderator/{image_id}")
+def get_image_moderator(image_id: int, db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    image = image_service.get_single_image(image_id, db)
+    
+    if(image.moderator == None):
+        return {"username": ""}
+    else:
+        return {"username": image.moderator.username}
+      
 @router.get("/get-filtered-images/{filters}/{start_id}/{end_id}")
 def get_filtered_images(
     start_id: int, 

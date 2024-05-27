@@ -26,7 +26,8 @@ from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY
 from .utils import create_images_dict, check_start_end_id
 
 class ImageServices:
-    def get_single_image(self, image_id: int, db: Session) -> bytes:
+
+    def get_single_image(self, image_id: int, db: Session) -> Image:
         image = db.query(Image).filter(Image.id == image_id).first()
 
         if not image:

@@ -63,14 +63,14 @@ export class ServerService {
         return this.http.post(url, data);
     }
 
+    getImage(id: number){
+        const url = `${this.restUrl}/images/get_image/${id}`;
+        return this.http.get(url, {responseType: "blob"});
+    }
+
     getImagesAsZip(startId: number, endId: number) {
         const url = `${this.restUrl}/images/get_images/${startId}/${endId}`;
         return this.http.get(url, { responseType: "arraybuffer" });
-    }
-
-    getImage(image_id: number): Observable<Blob> {
-        const url = `${this.restUrl}/images/get-image/${image_id}`;
-        return this.http.get(url, { responseType: 'blob' })
     }
 
     getSegmentedImage(image_id: number): Observable<Blob> {
@@ -81,5 +81,25 @@ export class ServerService {
     getImageAndSuperTagsAuthors(image_id: number) {
         const url = `${this.restUrl}/images/get-image-data/${image_id}`;
         return this.http.get(url)
+    }
+
+    getModerators(): Observable<any> {
+        const url = `${this.restUrl}/admin/moderators-list`;
+        return this.http.get(url);
+    }
+
+    getImageModerator(imageId: number): Observable<any> {
+        const url = `${this.restUrl}/images/get_image_moderator/${imageId}`;
+        return this.http.get(url);
+        
+    }
+
+    assignModeratorToImage(accessToken: string, imageId: number, username: string) {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/admin/assign-moderator/${imageId}/${username}`;
+        return this.http.put(url, {}, { headers });
     }
 }
