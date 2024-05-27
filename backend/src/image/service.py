@@ -26,7 +26,6 @@ from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY
 from .utils import create_images_dict, check_start_end_id
 
 class ImageServices:
-
     def get_single_image(self, image_id: int, db: Session) -> Image:
         image = db.query(Image).filter(Image.id == image_id).first()
 
@@ -38,11 +37,12 @@ class ImageServices:
         if check_start_end_id(start_id, end_id):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
     
-        images = db.query(Image).filter(Image.id >= start_id, Image.id <= end_id).all()
+        images = db.query(Image).all()
 
         if not images:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów w podanym zakresie")
         
+        images = images[start_id:end_id]
         images_dict = create_images_dict(images)
         return images_dict
     
@@ -100,10 +100,10 @@ class ImageServices:
     def get_supertag_author_by_image(self, image_id: int, db: Session) -> str:
         result = db.query(User.username).join(Comment, Comment.user_id == User.id).join(
             Image, Image.id == Comment.image_id).filter(Image.id == image_id).first()
-        if result:
-            return result[0]
-        else:
-            return ""
+
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak autora supertagów")
+        return result[0]
 
 class UserServices:
     async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:

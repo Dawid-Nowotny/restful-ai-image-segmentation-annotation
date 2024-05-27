@@ -39,12 +39,10 @@ def get_image(id: int, db: Session = Depends(get_db)):
     image_service = ImageServices()
     image = image_service.get_single_image(id, db)
 
-
     return Response (
         content=image.image,
         media_type="image/jpg"
     )
-
 
 @router.get("/get_images/{start_id}/{end_id}")
 def get_images(
@@ -113,22 +111,22 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
 @router.get("/get-image/{image_id}")
 def get_image(image_id: int, db: Session = Depends(get_db)):
     image_Services = ImageServices()
-    image_blob = image_Services.get_image_BLOB_by_id(image_id, db)
-    image = image_Services.BLOB_to_bytes(image_blob)
+    image = image_Services.get_single_image(image_id, db)
+    image_bytes = image_Services.BLOB_to_bytes(image.image)
     
     return Response(
-        content=image, 
+        content=image_bytes, 
         media_type="image/jpg"
         )
 
 @router.get("/get-segmented-image/{image_id}")
 def get_image(image_id: int, db: Session = Depends(get_db)):
     image_Services = ImageServices()
-    image_blob = image_Services.get_segmented_image_BLOB_by_id(image_id, db)
-    image = image_Services.BLOB_to_bytes(image_blob)
+    image = image_Services.get_single_image(image_id, db)
+    image_bytes = image_Services.BLOB_to_bytes(image.segmented_image)
     
     return Response(
-        content=image, 
+        content=image_bytes, 
         media_type="image/jpg"
         )
 
@@ -138,5 +136,7 @@ def get_image_data(image_id: int, db: Session = Depends(get_db)):
     image_uploader = image_Services.get_uploader_by_image(image_id, db)
     super_tag_author = image_Services.get_supertag_author_by_image(image_id, db)
     
-    return {"image_uploader": image_uploader,
-            "super_tag_author": super_tag_author}
+    return {
+            "image_uploader": image_uploader,
+            "super_tag_author": super_tag_author
+            }
