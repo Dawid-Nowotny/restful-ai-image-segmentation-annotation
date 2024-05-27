@@ -36,6 +36,12 @@ export class ServerService {
         return this.http.get(url, { headers });
     }
 
+    /** GET PROFILE INFO */
+    getProfileInfo(username: string): Observable<any> {
+        const url = `${this.restUrl}/user/get-profile-info/${username}`;
+        return this.http.get(url);
+    }
+
     verifyTOTP(data: any): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${data.accessToken}`,
@@ -60,5 +66,20 @@ export class ServerService {
     getImagesAsZip(startId: number, endId: number) {
         const url = `${this.restUrl}/images/get_images/${startId}/${endId}`;
         return this.http.get(url, { responseType: "arraybuffer" });
+    }
+
+    getImage(image_id: number): Observable<Blob> {
+        const url = `${this.restUrl}/images/get-image/${image_id}`;
+        return this.http.get(url, { responseType: 'blob' })
+    }
+
+    getSegmentedImage(image_id: number): Observable<Blob> {
+        const url = `${this.restUrl}/images/get-segmented-image/${image_id}`;
+        return this.http.get(url, { responseType: 'blob' })
+    }
+
+    getImageAndSuperTagsAuthors(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-data/${image_id}`;
+        return this.http.get(url)
     }
 }

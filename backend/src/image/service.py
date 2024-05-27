@@ -18,9 +18,9 @@ from typing import IO, Tuple, List
 from io import BytesIO
 
 try:
-    from models import Image, Tag, Comment
+    from models import Image, Tag, User, Comment
 except:
-    from src.models import Image, Tag, Comment
+    from src.models import Image, Tag, User, Comment
 from .schemas import ImageData, ImageFilterParams
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
 from .utils import create_images_dict, check_start_end_id
@@ -82,6 +82,27 @@ class ImageServices:
 
     def blob_to_image(self, image_blob) -> PILImage.Image:
         return PILImage.open(BytesIO(image_blob))
+
+    def get_images_number(self, db: Session) -> int:
+        return db.query(Image).count()
+
+    def BLOB_to_bytes(self, image_blob: bytes) -> bytes:
+        image = PILImage.open(BytesIO(image_blob)).convert('RGB')
+        byte_arr = BytesIO()
+        image.save(byte_arr, format='JPEG')
+        return byte_arr.getvalue()
+    
+    def get_uploader_by_image(self, image_id: int, db: Session) -> str:
+        result = db.query(User.username).join(Image, User.id == Image.uploader_id).filter(Image.id == image_id).first()
+        return result[0]
+    
+    def get_supertag_author_by_image(self, image_id: int, db: Session) -> str:
+        result = db.query(User.username).join(Comment, Comment.user_id == User.id).join(
+            Image, Image.id == Comment.image_id).filter(Image.id == image_id).first()
+        if result:
+            return result[0]
+        else:
+            return ""
 
 class UserServices:
     async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
