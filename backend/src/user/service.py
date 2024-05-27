@@ -3,22 +3,23 @@ import pyqrcode
 from fastapi import HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from validate_email import validate_email as validate_email_format
 from jose import JWTError, jwt
 
 import io
 
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Tuple
 
 from .jwt_config import SECRET_KEY, ALGORITHM
 from .schemas import TokenData
 
 try:
-    from models import User
+    from models import User, Image
     from get_db import get_db
 except:
-    from src.models import User
+    from src.models import User, Image
     from src.get_db import get_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -57,6 +58,17 @@ class UserServices:
         db.commit()
         db.refresh(user)
         return user
+    
+    def get_user_by_username(self, username: str, db: Session) -> User:
+        user = db.query(User).filter(User.username == username).first()
+        
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono użytkownika")
+        return user
+    
+    def count_user_images(self, user: User, db: Session) -> int:
+        images_count = db.query(func.count(Image.id)).filter(Image.uploader_id == user.id).scalar()
+        return images_count
     
     @staticmethod
     def __get_user_by_username(username, db: Session) -> User: 

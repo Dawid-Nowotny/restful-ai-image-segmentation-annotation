@@ -21,7 +21,7 @@ def get_moderators(db: Session = Depends(get_db)):
     return moderators
 
 @router.put("/make_moderator/{username}")
-def make_moderator(
+async def make_moderator(
     username: str,
     current_user: User = Depends(UserServices.get_current_user),
     db: Session = Depends(get_db)
@@ -29,12 +29,12 @@ def make_moderator(
     admin_service = AdminServices()
 
     admin_service.check_if_admin(current_user)
-    admin_service.make_moderator(username, db)
+    await admin_service.make_moderator(username, db)
 
     return {"message": "Rola moderatora została pomyślnie nadana"}
 
 @router.put("/assign-moderator/{image_id}/{username}")
-def assign_moderator_to_image(
+async def assign_moderator_to_image(
     image_id: int,
     username: str,
     current_user: User = Depends(UserServices.get_current_user),
@@ -43,12 +43,12 @@ def assign_moderator_to_image(
     admin_service = AdminServices()
 
     admin_service.check_if_admin(current_user)
-    admin_service.assign_moderator_to_image(image_id, username, db)
+    await admin_service.assign_moderator_to_image(image_id, username, db)
 
     return {"message": "Moderator został nadany do obrazka"}
 
 @router.post("/add-super-tag", status_code=status.HTTP_201_CREATED)
-def create_comment_super_tag(
+async def create_comment_super_tag(
     image_id: int,
     comment_data: CommentRequest,
     current_user: User = Depends(UserServices.get_current_user),
@@ -63,8 +63,8 @@ def create_comment_super_tag(
     moderator_service.check_if_admin_or_moderator(current_user)
     moderator_service.check_if_moderator_is_assigned_to_image(image, current_user)
 
-    tags = [comment_service.create_tag(tag_data.tag, db) for tag_data in comment_data.tags]
+    tags = [await comment_service.create_tag(tag_data.tag, db) for tag_data in comment_data.tags]
 
-    comment_service.create_comment(image_id, current_user, comment_data, tags, db)
+    await comment_service.create_comment(image_id, current_user, comment_data, tags, db)
 
     return {"message": "Super tag został dodany do obrazka"}

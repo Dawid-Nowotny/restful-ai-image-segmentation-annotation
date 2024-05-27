@@ -12,7 +12,7 @@ class AdminServices:
         moderators = db.query(User).filter(User.role == "Moderator").all()
         return moderators
         
-    def make_moderator(self, username, db) -> None:
+    async def make_moderator(self, username, db) -> None:
         user = db.query(User).filter(User.username == username).first()
         if not user:
             raise HTTPException(status_code=404, detail="Użytkownik nie został znaleziony")
@@ -25,7 +25,7 @@ class AdminServices:
         db.commit()
         db.refresh(user)
 
-    def assign_moderator_to_image(self, image_id, moderator_username, db) -> None:
+    async def assign_moderator_to_image(self, image_id, moderator_username, db) -> None:
         image = db.query(Image).filter(Image.id == image_id).first()
         if not image:
             raise HTTPException(status_code=404, detail="Obraz nie został znaleziony")

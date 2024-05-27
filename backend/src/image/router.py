@@ -3,7 +3,7 @@ from fastapi import APIRouter, UploadFile, File, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from .service import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
-from .schemas import ImageData
+from .schemas import ImageData, ImageFilterParams
 from .utils import convert_to_json
 from get_db import get_db
 
@@ -54,7 +54,7 @@ def get_images(
     ):
     image_service = ImageServices()
 
-    images_dict = image_service.get_images_BLOBs_by_range(start_id, end_id, db)
+    images_dict = image_service.get_images_by_range(start_id, end_id, db)
     zip_buffer = image_service.zip_images(images_dict)
 
     return Response(
@@ -72,6 +72,31 @@ def get_image_moderator(image_id: int, db: Session = Depends(get_db)):
         return {"username": ""}
     else:
         return {"username": image.moderator.username}
+      
+@router.get("/get-filtered-images/{filters}/{start_id}/{end_id}")
+def get_filtered_images(
+    start_id: int, 
+    end_id: int, 
+    filters: ImageFilterParams = Depends(),
+    db: Session = Depends(get_db),
+    ):
+    image_service = ImageServices()
+
+    images_dict = image_service.get_filtered_images_by_range(filters, start_id, end_id, db)
+    zip_buffer = image_service.zip_images(images_dict)
+
+    return Response(
+        content=zip_buffer.getvalue(), 
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=images.zip"},
+        )
+
+@router.get("/get_images_number")
+def get_images_number(db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    number_of_images = image_service.get_images_number(db)
+
+    return {"number_of_images": number_of_images}
 
 @router.get("/suggest-annotations/{image_id}")
 def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
@@ -79,8 +104,39 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
     ai_annotation_services = AiAnnotationServices()
 
     image = image_services.get_single_image(image_id, db)
-    unblobed_image = image_services.BLOB_to_image(image.image)
+    unblobed_image = image_services.blob_to_image(image.image)
 
     annotations = ai_annotation_services.annotate_image(unblobed_image)
 
     return {"annotations": annotations}
+
+@router.get("/get-image/{image_id}")
+def get_image(image_id: int, db: Session = Depends(get_db)):
+    image_Services = ImageServices()
+    image_blob = image_Services.get_image_BLOB_by_id(image_id, db)
+    image = image_Services.BLOB_to_bytes(image_blob)
+    
+    return Response(
+        content=image, 
+        media_type="image/jpg"
+        )
+
+@router.get("/get-segmented-image/{image_id}")
+def get_image(image_id: int, db: Session = Depends(get_db)):
+    image_Services = ImageServices()
+    image_blob = image_Services.get_segmented_image_BLOB_by_id(image_id, db)
+    image = image_Services.BLOB_to_bytes(image_blob)
+    
+    return Response(
+        content=image, 
+        media_type="image/jpg"
+        )
+
+@router.get("/get-image-data/{image_id}")
+def get_image_data(image_id: int, db: Session = Depends(get_db)):
+    image_Services = ImageServices()
+    image_uploader = image_Services.get_uploader_by_image(image_id, db)
+    super_tag_author = image_Services.get_supertag_author_by_image(image_id, db)
+    
+    return {"image_uploader": image_uploader,
+            "super_tag_author": super_tag_author}

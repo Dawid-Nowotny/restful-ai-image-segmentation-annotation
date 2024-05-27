@@ -14,8 +14,10 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'image-view/:id', component: ImageViewComponent },
-    { path: 'image-upload', component: ImageUploadComponent },
-    { path: 'user/:id', component: UserPanelComponent },
+    { path: 'image-upload', component: ImageUploadComponent},
+    { path: 'user/:username', component: UserPanelComponent },
+    { path: '**', pathMatch: 'full', 
+        component: NotFoundComponent },
     { path: 'admin', component: AdminMainPageComponent },
     { path: 'admin/image-view/:id', component: AdminImageViewComponent },
     {
