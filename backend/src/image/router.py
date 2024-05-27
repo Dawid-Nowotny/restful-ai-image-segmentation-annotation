@@ -108,25 +108,13 @@ def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
 
     return {"annotations": annotations}
 
-@router.get("/get-image/{image_id}")
-def get_image(image_id: int, db: Session = Depends(get_db)):
-    image_Services = ImageServices()
-    image = image_Services.get_single_image(image_id, db)
-    image_bytes = image_Services.BLOB_to_bytes(image.image)
-    
-    return Response(
-        content=image_bytes, 
-        media_type="image/jpg"
-        )
-
 @router.get("/get-segmented-image/{image_id}")
-def get_image(image_id: int, db: Session = Depends(get_db)):
+def get_segmented_image(image_id: int, db: Session = Depends(get_db)):
     image_Services = ImageServices()
     image = image_Services.get_single_image(image_id, db)
-    image_bytes = image_Services.BLOB_to_bytes(image.segmented_image)
     
     return Response(
-        content=image_bytes, 
+        content=image.image, 
         media_type="image/jpg"
         )
 

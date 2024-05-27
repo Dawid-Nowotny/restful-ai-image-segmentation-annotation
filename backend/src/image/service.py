@@ -86,12 +86,6 @@ class ImageServices:
 
     def get_images_number(self, db: Session) -> int:
         return db.query(Image).count()
-
-    def BLOB_to_bytes(self, image_blob: bytes) -> bytes:
-        image = PILImage.open(BytesIO(image_blob)).convert('RGB')
-        byte_arr = BytesIO()
-        image.save(byte_arr, format='JPEG')
-        return byte_arr.getvalue()
     
     def get_uploader_by_image(self, image_id: int, db: Session) -> str:
         result = db.query(User.username).join(Image, User.id == Image.uploader_id).filter(Image.id == image_id).first()
