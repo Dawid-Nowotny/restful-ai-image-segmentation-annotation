@@ -64,12 +64,12 @@ export class ServerService {
     }
 
     getImage(id: number){
-        const url = `${this.restUrl}/images/get_image/${id}`;
+        const url = `${this.restUrl}/images/get-image/${id}`;
         return this.http.get(url, {responseType: "blob"});
     }
 
     getImagesAsZip(startId: number, endId: number) {
-        const url = `${this.restUrl}/images/get_images/${startId}/${endId}`;
+        const url = `${this.restUrl}/images/get-images/${startId}/${endId}`;
         return this.http.get(url, { responseType: "arraybuffer" });
     }
 
@@ -84,7 +84,7 @@ export class ServerService {
     }
 
     getImagesNumber(){
-        const url = `${this.restUrl}/images/get_images_number`;
+        const url = `${this.restUrl}/images/get-images-number`;
         return this.http.get(url);
     }
 
@@ -94,7 +94,7 @@ export class ServerService {
     }
 
     getImageModerator(imageId: number): Observable<any> {
-        const url = `${this.restUrl}/images/get_image_moderator/${imageId}`;
+        const url = `${this.restUrl}/images/get-image-moderator/${imageId}`;
         return this.http.get(url);
         
     }
