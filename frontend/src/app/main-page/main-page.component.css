@@ -1,0 +1,10 @@
+.image-container {
+    margin-bottom: 20px;
+    width: 100%; /* Dodaj to, aby kontener obrazka miał pełną szerokość kolumny */
+}
+.image-container img {
+    width: 100%; /* Ustaw stałą szerokość */
+    height: 200px; /* Ustaw stałą wysokość */
+    object-fit: cover; /* Upewnij się, że obrazek jest przeskalowany proporcjonalnie */
+    cursor: pointer; /* Styl kursora, aby wskazać, że obrazek jest klikalny */
+}

@@ -55,7 +55,10 @@ class ImageServices:
 
     def BLOB_to_image(self, image_blob) -> PILImage.Image:
         return PILImage.open(BytesIO(image_blob))
-    
+
+    def get_images_number(self, db: Session) -> int:
+        return db.query(Image).count()
+
     def BLOB_to_bytes(self, image_blob: bytes) -> bytes:
         image = PILImage.open(BytesIO(image_blob)).convert('RGB')
         byte_arr = BytesIO()
