@@ -4,24 +4,21 @@
             <div class="col-lg-9 col-md-12 col-sm-12 rounded" style="background-color: rgb(231, 231, 231);">
                 <div class="row p-3">
                     <div class="col-md-8 ps-0">
-                        <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg" class="fit-image rounded">
+                        <img [src]="image" class="fit-image rounded">
                     </div>
                     <div class="col-md-4 pe-0">
                         <div class="row">
                             <div class="col">
-                                <button class="btn btn-success btn-rg">Wyświetl adnotacje</button>
+                                <button class="btn btn-success btn-rg" (click)="changeImage()">{{ buttonLabel }}</button>
                             </div>
                             <div class="col-auto">
-                                <button class="btn btn-success btn-rg">Zapisz zdjęcie</button>
+                                <button class="btn btn-success btn-rg" (click)="downloadImage()">Zapisz obraz</button>
                             </div>
                         </div>
                         <div class="rounded mt-3 p-3" style="background-color: lightgray;">
                             Adnotacje
                         </div>
-                        <div class="mt-3">
-                            <h1><b>Nazwa</b></h1>
-                        </div>
-                        <div class="row">
+                        <div class="row mt-3">
                             <div class="col-md-6">
                                 <h5 class="mb-0">{{ imageAutor }}</h5>
                                 <p class="small">Autor zdjęcia</p>

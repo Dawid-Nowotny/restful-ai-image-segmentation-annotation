@@ -13,7 +13,7 @@ export const routes: Routes = [
     { path: 'register', component: RegisterComponent },
     { path: 'image-view/:id', component: ImageViewComponent },
     { path: 'image-upload', component: ImageUploadComponent},
-    { path: 'user/:id', component: UserPanelComponent },
+    { path: 'user/:username', component: UserPanelComponent },
     { path: '**', pathMatch: 'full', 
         component: NotFoundComponent },
   ];
