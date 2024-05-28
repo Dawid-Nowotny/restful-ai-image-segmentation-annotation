@@ -39,6 +39,26 @@ class ImageServices:
         if not image.moderator:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono moderatora dla danego zdjecia")
         return image.moderator
+    
+    def get_image_super_tags(self, image_id: int, db: Session) -> List[Tag]:
+        comments_with_super_tags = db.query(Comment).filter(Comment.image_id == image_id, Comment.super_tag == True).all()
+
+        if not comments_with_super_tags:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono supertagów dla danego zdjecia")
+
+        super_tags_dict = {}
+        
+        for comment in comments_with_super_tags:
+            super_tags_dict.update({
+                "author": comment.user.username,
+                "tags": comment.tags
+            })
+
+        if super_tags_dict is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono supertagów dla danego zdjecia")
+        
+        return super_tags_dict
+
             
 
     def get_images_by_range(self, start_id: int, end_id: int, db: Session) -> dict:

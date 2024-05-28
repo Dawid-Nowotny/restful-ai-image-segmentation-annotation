@@ -4,7 +4,7 @@ import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { LoggedUserService } from '../services/logged-user.service';
-import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
 
 @Component({
 	selector: 'app-admin-image-view',
@@ -20,6 +20,10 @@ export class AdminImageViewComponent implements OnInit {
 	moderatorList: string[];
 	selectedModerator: string;
 	currentModerator: string;
+	imageSuperTags: {
+		author: string;
+		superTags: string[];
+	}
 	successMessage: string;
 	errorMessage: string;
 
@@ -42,6 +46,10 @@ export class AdminImageViewComponent implements OnInit {
 		this.currentModerator = '';
 		this.image = new Blob();
 		this.imageUrl = '';
+		this.imageSuperTags = {
+			author: '',
+			superTags: []
+		};
 		this.successMessage = '';
 		this.errorMessage = '';
 	}
@@ -81,10 +89,27 @@ export class AdminImageViewComponent implements OnInit {
 		})
 	}
 
+	getImageSuperTags(imageId: number) {
+		this.serverService.getImageSuperTags(imageId).subscribe({
+			next: (response: any) => {
+				this.imageSuperTags.author = response.author;
+				this.imageSuperTags.superTags = response.tags.map((tag: any) => tag.tag);
+				console.log(response);
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error);
+			}
+		})
+	}
+
 	handleModeratorSelect(event: Event) {
 		this.resetMessages();
 		const selectElement = event.target as HTMLSelectElement;
 		this.selectedModerator = selectElement.value;
+	}
+
+	handleTabChange(data: TabDirective) {
+		this.getImageSuperTags(this.id);
 	}
 
 	assignModerator() {

@@ -83,6 +83,11 @@ export class ServerService {
         return this.http.get(url)
     }
 
+    getImageSuperTags(imageId: number){
+        const url = `${this.restUrl}/images/get-image-super-tags/${imageId}`;
+        return this.http.get(url);
+    }
+
     getImagesNumber(){
         const url = `${this.restUrl}/images/get-images-number`;
         return this.http.get(url);
