@@ -1,4 +1,4 @@
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.orm import Session
 
 from collections import Counter
@@ -42,3 +42,17 @@ class UserStatsServices:
         )
 
         return top_commenters
+    
+    def get_moderated_images_count(self, limit: int, db: Session) -> List[Dict[str, int]]:
+        moderated_counts = (
+            db.query(User.username, func.count(Image.id).label("moderated_count"))
+            .join(Image, User.id == Image.moderator_id)
+            .join(Comment, and_(Comment.image_id == Image.id, Comment.super_tag == True), isouter=True)
+            .filter(Comment.id.isnot(None))
+            .group_by(User.username)
+            .order_by(func.count(Image.id).desc())
+            .limit(limit)
+            .all()
+        )
+
+        return moderated_counts

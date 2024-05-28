@@ -11,3 +11,7 @@ class TopUploaderResponse(BaseModel):
 class TopCommenterResponse(BaseModel):
     username: str
     comment_count: int
+
+class ModeratedImagesResponse(BaseModel):
+    username: str
+    moderated_count: int
