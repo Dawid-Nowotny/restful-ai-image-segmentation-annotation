@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Path, status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -35,8 +35,8 @@ async def make_moderator(
 
 @router.put("/assign-moderator/{image_id}/{username}")
 async def assign_moderator_to_image(
-    image_id: int,
     username: str,
+    image_id: int = Path(..., ge=0),
     current_user: User = Depends(UserServices.get_current_user),
     db: Session = Depends(get_db)
     ):
