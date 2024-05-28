@@ -18,6 +18,25 @@ class ImageStatsServices:
 
         return tags
     
+    def get_popular_tags_by_month(self, db: Session) -> List[Dict[str, Any]]:
+        tags_by_month = defaultdict(Counter)
+        result = []
+
+        for tag, comment_date in db.query(Tag.tag, Comment.comment_date).join(Comment, Tag.comment_id == Comment.id):
+            month_year = (comment_date.year, comment_date.month)
+            tags_by_month[month_year].update([tag.lower()])
+
+        for (year, month), tag_counts in sorted(tags_by_month.items()):
+            if tag_counts:
+                most_common_tag, count = tag_counts.most_common(1)[0]
+                result.append({
+                    "year": year,
+                    "month": MONTHS[month],
+                    "top_tag": {"tag": most_common_tag, "count": count}
+                })
+
+        return result
+
     def get_top_classes(self, limit: int, db: Session) -> List[Dict[str, int]]:
         class_counts = Counter()
         images = db.query(Image.coordinates_classes).all()
@@ -38,12 +57,13 @@ class ImageStatsServices:
             classes_by_month[month_year].update(classes)
 
         for (year, month), class_counts in sorted(classes_by_month.items()):
-            top_classes = [{"class": class_name, "count": count} for class_name, count in class_counts.most_common(5)]
-            result.append({
-                "year": year,
-                "month": MONTHS[month],
-                "top_classes": top_classes
-            })
+            if class_counts:
+                most_common_class, count = class_counts.most_common(1)[0]
+                result.append({
+                    "year": year,
+                    "month": MONTHS[month],
+                    "top_class": {"class_name": most_common_class, "count": count}
+                })
 
         return result
 

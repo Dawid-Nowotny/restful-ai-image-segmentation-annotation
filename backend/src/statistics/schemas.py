@@ -5,6 +5,11 @@ class TopTagResponse(BaseModel):
     tag: str
     count: int
 
+class MonthlyTagResponse(BaseModel):
+    year: int
+    month: str
+    top_tag: Dict[str, Any]
+
 class TopClassResponse(BaseModel):
     class_name: str
     count: int

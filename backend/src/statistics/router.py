@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from .service import ImageStatsServices, UserStatsServices
-from .schemas import TopTagResponse, TopClassResponse, MonthlyClassResponse, TopUploaderResponse, TopCommenterResponse, ModeratedImagesResponse
+from .schemas import TopTagResponse, MonthlyTagResponse, TopClassResponse, MonthlyClassResponse, TopUploaderResponse, TopCommenterResponse, ModeratedImagesResponse
 from get_db import get_db
 
 router = APIRouter()
@@ -14,6 +14,12 @@ def get_top_tags(limit: int = Path(..., gt=0), db: Session = Depends(get_db)):
     image_stats_service = ImageStatsServices()
     tags = image_stats_service.get_top_tags(limit, db)
     return tags
+
+@router.get("/popular_tags_by_month", response_model=List[MonthlyTagResponse])
+def get_popular_tags_by_month(db: Session = Depends(get_db)):
+    image_stats_service = ImageStatsServices()
+    popular_tags = image_stats_service.get_popular_tags_by_month(db)
+    return popular_tags
 
 @router.get("/top_classes/{limit}", response_model=List[TopClassResponse])
 def get_top_classes(limit: int = Path(..., gt=0), db: Session = Depends(get_db)):
