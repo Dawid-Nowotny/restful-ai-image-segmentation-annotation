@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from .service import ImageStatsServices, UserStatsServices
-from .schemas import TagResponse, TopUploaderResponse
+from .schemas import TagResponse, TopUploaderResponse, TopCommenterResponse
 from get_db import get_db
 
 router = APIRouter()
@@ -20,3 +20,9 @@ def get_top_uploaders(limit: int = Path(..., gt=0), db: Session = Depends(get_db
     user_stats_service = UserStatsServices()
     top_uploaders = user_stats_service.get_top_uploaders(limit, db)
     return top_uploaders
+
+@router.get("/top_commenters/{limit}", response_model=List[TopCommenterResponse])
+def get_top_commenters(limit: int = Path(..., gt=0), db: Session = Depends(get_db)):
+    user_stats_service = UserStatsServices()
+    top_commenters = user_stats_service.get_top_commenters(limit, db)
+    return top_commenters
