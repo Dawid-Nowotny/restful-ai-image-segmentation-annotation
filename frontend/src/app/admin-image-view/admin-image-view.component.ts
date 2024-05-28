@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { LoggedUserService } from '../services/logged-user.service';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
+import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
+import { FormsModule } from '@angular/forms';
 
 @Component({
 	selector: 'app-admin-image-view',
 	standalone: true,
-	imports: [CommonModule, TabsModule],
+	providers: [BsModalService],
+	imports: [CommonModule, TabsModule, ModalModule, FormsModule],
 	templateUrl: './admin-image-view.component.html',
 	styleUrls: ['./admin-image-view.component.css']
 })
@@ -24,6 +27,8 @@ export class AdminImageViewComponent implements OnInit {
 		author: string;
 		superTags: string[];
 	}
+	modalRef?: BsModalRef;
+	tagsInputField: string;
 	successMessage: string;
 	errorMessage: string;
 
@@ -38,7 +43,8 @@ export class AdminImageViewComponent implements OnInit {
 	constructor(
 		private route: ActivatedRoute, 
 		private serverService: ServerService, 
-		private loggedUserService: LoggedUserService
+		private loggedUserService: LoggedUserService,
+		private modalService: BsModalService
 	) {
 		this.id = -1;
 		this.moderatorList = [];
@@ -50,6 +56,7 @@ export class AdminImageViewComponent implements OnInit {
 			author: '',
 			superTags: []
 		};
+		this.tagsInputField = '';
 		this.successMessage = '';
 		this.errorMessage = '';
 	}
@@ -94,7 +101,6 @@ export class AdminImageViewComponent implements OnInit {
 			next: (response: any) => {
 				this.imageSuperTags.author = response.author;
 				this.imageSuperTags.superTags = response.tags.map((tag: any) => tag.tag);
-				console.log(response);
 			},
 			error: (error: HttpErrorResponse) => {
 				console.log(error);
@@ -109,6 +115,7 @@ export class AdminImageViewComponent implements OnInit {
 	}
 
 	handleTabChange(data: TabDirective) {
+		this.resetMessages();
 		this.getImageSuperTags(this.id);
 	}
 
@@ -123,6 +130,35 @@ export class AdminImageViewComponent implements OnInit {
 			},
 			error: (error: HttpErrorResponse) => {
 				this.errorMessage = error.error.message;
+			}
+		})
+	}
+
+	openModal(template: TemplateRef<void>){
+		this.modalRef = this.modalService.show(template);
+	}
+
+	addSuperTag(){
+		this.tagsInputField = this.tagsInputField.replaceAll(" ", "").trim();
+		let tagsArray: string[] = this.tagsInputField.split(',');
+
+		if(tagsArray.length <= 0){
+			return;
+		}
+
+		this.serverService.addSuperTagToImage(
+			this.loggedUserService.getAccessToken(),
+			this.id,
+			tagsArray
+		).subscribe({
+			next: (response: any) => {
+				this.getImageSuperTags(this.id);
+				this.modalRef?.hide();
+				this.successMessage = response.message;
+			},
+			error: (error: HttpErrorResponse) => {
+				this.errorMessage = error.error.detail;
+				console.log(error);
 			}
 		})
 	}

@@ -83,9 +83,36 @@ export class ServerService {
         return this.http.get(url)
     }
 
-    getImageSuperTags(imageId: number){
+    getImageSuperTags(imageId: number): Observable<any>{
         const url = `${this.restUrl}/images/get-image-super-tags/${imageId}`;
         return this.http.get(url);
+    }
+
+    addSuperTagToImage(accessToken: string, imageId: number, tagsArray: string[]): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/admin/add-super-tag/`;
+
+        const tagsInRequest = tagsArray.map(tag => {
+            return {
+                tag: tag
+            }
+        })
+        console.log(tagsInRequest);
+
+        const body = {
+            request: {
+                image_id: imageId,
+            },
+            comment_data: {
+                super_tag: true,
+                tags: tagsInRequest
+            }
+        }
+
+        return this.http.post(url, body, { headers }); 
     }
 
     getImagesNumber(){
