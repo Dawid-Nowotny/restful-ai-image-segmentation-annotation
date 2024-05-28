@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List, Dict, Any
 
 class TopTagResponse(BaseModel):
     tag: str
@@ -7,6 +8,11 @@ class TopTagResponse(BaseModel):
 class TopClassResponse(BaseModel):
     class_name: str
     count: int
+
+class MonthlyClassResponse(BaseModel):
+    year: int
+    month: str
+    top_classes: List[Dict[str, Any]]
 
 class TopUploaderResponse(BaseModel):
     username: str

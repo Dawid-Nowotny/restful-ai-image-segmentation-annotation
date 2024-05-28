@@ -1,9 +1,10 @@
 from sqlalchemy import func, and_
 from sqlalchemy.orm import Session
 
-from collections import Counter
-from typing import List, Dict
+from collections import Counter, defaultdict
+from typing import List, Dict, Any
 
+from .constants import MONTHS
 from models import User, Image, Tag, Comment
 
 class ImageStatsServices:
@@ -26,6 +27,25 @@ class ImageStatsServices:
         top_classes = [{"class_name": class_name, "count": count} for class_name, count in class_counts.most_common(limit)]
 
         return top_classes
+    
+    def get_popular_classes_by_month(self, db: Session) -> List[Dict[str, Any]]:
+        classes_by_month = defaultdict(Counter)
+        result = []
+
+        for image in db.query(Image.coordinates_classes, Image.upload_date):
+            month_year = (image.upload_date.year, image.upload_date.month)
+            classes = image.coordinates_classes.get("pred_class", [])
+            classes_by_month[month_year].update(classes)
+
+        for (year, month), class_counts in sorted(classes_by_month.items()):
+            top_classes = [{"class": class_name, "count": count} for class_name, count in class_counts.most_common(5)]
+            result.append({
+                "year": year,
+                "month": MONTHS[month],
+                "top_classes": top_classes
+            })
+
+        return result
 
 class UserStatsServices:
     def get_top_uploaders(self, limit: int, db: Session) -> List[Dict[str, int]]:
