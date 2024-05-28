@@ -1,7 +1,11 @@
 from pydantic import BaseModel
 
-class TagResponse(BaseModel):
+class TopTagResponse(BaseModel):
     tag: str
+    count: int
+
+class TopClassResponse(BaseModel):
+    class_name: str
     count: int
 
 class TopUploaderResponse(BaseModel):

@@ -4,16 +4,22 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from .service import ImageStatsServices, UserStatsServices
-from .schemas import TagResponse, TopUploaderResponse, TopCommenterResponse, ModeratedImagesResponse
+from .schemas import TopTagResponse, TopClassResponse, TopUploaderResponse, TopCommenterResponse, ModeratedImagesResponse
 from get_db import get_db
 
 router = APIRouter()
 
-@router.get("/top_tags/{limit}", response_model=List[TagResponse])
+@router.get("/top_tags/{limit}", response_model=List[TopTagResponse])
 def get_top_tags(limit: int = Path(..., gt=0), db: Session = Depends(get_db)):
     image_stats_service = ImageStatsServices()
     tags = image_stats_service.get_top_tags(limit, db)
     return tags
+
+@router.get("/top_classes/{limit}", response_model=List[TopClassResponse])
+def get_top_classes(limit: int = Path(..., gt=0), db: Session = Depends(get_db)):
+    image_stats_service = ImageStatsServices()
+    top_classes = image_stats_service.get_top_classes(limit, db)
+    return top_classes
 
 @router.get("/top_uploaders/{limit}", response_model=List[TopUploaderResponse])
 def get_top_uploaders(limit: int = Path(..., gt=0), db: Session = Depends(get_db)):

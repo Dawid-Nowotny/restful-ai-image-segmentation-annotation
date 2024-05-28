@@ -16,6 +16,16 @@ class ImageStatsServices:
         ]
 
         return tags
+    
+    def get_top_classes(self, limit: int, db: Session) -> List[Dict[str, int]]:
+        class_counts = Counter()
+        images = db.query(Image.coordinates_classes).all()
+        for image in images:
+            classes = image.coordinates_classes.get("pred_class", [])
+            class_counts.update(classes)
+        top_classes = [{"class_name": class_name, "count": count} for class_name, count in class_counts.most_common(limit)]
+
+        return top_classes
 
 class UserStatsServices:
     def get_top_uploaders(self, limit: int, db: Session) -> List[Dict[str, int]]:
