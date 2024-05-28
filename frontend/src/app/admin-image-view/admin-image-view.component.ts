@@ -4,11 +4,12 @@ import { ServerService } from '../services/server.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { LoggedUserService } from '../services/logged-user.service';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 @Component({
 	selector: 'app-admin-image-view',
 	standalone: true,
-	imports: [CommonModule],
+	imports: [CommonModule, TabsModule],
 	templateUrl: './admin-image-view.component.html',
 	styleUrls: ['./admin-image-view.component.css']
 })

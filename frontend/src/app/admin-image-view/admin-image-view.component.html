@@ -7,32 +7,47 @@
                         <img [src]="imageUrl" class="fit-image rounded">
                     </div>
                     <div class="col-md-4 pe-0">
-                        <div class="row text-center" >
-                            <h3>Obecny moderator zdjęcia:</h3>
-                            <div class="rounded mt-3 mb-5 p-2 text-center  " style="background-color: lightgray;">
-                                <h5>{{ currentModerator }}</h5>
-                            </div>
+                        <div>
+                            <tabset>
+                                <tab heading="Moderator" id="tab1">
+                                    <div class="rounded mt-3" style="background-color: light;">
+
+                                        <div class="row text-center px-5">
+                                            <h3>Obecny moderator zdjęcia:</h3>
+                                            <div class="rounded mt-3 mb-5 p-2 text-center  "
+                                                style="background-color: lightgray;">
+                                                <h5>{{ currentModerator }}</h5>
+                                            </div>
+                                        </div>
+                                        <div class="row text-center">
+                                            <h3>Przypisz moderatora dla tego zdjęcia:</h3>
+                                        </div>
+                                        <div class="row justify-content-center pb-2">
+                                            <div class="col-auto">
+                                                <select class="form-select" aria-label="Default select example"
+                                                    (change)="handleModeratorSelect($event)">
+                                                    <option *ngFor="let moderator of moderatorList">{{ moderator }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-center pb-2 px-5">
+                                            <button class="btn btn-success" (click)="assignModerator()">Zapisz</button>
+                                        </div>
+                                        <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                                            {{ successMessage }}
+                                        </div>
+                                        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                                            {{ errorMessage }}
+                                        </div>
+                                    </div>
+                                </tab>
+                                <tab heading="Super Tag">
+                                    
+                                </tab>
+                            </tabset>
                         </div>
-                        <div class="row text-center">
-                            <h3>Przypisz moderatora dla tego zdjęcia:</h3>
-                        </div>
-                        <div class="row justify-content-center pb-2">
-                            <div class="col-auto">
-                                <select class="form-select" aria-label="Default select example"
-                                    (change)="handleModeratorSelect($event)">
-                                    <option *ngFor="let moderator of moderatorList">{{ moderator }}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row justify-content-center pb-2">
-                            <button class="btn btn-success btn-rg" (click)="assignModerator()">Zapisz</button>
-                        </div>
-                        <div *ngIf="successMessage" class="alert alert-success" role="alert">
-                            {{ successMessage }}
-                        </div>
-                        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-                            {{ errorMessage }}
-                        </div>
+
                     </div>
                 </div>
             </div>
