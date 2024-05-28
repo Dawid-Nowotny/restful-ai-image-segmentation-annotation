@@ -41,12 +41,11 @@ export class LoginComponent {
             username: this.username,
             password: this.password
         };
-
+        
         this.serverService.postLogin(data).subscribe(
             {
                 next: (loginResponse: any) => {
                     if (loginResponse.totp_enabled == true) {
-                        console.log(loginResponse.access_token);
                         this.loginService.saveAccessToken(loginResponse.access_token);
                         this.totpModalComponent.openModal();
                     } else {

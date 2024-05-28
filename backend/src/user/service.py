@@ -51,6 +51,10 @@ class UserServices:
             return user
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Niepoprawne hasło")
 
+    def check_password(self, user: User, password: str) -> None:
+        if not user.verify_password(password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Niepoprawne hasło")
+
     async def create_user(self, username: str, email: str, password: str, db: Session) -> User:
         user = User(username=username, email=email, role="User")
         user.set_password(password)
@@ -135,3 +139,9 @@ class TOTPServices:
 
         if not valid:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Nieprawidłowy kod 2FA")
+        
+    async def disable_totp(self, user: User, db: Session) -> None:
+        user.secret_key = None
+        db.add(user)
+        db.commit()
+        db.refresh(user)
