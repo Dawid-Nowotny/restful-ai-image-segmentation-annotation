@@ -1,11 +1,12 @@
-from io import BytesIO
-from fastapi import APIRouter, UploadFile, File, Depends, Response, status
+from fastapi import APIRouter, UploadFile, File, Depends, Path, Response, status
 from sqlalchemy.orm import Session
 
-from .service import UserServices, ImageServices, SegmentationServices, AiAnnotationServices
+from .service import ImageServices, SegmentationServices, AiAnnotationServices
 from .schemas import ImageData, ImageFilterParams
 from .utils import convert_to_json
 from get_db import get_db
+
+from user.service import UserServices
 
 router = APIRouter()
 
@@ -15,7 +16,7 @@ async def upload(
     file: UploadFile = File(...), 
     db: Session = Depends(get_db)
     ):
-    user_services = UserServices()
+    image_service = ImageServices()
     segmentation_services = SegmentationServices()
 
     binary_pred = file.file.read()
@@ -23,19 +24,19 @@ async def upload(
     binary_seg_output = file.file.read()
     file.file.seek(0)
 
-    await user_services.validate_file_size_type(file)
+    await image_service.validate_file_size_type(file)
     file.file.seek(0)
     
     masks, pred_boxes, pred_class = segmentation_services.get_prediction(binary_pred, threshold=image_data.threshold)
     segmented_image = segmentation_services.get_segmented_image(binary_seg_output, masks, pred_boxes, pred_class)
     segmentation_data = convert_to_json(pred_boxes, pred_class)
 
-    await user_services.add_image_to_database(db, segmented_image, segmentation_data, image_data, file)
+    await image_service.add_image_to_database(db, segmented_image, segmentation_data, image_data, file)
 
     return {"saved_image": file.filename}
 
 @router.get("/get-image/{id}")
-def get_image(id: int, db: Session = Depends(get_db)):
+def get_image(id: int = Path(..., ge=0), db: Session = Depends(get_db)):
     image_service = ImageServices()
     image = image_service.get_single_image(id, db)
 
@@ -46,8 +47,8 @@ def get_image(id: int, db: Session = Depends(get_db)):
 
 @router.get("/get-images/{start_id}/{end_id}")
 def get_images(
-        start_id: int, 
-        end_id: int, 
+        start_id: int = Path(..., ge=0), 
+        end_id: int = Path(..., ge=0), 
         db: Session = Depends(get_db)
     ):
     image_service = ImageServices()
@@ -61,8 +62,23 @@ def get_images(
         headers={"Content-Disposition": "attachment; filename=images.zip"},
         )
 
+@router.get("/get-user-images/{username}/images/{start_id}/{end_id}")
+def get_user_images(username: str, start_id: int = Path(..., ge=0), end_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
+    user_service = UserServices()
+    image_service = ImageServices()
+
+    user = user_service.get_user_by_username(username, db)
+    image_dict = image_service.get_user_images_by_range(user, start_id, end_id, db)
+    zip_buffer = image_service.zip_images(image_dict)
+
+    return Response(
+        content=zip_buffer.getvalue(), 
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=images.zip"},
+        )
+
 @router.get("/get-image-moderator/{image_id}")
-def get_image_moderator(image_id: int, db: Session = Depends(get_db)):
+def get_image_moderator(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
     image_service = ImageServices()
     moderator = image_service.get_image_moderator(image_id, db)
     
@@ -70,8 +86,8 @@ def get_image_moderator(image_id: int, db: Session = Depends(get_db)):
       
 @router.get("/get-filtered-images/{filters}/{start_id}/{end_id}")
 def get_filtered_images(
-    start_id: int, 
-    end_id: int, 
+    start_id: int = Path(..., ge=0),
+    end_id: int = Path(..., ge=0),
     filters: ImageFilterParams = Depends(),
     db: Session = Depends(get_db),
     ):
@@ -94,21 +110,21 @@ def get_images_number(db: Session = Depends(get_db)):
     return {"number_of_images": number_of_images}
 
 @router.get("/suggest-annotations/{image_id}")
-def suggest_annotations(image_id: int, db: Session = Depends(get_db)):
-    image_services = ImageServices()
+def suggest_annotations(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
+    image_service = ImageServices()
     ai_annotation_services = AiAnnotationServices()
 
-    image = image_services.get_single_image(image_id, db)
-    unblobed_image = image_services.blob_to_image(image.image)
+    image = image_service.get_single_image(image_id, db)
+    unblobed_image = image_service.blob_to_image(image.image)
 
     annotations = ai_annotation_services.annotate_image(unblobed_image)
 
     return {"annotations": annotations}
 
 @router.get("/get-segmented-image/{image_id}")
-def get_segmented_image(image_id: int, db: Session = Depends(get_db)):
-    image_Services = ImageServices()
-    image = image_Services.get_single_image(image_id, db)
+def get_segmented_image(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    image = image_service.get_single_image(image_id, db)
     
     return Response(
         content=image.image, 
@@ -116,12 +132,12 @@ def get_segmented_image(image_id: int, db: Session = Depends(get_db)):
         )
 
 @router.get("/get-image-data/{image_id}")
-def get_image_data(image_id: int, db: Session = Depends(get_db)):
-    image_Services = ImageServices()
-    image_uploader = image_Services.get_uploader_by_image(image_id, db)
-    super_tag_author = image_Services.get_supertag_author_by_image(image_id, db)
+def get_image_data(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    image_uploader = image_service.get_uploader_by_image(image_id, db)
+    super_tag_author = image_service.get_supertag_author_by_image(image_id, db)
     
     return {
             "image_uploader": image_uploader,
             "super_tag_author": super_tag_author
-            }
+    }

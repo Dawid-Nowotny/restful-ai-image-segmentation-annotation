@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Path, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from .schemas import ModeratorResponse
+from .schemas import ModeratorResponse, SuperTagIdRequest
 from models import User
 from get_db import get_db
 from .service import *
@@ -35,8 +35,8 @@ async def make_moderator(
 
 @router.put("/assign-moderator/{image_id}/{username}")
 async def assign_moderator_to_image(
-    image_id: int,
     username: str,
+    image_id: int = Path(..., ge=0),
     current_user: User = Depends(UserServices.get_current_user),
     db: Session = Depends(get_db)
     ):
@@ -49,7 +49,7 @@ async def assign_moderator_to_image(
 
 @router.post("/add-super-tag", status_code=status.HTTP_201_CREATED)
 async def create_comment_super_tag(
-    image_id: int,
+    request: SuperTagIdRequest,
     comment_data: CommentRequest,
     current_user: User = Depends(UserServices.get_current_user),
     db: Session = Depends(get_db)
@@ -58,13 +58,13 @@ async def create_comment_super_tag(
     image_service = ImageServices()
     comment_service = CommentServices()
     
-    image = image_service.get_single_image(image_id, db)
+    image = image_service.get_single_image(request.image_id, db)
     comment_service.check_if_image_has_supertags(image, db)
     moderator_service.check_if_admin_or_moderator(current_user)
     moderator_service.check_if_moderator_is_assigned_to_image(image, current_user)
 
     tags = [await comment_service.create_tag(tag_data.tag, db) for tag_data in comment_data.tags]
 
-    await comment_service.create_comment(image_id, current_user, comment_data, tags, db)
+    await comment_service.create_comment(request.image_id, current_user, comment_data, tags, db)
 
     return {"message": "Super tag został dodany do obrazka"}

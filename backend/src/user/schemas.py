@@ -17,3 +17,9 @@ class UserOut(BaseModel):
         
 class TokenData(BaseModel):
     username: str | None = None
+
+class VerifyTotpRequest(BaseModel):
+    token: str
+
+class DisableTOTPRequest(BaseModel):
+    password: str

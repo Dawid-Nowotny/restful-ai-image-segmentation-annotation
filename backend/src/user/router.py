@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
 from .service import *
-from .schemas import UserCreateSchema, UserOut
+from .schemas import UserCreateSchema, UserOut, VerifyTotpRequest, DisableTOTPRequest
 from get_db import get_db
 
 router = APIRouter()
@@ -73,9 +73,23 @@ async def generate_qr(
 
 @router.post("/verify-code")
 async def verify_2fa(
-    token: str, current_user: User = Depends(UserServices.get_current_user)
+    request: VerifyTotpRequest, current_user: User = Depends(UserServices.get_current_user)
     ):
     totp_service = TOTPServices()
-    await totp_service.verify_2fa_token(token, current_user)
+    await totp_service.verify_2fa_token(request.token, current_user)
 
     return {"message": "Kod 2FA został pomyślnie zweryfikowany"}
+
+@router.post("/disable-totp")
+async def disable_2fa(
+    request: DisableTOTPRequest,
+    current_user: Annotated[User, Depends(UserServices.get_current_active_user)], 
+    db: Session = Depends(get_db)
+    ):
+    user_service = UserServices()
+    totp_service = TOTPServices()
+
+    user_service.check_password(current_user, request.password)
+    await totp_service.disable_totp(current_user, db)
+
+    return {"message": "Dwuetapowa weryfikacja została wyłączona"}

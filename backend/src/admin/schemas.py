@@ -6,3 +6,6 @@ class ModeratorResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class SuperTagIdRequest(BaseModel):
+    image_id: int

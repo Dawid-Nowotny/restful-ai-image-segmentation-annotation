@@ -47,10 +47,13 @@ export class ServerService {
             'Authorization': `Bearer ${data.accessToken}`,
             'Content-Type': 'application/json'
         });
-        const queryParam = `token=${data.verificationCode}`
-        const url = `${this.restUrl}/user/verify-code?${queryParam}`;
+        const url = `${this.restUrl}/user/verify-code`;
+        
+        const body = {
+            token: data.verificationCode
+        }
 
-        return this.http.post(url, {}, { headers });
+        return this.http.post(url, body, { headers });
     }
     /** POST REGISTER */
     postRegister(data: any): Observable<any> {

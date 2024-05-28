@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 import json
 
 def convert_to_json(pred_boxes, pred_class) -> str:
@@ -11,12 +12,13 @@ def convert_to_json(pred_boxes, pred_class) -> str:
     json_data = json.dumps(data)
     return json_data
 
-def create_images_dict(images) -> dict:
+def get_images_in_range(images, start_id, end_id):
+    if start_id < 0 or end_id < 0 or start_id >= end_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nieprawidłowy zakres identyfikatorów obrazów")
+
     images_dict = {}
-    for image in images:
+    images_in_range = images[start_id:end_id]
+    for image in images_in_range:
         images_dict[image.id] = image.image
 
     return images_dict
-
-def check_start_end_id(start_id, end_id) -> bool:
-    return start_id < 0 or end_id < 0 or start_id > end_id
