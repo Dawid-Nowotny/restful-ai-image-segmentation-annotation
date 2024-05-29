@@ -29,12 +29,12 @@ export class ImageViewComponent implements OnInit {
           this.image_id = params['id'];
       })
 
-      this.getImages(this.image_id);
-      this.getImageAndSuperTagsAuthors(this.image_id);
+      this.getImage();
+      this.getImageAndSuperTagsAuthors();
     }
 
-    getImages(imageId: number): void {
-      this.serverService.getImage(imageId).subscribe({
+    getImage(): void {
+      this.serverService.getImage(this.image_id).subscribe({
         next: (blob: Blob) => {
           this.imageBLOB = blob;
           const reader = new FileReader();
@@ -48,22 +48,10 @@ export class ImageViewComponent implements OnInit {
           console.error('Error fetching image:', error);
         }
       });
-
-      this.serverService.getSegmentedImage(imageId).subscribe({
-        next: (blob: Blob) => {
-          this.segmentedImageBLOB = blob;
-          const reader = new FileReader();
-          reader.onload = () => this.segmentedImageURL = reader.result;
-          reader.readAsDataURL(blob);
-        },
-        error: (error: Error)=> {
-          console.error('Error fetching segmented image:', error);
-        }
-      });
     }
 
-    getImageAndSuperTagsAuthors(imageId: number) {
-      this.serverService.getImageAndSuperTagsAuthors(imageId).subscribe({
+    getImageAndSuperTagsAuthors() {
+      this.serverService.getImageAndSuperTagsAuthors(this.image_id).subscribe({
         next: (result: any) => {
           this.imageAutor = result.image_uploader;
           this.superTagsAutor = result.super_tag_author;
@@ -74,38 +62,56 @@ export class ImageViewComponent implements OnInit {
       });
     }
 
-    changeImage(): void {
+    async changeImage(): Promise<void> {
       if (this.image == this.imageURL) {
+        if (this.segmentedImageURL == null) {
+          await this.getSegmentedImage();
+        }
         this.image = this.segmentedImageURL;
         this.buttonLabel = 'Wyświetl oryginał';
-      }
-      else {
+      } else {
         this.image = this.imageURL;
         this.buttonLabel = 'Wyświetl segmentację';
       }
     }
 
-    downloadImage(): void {
-      let blob: Blob | null = null;
-      let fileName: string = '';
+    getSegmentedImage(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        this.serverService.getSegmentedImage(this.image_id).subscribe({
+          next: (blob: Blob) => {
+            this.segmentedImageBLOB = blob;
+            const reader = new FileReader();
+            reader.onload = () => {
+              this.segmentedImageURL = reader.result;
+              resolve();
+            };
+            reader.readAsDataURL(blob);
+          },
+          error: (error: Error) => {
+            console.error('Error fetching segmented image:', error);
+            reject(error);
+          }
+        });
+      });
+    }
 
+    downloadImage(): void {
       if (this.image == this.imageURL && this.imageBLOB) {
-        blob = this.imageBLOB;
-        fileName = `${this.image_id}.jpg`;
-      }
-      else if (this.image == this.segmentedImageURL && this.segmentedImageBLOB) {
-        blob = this.segmentedImageBLOB;
-        fileName = `${this.image_id}-segmented.jpg`;
-      }
-      else {
+        const link =  window.URL.createObjectURL(this.imageBLOB);
+        this.triggerDownload(link, `${this.image_id}.jpg`);
+      } else if (this.image == this.segmentedImageURL && this.segmentedImageBLOB) {
+        const link =  window.URL.createObjectURL(this.segmentedImageBLOB);
+        this.triggerDownload(link, `${this.image_id}-segmented.jpg`);
+      } else {
         console.error('Nie można zapisać obrazu');
         return;
       }
-    
-      const link = window.URL.createObjectURL(blob);
+    }
+
+    triggerDownload(link: string, filename: string) {
       const a = document.createElement('a');
       a.href = link;
-      a.download = fileName;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
