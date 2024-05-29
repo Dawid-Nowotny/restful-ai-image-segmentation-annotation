@@ -102,6 +102,18 @@ class ImageServices:
         if not image.moderator:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono moderatora dla danego zdjecia")
         return image.moderator
+    
+    def get_image_threshold(self, image_id: int, db: Session) -> json:
+        result = db.query(Image.threshold).filter(Image.id == image_id).first()
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak progu detekcji")
+        return result[0]
+
+    def get_image_coordinates_classes(self, image_id: int, db: Session) -> json:
+        result = db.query(Image.coordinates_classes).filter(Image.id == image_id).first()
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak koordynatów klas")
+        return result[0]
 
     async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
         image_bytes = BytesIO()

@@ -141,3 +141,14 @@ def get_image_data(image_id: int = Path(..., ge=0), db: Session = Depends(get_db
             "image_uploader": image_uploader,
             "super_tag_author": super_tag_author
     }
+
+@router.get("/get-image-detections/{image_id}")
+def get_image_detections(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    threshold = image_service.get_image_threshold(image_id, db)
+    coordinates_classes = image_service.get_image_coordinates_classes(image_id, db)
+
+    return {
+        "threshold": threshold,
+        "coordinates_classes": coordinates_classes
+    }
