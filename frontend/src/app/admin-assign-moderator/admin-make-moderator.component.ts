@@ -10,13 +10,13 @@ type UserData = {
 };
 
 @Component({
-	selector: 'app-admin-assign-moderator',
+	selector: 'app-admin-make-moderator',
 	standalone: true,
 	imports: [CommonModule],
-	templateUrl: './admin-assign-moderator.component.html',
-	styleUrl: './admin-assign-moderator.component.css'
+	templateUrl: './admin-make-moderator.component.html',
+	styleUrl: './admin-make-moderator.component.css'
 })
-export class AdminAssignModeratorComponent implements OnInit{
+export class AdminMakeModeratorComponent implements OnInit{
 
 	userList: UserData[] = [];
 	successMessage: string = '';
@@ -33,7 +33,6 @@ export class AdminAssignModeratorComponent implements OnInit{
 		this.serverService.getUsers().subscribe({
 			next: (response) => {
 				this.userList = response;
-				console.log(this.userList);
 			},
 			error: (error) => {
 				console.log(error);

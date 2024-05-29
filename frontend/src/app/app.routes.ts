@@ -10,7 +10,7 @@ import { AdminMainPageComponent } from './admin-main-page/admin-main-page.compon
 import { AdminImageViewComponent } from './admin-image-view/admin-image-view.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { hasRoleGuard } from './guards/has-role.guard';
-import { AdminAssignModeratorComponent } from './admin-assign-moderator/admin-assign-moderator.component';
+import { AdminMakeModeratorComponent } from './admin-assign-moderator/admin-make-moderator.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent },
@@ -36,8 +36,8 @@ export const routes: Routes = [
         }
     },
     {
-        path: 'admin/assign-moderator',
-        component: AdminAssignModeratorComponent,
+        path: 'admin/make-moderators',
+        component: AdminMakeModeratorComponent,
         canActivate: [hasRoleGuard],
         data: {
             roles: ['Admin']

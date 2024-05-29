@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminAssignModeratorComponent } from './admin-assign-moderator.component';
+import { AdminAssignModeratorComponent } from './admin-make-moderator.component';
 
 describe('AdminAssignModeratorComponent', () => {
 	let component: AdminAssignModeratorComponent;
