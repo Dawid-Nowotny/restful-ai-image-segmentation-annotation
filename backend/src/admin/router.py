@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from .schemas import ModeratorResponse, SuperTagIdRequest
+from .schemas import ModeratorResponse, UserResponse, SuperTagIdRequest
 from models import User
 from get_db import get_db
 from .service import *
@@ -19,6 +19,13 @@ def get_moderators(db: Session = Depends(get_db)):
     moderators = admin_service.get_moderators(db)
 
     return moderators
+
+@router.get("/users-list", response_model=List[UserResponse])
+def get_users(db: Session = Depends(get_db)):
+    admin_service = AdminServices()
+    users = admin_service.get_users(db)
+
+    return users
 
 @router.put("/make-moderator/{username}")
 async def make_moderator(
