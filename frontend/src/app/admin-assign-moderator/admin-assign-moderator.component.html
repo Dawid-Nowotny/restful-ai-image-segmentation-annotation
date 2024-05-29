@@ -18,11 +18,18 @@
                 <td>{{ user.role }}</td>
                 <td style="width: 30%;">
                     <div>
-                        <input type="button" class="btn btn-success" value="Przypisz role moderatora">
+                        <input type="button" class="btn btn-success" value="Przypisz role moderatora" (click)="assignModeratorRole(user.username)">
                     </div>
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <div *ngIf="successMessage" class="alert alert-success" role="alert">
+        {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+    </div>
 
 </div>

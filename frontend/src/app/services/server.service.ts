@@ -144,4 +144,13 @@ export class ServerService {
         const url = `${this.restUrl}/admin/assign-moderator/${imageId}/${username}`;
         return this.http.put(url, {}, { headers });
     }
+
+    assignModeratorRole(accessToken: string, username: string) {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/admin/make-moderator/${username}`;
+        return this.http.put(url, {}, { headers });
+    }
 }

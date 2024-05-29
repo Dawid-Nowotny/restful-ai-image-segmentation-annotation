@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../services/server.service';
 import { CommonModule } from '@angular/common';
+import { LoggedUserService } from '../services/logged-user.service';
 
 type UserData = {
 	username: string,
@@ -18,7 +19,11 @@ type UserData = {
 export class AdminAssignModeratorComponent implements OnInit{
 
 	userList: UserData[] = [];
-	constructor(private serverService: ServerService) {}
+	successMessage: string = '';
+	errorMessage: string = '';
+	
+
+	constructor(private serverService: ServerService, private loggedUserService: LoggedUserService) {}
 
 	ngOnInit(): void {
 		this.getUsers();
@@ -34,6 +39,24 @@ export class AdminAssignModeratorComponent implements OnInit{
 				console.log(error);
 			}
 		})
+	}
+
+	assignModeratorRole(username: string){
+		this.serverService.assignModeratorRole(this.loggedUserService.getAccessToken(), username).subscribe({
+			next: (response: any) => {
+				this.getUsers();
+				this.successMessage = response.message + ` (${username})`;
+			},
+			error: (error) => {
+				this.errorMessage = error.error.detail;
+				console.log(error);
+			}
+		})
+	}
+
+	resetMessages(){
+		this.successMessage = '';
+		this.errorMessage = '';
 	}
 
 }
