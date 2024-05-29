@@ -125,6 +125,11 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    getUsers(): Observable<any> {
+        const url = `${this.restUrl}/admin/users-list`;
+        return this.http.get(url);
+    }
+
     getImageModerator(imageId: number): Observable<any> {
         const url = `${this.restUrl}/images/get-image-moderator/${imageId}`;
         return this.http.get(url);
