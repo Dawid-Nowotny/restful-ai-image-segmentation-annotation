@@ -127,7 +127,7 @@ def get_segmented_image(image_id: int = Path(..., ge=0), db: Session = Depends(g
     image = image_service.get_single_image(image_id, db)
     
     return Response(
-        content=image.image, 
+        content=image.segmented_image, 
         media_type="image/jpg"
         )
 
