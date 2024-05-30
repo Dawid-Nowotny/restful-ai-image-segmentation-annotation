@@ -131,16 +131,19 @@ def get_segmented_image(image_id: int = Path(..., ge=0), db: Session = Depends(g
         media_type="image/jpg"
         )
 
-@router.get("/get-image-data/{image_id}")
+@router.get("/get-image-uploader/{image_id}")
 def get_image_data(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
     image_service = ImageServices()
     image_uploader = image_service.get_uploader_by_image(image_id, db)
-    super_tag_author = image_service.get_supertag_author_by_image(image_id, db)
     
-    return {
-            "image_uploader": image_uploader,
-            "super_tag_author": super_tag_author
-    }
+    return {"image_uploader": image_uploader}
+
+@router.get("/get-image-super-tag-author/{image_id}")
+def get_image_data(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    super_tag_author = image_service.get_super_tag_author_by_image(image_id, db)
+    
+    return {"super_tag_author": super_tag_author}
 
 @router.get("/get-image-detections/{image_id}")
 def get_image_detections(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):

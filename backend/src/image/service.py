@@ -86,9 +86,12 @@ class ImageServices:
     
     def get_uploader_by_image(self, image_id: int, db: Session) -> str:
         result = db.query(User.username).join(Image, User.id == Image.uploader_id).filter(Image.id == image_id).first()
+        
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak przesyłającego zdjęcie")
         return result[0]
     
-    def get_supertag_author_by_image(self, image_id: int, db: Session) -> str:
+    def get_super_tag_author_by_image(self, image_id: int, db: Session) -> str:
         result = db.query(User.username).join(Comment, Comment.user_id == User.id).join(
             Image, Image.id == Comment.image_id).filter(Image.id == image_id).first()
 
@@ -105,6 +108,7 @@ class ImageServices:
     
     def get_image_threshold(self, image_id: int, db: Session) -> json:
         result = db.query(Image.threshold).filter(Image.id == image_id).first()
+        
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak progu detekcji")
         return result[0]
