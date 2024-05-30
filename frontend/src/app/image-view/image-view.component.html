@@ -15,12 +15,13 @@
                                 <button class="btn btn-success btn-rg" (click)="downloadImage()">Zapisz obraz</button>
                             </div>
                         </div>
-                        <div class="rounded mt-3 p-3" style="background-color: lightgray;">
-                            Adnotacje
+                        <div class="rounded mt-3 p-3 overflow-auto" style="background-color: lightgray; max-height: 25%;">
+                            Próg detekcji: {{ threshold }}<br>
+                            Klasy: {{ annotations | json }}
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-6">
-                                <h5 class="mb-0">{{ imageAutor }}</h5>
+                                <h5 class="mb-0">{{ imageAuthor }}</h5>
                                 <p class="small">Autor zdjęcia</p>
                             </div>
                             <div class="col-md-6" *ngIf="superTagsAutor != ''">

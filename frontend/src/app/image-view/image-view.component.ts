@@ -12,8 +12,10 @@ import { ServerService } from '../services/server.service';
 })
 
 export class ImageViewComponent implements OnInit {
-    imageAutor: string = '';
+    imageAuthor: string = '';
     superTagsAutor: string = '';
+    threshold: string = '';
+    annotations: string = '';
     image_id: number = 0;
     imageURL: string | ArrayBuffer | null = null;
     imageBLOB: Blob | null = null;
@@ -32,6 +34,7 @@ export class ImageViewComponent implements OnInit {
       this.getImage();
       this.getImageAuthor();
       this.getSuperTagsAuthor();
+      this.getImageDetections();
     }
 
     getImage(): void {
@@ -54,7 +57,7 @@ export class ImageViewComponent implements OnInit {
     getImageAuthor() {
       this.serverService.getImageAuthor(this.image_id).subscribe({
         next: (result: any) => {
-          this.imageAutor = result.image_uploader;
+          this.imageAuthor = result.image_uploader;
         },
         error: (error: Error)=> {
           console.error('Error fetching image author', error);
@@ -67,10 +70,23 @@ export class ImageViewComponent implements OnInit {
         next: (result: any) => {
           this.superTagsAutor = result.super_tag_author;
         },
-        error: (error: Error)=> {
+        error: (error: Error) => {
           console.error('Error fetching super tags author', error);
         }
       });
+    }
+
+    getImageDetections() {
+      this.serverService.getImageDetections(this.image_id).subscribe({
+        next: (result: any) => {
+          this.threshold = result.threshold;
+          this.annotations = result.coordinates_classes;
+          console.log(result)
+        },
+        error: (error: Error) => {
+          console.error("Error fetching detections", error);
+        }
+      })
     }
 
     async changeImage(): Promise<void> {

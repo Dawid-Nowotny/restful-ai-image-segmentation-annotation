@@ -91,6 +91,11 @@ export class ServerService {
         return this.http.get(url)
     }
 
+    getImageDetections(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-detections/${image_id}`;
+        return this.http.get(url)
+    }
+
     getImagesNumber(){
         const url = `${this.restUrl}/images/get-images-number`;
         return this.http.get(url);
