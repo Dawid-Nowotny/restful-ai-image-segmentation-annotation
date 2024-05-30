@@ -30,7 +30,8 @@ export class ImageViewComponent implements OnInit {
       })
 
       this.getImage();
-      this.getImageAndSuperTagsAuthors();
+      this.getImageAuthor();
+      this.getSuperTagsAuthor();
     }
 
     getImage(): void {
@@ -50,14 +51,24 @@ export class ImageViewComponent implements OnInit {
       });
     }
 
-    getImageAndSuperTagsAuthors() {
-      this.serverService.getImageAndSuperTagsAuthors(this.image_id).subscribe({
+    getImageAuthor() {
+      this.serverService.getImageAuthor(this.image_id).subscribe({
         next: (result: any) => {
           this.imageAutor = result.image_uploader;
+        },
+        error: (error: Error)=> {
+          console.error('Error fetching image author', error);
+        }
+      });
+    }
+
+    getSuperTagsAuthor() {
+      this.serverService.getSuperTagsAuthor(this.image_id).subscribe({
+        next: (result: any) => {
           this.superTagsAutor = result.super_tag_author;
         },
         error: (error: Error)=> {
-          console.error('Error fetching authors', error);
+          console.error('Error fetching super tags author', error);
         }
       });
     }
@@ -104,7 +115,6 @@ export class ImageViewComponent implements OnInit {
         this.triggerDownload(link, `${this.image_id}-segmented.jpg`);
       } else {
         console.error('Nie można zapisać obrazu');
-        return;
       }
     }
 

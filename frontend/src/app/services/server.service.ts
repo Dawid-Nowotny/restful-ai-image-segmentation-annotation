@@ -81,8 +81,13 @@ export class ServerService {
         return this.http.get(url, { responseType: 'blob' })
     }
 
-    getImageAndSuperTagsAuthors(image_id: number) {
-        const url = `${this.restUrl}/images/get-image-data/${image_id}`;
+    getImageAuthor(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-uploader/${image_id}`;
+        return this.http.get(url)
+    }
+
+    getSuperTagsAuthor(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-super-tag-author/${image_id}`;
         return this.http.get(url)
     }
 
