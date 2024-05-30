@@ -81,8 +81,7 @@
         </div>
         <div class="modal-body">
             <p>Wpisz super tagi (oddzielone przecinkami):</p>
-            <input [(ngModel)]="tagsInputField" type="text" class="form-control" placeholder="Tagi" aria-label="Tagi"
-                aria-describedby="basic-addon1" required>
+            <input type="text" [(ngModel)]="tagsInputField" (input)="filterOnInput($event)" class="form-control" placeholder="Tagi" aria-label="Tagi"aria-describedby="basic-addon1">
         </div>
         <div *ngIf="errorMessage" class="alert alert-danger mx-auto" role="alert">
             {{ errorMessage }}

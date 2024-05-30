@@ -32,6 +32,8 @@ export class AdminImageViewComponent implements OnInit {
 	successMessage: string;
 	errorMessage: string;
 
+	readonly tagsPattern: RegExp = /[^a-zA-Z0-9,]/g;
+	
 	ngOnInit(): void {
 		this.id = parseInt(this.route.snapshot.paramMap.get('id') ?? "-1");
 
@@ -41,8 +43,8 @@ export class AdminImageViewComponent implements OnInit {
 	}
 
 	constructor(
-		private route: ActivatedRoute, 
-		private serverService: ServerService, 
+		private route: ActivatedRoute,
+		private serverService: ServerService,
 		private loggedUserService: LoggedUserService,
 		private modalService: BsModalService
 	) {
@@ -61,7 +63,7 @@ export class AdminImageViewComponent implements OnInit {
 		this.errorMessage = '';
 	}
 
-	fetchImage(){
+	fetchImage() {
 		this.serverService.getImage(this.id).subscribe({
 			next: (response: any) => {
 				this.image = response;
@@ -73,7 +75,7 @@ export class AdminImageViewComponent implements OnInit {
 		})
 	}
 
-	getModeratorsList(){
+	getModeratorsList() {
 		this.serverService.getModerators().subscribe({
 			next: (response: any) => {
 				this.moderatorList = response.map((moderator: any) => moderator.username);
@@ -134,16 +136,16 @@ export class AdminImageViewComponent implements OnInit {
 		})
 	}
 
-	openModal(template: TemplateRef<void>){
+	openModal(template: TemplateRef<void>) {
 		this.modalRef = this.modalService.show(template);
 	}
 
-	addSuperTag(){
+	addSuperTag() {
 		this.tagsInputField = this.tagsInputField.replaceAll(" ", "").trim();
 		let tagsArray: string[] = this.tagsInputField.split(',');
 		tagsArray = this.filterEmptyArrayElements(tagsArray);
 
-		if(tagsArray.length <= 0){
+		if (tagsArray.length <= 0) {
 			this.errorMessage = "Podaj co namniej 1 tag"
 			return;
 		}
@@ -165,7 +167,13 @@ export class AdminImageViewComponent implements OnInit {
 		})
 	}
 
-	resetMessages(){
+	filterOnInput(event: any) {
+		const input = event.target as HTMLInputElement;
+		input.value = input.value.replace(/[^a-zA-Z0-9,]/g, '');
+		this.tagsInputField = input.value;
+	}
+
+	resetMessages() {
 		this.successMessage = "";
 		this.errorMessage = "";
 	}
