@@ -78,6 +78,11 @@ export class ServerService {
         return this.http.get(url, { responseType: 'blob' })
     }
 
+    getImageSuggestedAnnotations(imageId: number): Observable<any> {
+        const url = `${this.restUrl}/images/suggest-annotations/${imageId}`;
+        return this.http.get(url);
+    }
+
     getImageAndSuperTagsAuthors(image_id: number) {
         const url = `${this.restUrl}/images/get-image-data/${image_id}`;
         return this.http.get(url)
@@ -153,4 +158,6 @@ export class ServerService {
         const url = `${this.restUrl}/admin/make-moderator/${username}`;
         return this.http.put(url, {}, { headers });
     }
+
+
 }

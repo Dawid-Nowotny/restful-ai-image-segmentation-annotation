@@ -81,6 +81,7 @@
         </div>
         <div class="modal-body">
             <p>Wpisz super tagi (oddzielone przecinkami):</p>
+            <p><strong>Proponowane tagi:</strong> {{suggestedTags.length > 0? suggestedTags : "(oczekiwanie na proponowane tagi...)"}}</p>
             <input type="text" [(ngModel)]="tagsInputField" (input)="filterOnInput($event)" class="form-control" placeholder="Tagi" aria-label="Tagi"aria-describedby="basic-addon1">
         </div>
         <div *ngIf="errorMessage" class="alert alert-danger mx-auto" role="alert">

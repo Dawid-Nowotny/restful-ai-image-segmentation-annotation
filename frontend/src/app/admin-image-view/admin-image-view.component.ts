@@ -17,20 +17,21 @@ import { FormsModule } from '@angular/forms';
 	styleUrls: ['./admin-image-view.component.css']
 })
 export class AdminImageViewComponent implements OnInit {
-	id: number;
-	image: Blob;
-	imageUrl: string;
-	moderatorList: string[];
-	selectedModerator: string;
-	currentModerator: string;
+	id: number = -1;
+	image: Blob = new Blob();
+	imageUrl: string = '';
+	moderatorList: string[] = [];
+	selectedModerator: string = '';
+	currentModerator: string = '';
 	imageSuperTags: {
-		author: string;
-		superTags: string[];
+		author: string,
+		superTags: string[],
 	}
 	modalRef?: BsModalRef;
-	tagsInputField: string;
-	successMessage: string;
-	errorMessage: string;
+	suggestedTags: string[] = [];
+	tagsInputField: string = '';
+	successMessage: string = '';
+	errorMessage: string = '';
 
 	readonly tagsPattern: RegExp = /[^a-zA-Z0-9,]/g;
 	
@@ -48,19 +49,10 @@ export class AdminImageViewComponent implements OnInit {
 		private loggedUserService: LoggedUserService,
 		private modalService: BsModalService
 	) {
-		this.id = -1;
-		this.moderatorList = [];
-		this.selectedModerator = '';
-		this.currentModerator = '';
-		this.image = new Blob();
-		this.imageUrl = '';
 		this.imageSuperTags = {
 			author: '',
 			superTags: []
 		};
-		this.tagsInputField = '';
-		this.successMessage = '';
-		this.errorMessage = '';
 	}
 
 	fetchImage() {
@@ -138,6 +130,19 @@ export class AdminImageViewComponent implements OnInit {
 
 	openModal(template: TemplateRef<void>) {
 		this.modalRef = this.modalService.show(template);
+		this.getImageSuggestedAnnotations();
+	}
+
+	getImageSuggestedAnnotations(){
+		this.serverService.getImageSuggestedAnnotations(this.id).subscribe({
+			next: (response: any) => {
+				this.suggestedTags = response.annotations;
+			},
+			error: (error: HttpErrorResponse) => {
+				this.errorMessage = error.error.detail;
+				console.log(error);
+			}
+		})
 	}
 
 	addSuperTag() {
