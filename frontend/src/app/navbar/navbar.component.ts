@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
+import { LoggedUserService } from '../services/logged-user.service';
 
 @Component({
     selector: 'app-navbar',
@@ -14,13 +15,14 @@ import { Title } from '@angular/platform-browser';
 export class NavbarComponent implements OnInit, AfterViewInit {
     currentComponent: string | null = null;
     routeParams: any;
-    @Input() itemId: string = '';
-    @Input() itemName: string = '';
-    @Input() itemCategory: string = '';
-    @Input() itemBrand: string = '';
     @Input() notFound: string = '';
 
-    constructor(private router: Router, private titleService: Title, private route: ActivatedRoute) { }
+    constructor(
+        private router: Router, 
+        private titleService: Title, 
+        private route: ActivatedRoute,
+        public loggedUserService: LoggedUserService
+    ) { }
 
     ngOnInit(): void {
         this.router.events
@@ -38,13 +40,6 @@ export class NavbarComponent implements OnInit, AfterViewInit {
         let pageTitle = '';
 
         this.route.queryParams.subscribe(params => {
-            if (params['brand']) {
-                this.itemBrand = params['brand'];
-            }
-            if (params['category']) {
-                this.itemCategory = params['category'];
-            }
-
             if (currentUrl === '/') {
                 pageTitle = 'Strona główna';
             } else if (currentUrl === '/login') {
