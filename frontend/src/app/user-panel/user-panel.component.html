@@ -29,7 +29,7 @@
                     </li>
                     <li class="list-inline-item">
                       <div class="profile mr-3">
-                          <a href="#" class="btn btn-outline-dark btn-lg btn-block btn-lg-sm">{{authorizationButtonMessage}}</a>
+                          <a class="btn btn-outline-dark btn-lg btn-block btn-lg-sm" (click)="openModal()">2FA</a>
                       </div>
                   </li>
                     <li class="list-inline-item">
@@ -65,3 +65,6 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal -->
+<app-totp-user-panel-modal></app-totp-user-panel-modal>
