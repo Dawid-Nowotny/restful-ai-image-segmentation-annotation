@@ -68,4 +68,8 @@ export class NavbarComponent implements OnInit, AfterViewInit {
     setPageTitle(title: string): void {
         this.titleService.setTitle(title);
     }
+
+    logOut(){
+        this.loggedUserService.logOut();
+    }
 }

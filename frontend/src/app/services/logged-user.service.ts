@@ -59,4 +59,8 @@ export class LoggedUserService {
 	clearLoggedUserData(): void {
 		this.localStorageService.clear();
 	}
+
+	logOut(): void {
+		this.clearLoggedUserData();
+	}
 }
