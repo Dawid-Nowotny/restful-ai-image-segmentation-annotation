@@ -53,7 +53,7 @@ export class LoggedUserService {
 			return null;
 		}
 
-		return Boolean(isTotpEnabledAsString);
+		return isTotpEnabledAsString === 'true';
 	}
 
 	clearLoggedUserData(): void {

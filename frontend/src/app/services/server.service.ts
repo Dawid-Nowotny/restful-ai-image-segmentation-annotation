@@ -42,6 +42,15 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    generateQrCode(accessToken: string): Observable<Blob> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`
+        });
+        const url = `${this.restUrl}/user/generate-qr`;
+
+        return this.http.post(url, null, { headers, responseType: 'blob' });
+    }
+
     verifyTOTP(data: any): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${data.accessToken}`,
@@ -55,6 +64,18 @@ export class ServerService {
 
         return this.http.post(url, body, { headers });
     }
+
+    disableTOTP(password: string, accessToken: string): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/user/disable-totp`;
+        const body = { password: password };
+
+        return this.http.put(url, body, { headers });
+    }
+
     /** POST REGISTER */
     postRegister(data: any): Observable<any> {
         const url = `${this.restUrl}/user/register`;
@@ -70,6 +91,11 @@ export class ServerService {
         const url = `${this.restUrl}/images/get-image/${id}`;
         return this.http.get(url, {responseType: "blob"});
     }
+
+    getUserImages(username: string, startId: number, endId: number) {
+        const url = `${this.restUrl}/images/get-user-images/${username}/images/${startId}/${endId}`;
+        return this.http.get(url, {  responseType: 'arraybuffer' });
+      }
 
     getImagesAsZip(startId: number, endId: number) {
         const url = `${this.restUrl}/images/get-images/${startId}/${endId}`;
