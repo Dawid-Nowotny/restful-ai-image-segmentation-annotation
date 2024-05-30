@@ -80,7 +80,7 @@ async def verify_2fa(
 
     return {"message": "Kod 2FA został pomyślnie zweryfikowany"}
 
-@router.post("/disable-totp")
+@router.put("/disable-totp")
 async def disable_2fa(
     request: DisableTOTPRequest,
     current_user: Annotated[User, Depends(UserServices.get_current_active_user)], 
