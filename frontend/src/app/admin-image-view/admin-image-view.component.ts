@@ -141,8 +141,10 @@ export class AdminImageViewComponent implements OnInit {
 	addSuperTag(){
 		this.tagsInputField = this.tagsInputField.replaceAll(" ", "").trim();
 		let tagsArray: string[] = this.tagsInputField.split(',');
+		tagsArray = this.filterEmptyArrayElements(tagsArray);
 
 		if(tagsArray.length <= 0){
+			this.errorMessage = "Podaj co namniej 1 tag"
 			return;
 		}
 
@@ -166,5 +168,9 @@ export class AdminImageViewComponent implements OnInit {
 	resetMessages(){
 		this.successMessage = "";
 		this.errorMessage = "";
+	}
+
+	filterEmptyArrayElements(array: string[]) {
+		return array.filter((element) => element !== '');
 	}
 }
