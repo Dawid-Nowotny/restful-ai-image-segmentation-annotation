@@ -1,1 +1,21 @@
-<p>totp-user-panel-modal works!</p>
+<div class="modal" tabindex="-1" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Uwierzytelnianie dwuskładnikowe</h5>
+            </div>
+            <div class="modal-body">
+                <img *ngIf="imageUrl" [src]="imageUrl" alt="QR Code" class="img-fluid">
+                <p>{{modalMessage}}</p>
+                <input type="password" [(ngModel)]="password" [ngModelOptions]="{ standalone: true }"
+                       [ngStyle]="{'display': isAuthorizationEnabled ? 'block' : 'none'}"
+                       class="form-control" placeholder="Hasło" aria-label="Hasło"
+                       aria-describedby="basic-addon1">
+            </div>
+            <div class="modal-footer">
+                <button [ngStyle]="{'display': isConfirmButtonDisable ? 'none' : 'block'}" type="button" class="btn btn-primary" (click)="confirm()">Potwierdź</button>
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Wyjdź</button>
+            </div>
+        </div>
+    </div>
+</div>
