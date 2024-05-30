@@ -83,6 +83,13 @@ def get_image_moderator(image_id: int = Path(..., ge=0), db: Session = Depends(g
     moderator = image_service.get_image_moderator(image_id, db)
     
     return {"username": moderator.username}
+
+@router.get("/get-image-super-tags/{image_id}")
+def get_image_supertags(image_id: int, db: Session = Depends(get_db)):
+    image_service = ImageServices()
+    super_tags = image_service.get_image_super_tags(image_id, db)
+    
+    return super_tags
       
 @router.get("/get-filtered-images/{filters}/{start_id}/{end_id}")
 def get_filtered_images(

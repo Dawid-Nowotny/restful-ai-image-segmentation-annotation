@@ -51,13 +51,21 @@ export class LoginService {
 
                     this.successMessage = 'Zalogowano!';
                     this.errorMessage = '';
-                    this.router.navigate(['/']);
+                    this.redirectBasedOnRole(userDataResponse.role);
                 },
                 error: (error: HttpErrorResponse) => {
                     this.errorMessage = error.error.detail;
                 }
             }
         )
+    }
+
+    redirectBasedOnRole(role: string): void {
+        if (role === 'Admin') {
+            this.router.navigate(['/admin']);
+        } else if (role === 'User') {
+            this.router.navigate(['/']);
+        }
     }
 
     saveAccessToken(accessToken: string): void {

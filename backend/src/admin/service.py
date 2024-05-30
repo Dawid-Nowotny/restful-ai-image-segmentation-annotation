@@ -11,6 +11,10 @@ class AdminServices:
     def get_moderators(self, db) -> List[User]:
         moderators = db.query(User).filter(User.role == "Moderator").all()
         return moderators
+    
+    def get_users(self, db) -> List[User]:
+        users = db.query(User).filter(User.role == "User").all()
+        return users
         
     async def make_moderator(self, username, db) -> None:
         user = db.query(User).filter(User.username == username).first()

@@ -10,33 +10,43 @@ import { AdminMainPageComponent } from './admin-main-page/admin-main-page.compon
 import { AdminImageViewComponent } from './admin-image-view/admin-image-view.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { hasRoleGuard } from './guards/has-role.guard';
+import { AdminMakeModeratorComponent } from './admin-assign-moderator/admin-make-moderator.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'image-view/:id', component: ImageViewComponent },
-    { path: 'image-upload', component: ImageUploadComponent},
+    { path: 'image-upload', component: ImageUploadComponent },
     { path: 'user/:username', component: UserPanelComponent },
-    { 
-        path: 'admin', 
+    {
+        path: 'admin',
         component: AdminMainPageComponent,
         canActivate: [hasRoleGuard],
         data: {
             roles: ['Admin']
-        } 
+        }
     },
-    { 
-        path: 'admin/image-view/:id', 
+    {
+        path: 'admin/image-view/:id',
         component: AdminImageViewComponent,
         canActivate: [hasRoleGuard],
         data: {
             roles: ['Admin']
-        } 
+        }
+    },
+    {
+        path: 'admin/make-moderators',
+        component: AdminMakeModeratorComponent,
+        canActivate: [hasRoleGuard],
+        data: {
+            roles: ['Admin']
+        }
     },
     { path: 'unauthorized', component: UnauthorizedComponent },
     {
-        path: '**', pathMatch: 'full',
+        path: '**',
+        pathMatch: 'full',
         component: NotFoundComponent
     },
 ];
