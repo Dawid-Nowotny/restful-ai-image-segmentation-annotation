@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoggedUserService } from '../services/logged-user.service';
 import { TotpUserPanelModalComponent } from '../totp-user-panel-modal/totp-user-panel-modal.component';
+import { ImageFileData, ImageService } from '../services/image.service';
 
 
 @Component({
@@ -25,16 +26,22 @@ export class UserPanelComponent {
   isLoggedUser: boolean = false;
   errorMessage: string | undefined;
   @ViewChild(TotpUserPanelModalComponent) totpUserPanelModalModalComponent!: TotpUserPanelModalComponent;
+	imagesArray: ImageFileData[] = [];
+  baseUrlToImageDetails: string = "image-view";
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private serverService: ServerService, 
-              private loggedUserService: LoggedUserService) { }
+              private loggedUserService: LoggedUserService,
+              private imageService: ImageService) { }
 
   ngOnInit() {
     const usernameFromRoute = this.route.snapshot.paramMap.get('username');
     const loggedUser = this.loggedUserService.getUsername();
     this.isAuthorizationEnabled = this.loggedUserService.isTotpEnabled();
+    
+    if(usernameFromRoute)
+      this.getImages(usernameFromRoute, 0, 6);
 
     if (usernameFromRoute === loggedUser) {
       this.isLoggedUser = true;
@@ -65,5 +72,21 @@ export class UserPanelComponent {
   openModal(){
     this.totpUserPanelModalModalComponent.openModal();
 }
+
+  getImages(username: string, startId: number, endId: number) {
+    this.serverService.getUserImages(username, startId, endId).subscribe({
+      next: (response: any) => {
+        const blob = new Blob([response], { type: 'application/zip' });
+        this.imagesArray = this.imageService.getImagesArrayFromZip(blob);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.log(error);
+      }
+    })
+  }
+
+  navigateToImageDetails(routeParam: string) {
+		this.router.navigate([`${this.baseUrlToImageDetails}/` , routeParam]);
+	}
 
 }
