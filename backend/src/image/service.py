@@ -23,7 +23,7 @@ except:
     from src.models import Image, Tag, User, Comment
 from .schemas import ImageData, ImageFilterParams
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
-from .utils import create_images_dict, check_start_end_id
+from .utils import get_images_in_range
 
 class ImageServices:
     def get_single_image(self, image_id: int, db: Session) -> Image:
@@ -59,20 +59,13 @@ class ImageServices:
         
         return super_tags_dict
 
-            
-
     def get_images_by_range(self, start_id: int, end_id: int, db: Session) -> dict:
-        if check_start_end_id(start_id, end_id):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
-    
         images = db.query(Image).all()
 
         if not images:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów w podanym zakresie")
-        
-        images = images[start_id:end_id]
-        images_dict = create_images_dict(images)
-        return images_dict
+
+        return get_images_in_range(images, start_id, end_id)
     
     def get_filtered_images_by_range(self, filters: ImageFilterParams, start_id: int, end_id: int, db: Session) -> dict:
         query = db.query(Image).options(joinedload(Image.comments).joinedload(Comment.tags))
@@ -93,13 +86,15 @@ class ImageServices:
         if not images:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów spełniających podane kryteria filtrowania.")
 
-        if check_start_end_id(start_id, end_id):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identyfikator początkowy nie może być większy niż identyfikator końcowy")
-        
-        images = images[start_id:end_id]
-        images_dict = create_images_dict(images)
+        return get_images_in_range(images, start_id, end_id)
+    
+    def get_user_images_by_range(self, user: User, start_id: int, end_id: int, db: Session) -> dict:
+        images = db.query(Image).filter(Image.uploader_id == user.id).order_by(Image.id).all()
 
-        return images_dict
+        if not images:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono obrazów spełniających podane kryteria filtrowania.")
+
+        return get_images_in_range(images, start_id, end_id)
 
     def zip_images(self, images_dict: dict) -> BytesIO:
         zip_buffer = BytesIO()
@@ -126,8 +121,14 @@ class ImageServices:
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak autora supertagów")
         return result[0]
+    
+    def get_image_moderator(self, image_id: int, db: Session) -> User:
+        image = self.get_single_image(image_id, db)
 
-class UserServices:
+        if not image.moderator:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono moderatora dla danego zdjecia")
+        return image.moderator
+
     async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
         image_bytes = BytesIO()
         segmented_image.save(image_bytes, format="JPEG")
