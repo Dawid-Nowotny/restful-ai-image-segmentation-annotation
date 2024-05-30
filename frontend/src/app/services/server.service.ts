@@ -92,6 +92,11 @@ export class ServerService {
         return this.http.get(url, {responseType: "blob"});
     }
 
+    getUserImages(username: string, startId: number, endId: number) {
+        const url = `${this.restUrl}/images/get-user-images/${username}/images/${startId}/${endId}`;
+        return this.http.get(url, {  responseType: 'arraybuffer' });
+      }
+
     getImagesAsZip(startId: number, endId: number) {
         const url = `${this.restUrl}/images/get-images/${startId}/${endId}`;
         return this.http.get(url, { responseType: "arraybuffer" });
