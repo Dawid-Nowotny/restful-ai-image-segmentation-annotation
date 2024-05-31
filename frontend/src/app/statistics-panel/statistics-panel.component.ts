@@ -3,6 +3,7 @@ import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
 import { ServerService } from '../services/server.service';
+import { LoggedUserService } from '../services/logged-user.service';
 
 type TopTagData = {
 	tag: string,
@@ -32,6 +33,11 @@ type PopularClassesByMonthData = {
 	}
 }
 
+type TopUploadersData = {
+	username: string,
+	upload_count: number,
+}
+
 @Component({
 	selector: 'app-statistics-panel',
 	standalone: true,
@@ -45,13 +51,11 @@ export class StatisticsPanelComponent implements AfterViewInit {
 	@ViewChild('popularTagsByMonthChart') popularTagsByMonthChartCanvas!: ElementRef<HTMLCanvasElement>;
 	@ViewChild('topClassesChart') topClassesChartCanvas!: ElementRef<HTMLCanvasElement>;
 	@ViewChild('popularClassesByMonthChart') popularClassesByMonthChartCanvas!: ElementRef<HTMLCanvasElement>;
+	@ViewChild('topUploadersChart') topUploadersChartCanvas!: ElementRef<HTMLCanvasElement>;
 
 	chart!: Chart;
 
-	topTagsArray: TopTagData[] = [];
-	popularTagsByMonthArray: PopularTagsByMonthData[] = [];
-
-	constructor(private serverService: ServerService) {
+	constructor(private serverService: ServerService, private loggedUserService: LoggedUserService) {
 		Chart.register(ChartDataLabels);
 	}
 
@@ -65,6 +69,7 @@ export class StatisticsPanelComponent implements AfterViewInit {
 			case 'tab2': this.createPopularTagsByMonthChart(); break;
 			case 'tab3': this.createTopClassesChart(); break;
 			case 'tab4': this.createPopularClassesByMonthChart(); break;
+			case 'tab5': this.createTopUploadersChart(); break;
 		}
 	}
 
@@ -119,6 +124,17 @@ export class StatisticsPanelComponent implements AfterViewInit {
 					data
 				);
 			},
+		})
+	}
+
+	createTopUploadersChart() {
+		this.serverService.getTopUploaders(this.loggedUserService.getAccessToken(), 10).subscribe({
+			next: (response: TopUploadersData[]) => {
+				let labels = response.map((uploader: TopUploadersData) => uploader.username);
+				let data = response.map((uploader: TopUploadersData) => uploader.upload_count);
+				this.createChart(this.topUploadersChartCanvas, "Top 10 uploaderów", labels, data);
+			},
+
 		})
 	}
 

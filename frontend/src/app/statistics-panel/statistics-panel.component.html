@@ -22,7 +22,9 @@
             </div>
         </tab>
         <tab id="tab5" heading="Top 10 uploaderów" (selectTab)="handleTabChange($event)">
-
+            <div class="chart-container pt-5">
+                <canvas #topUploadersChart></canvas>
+            </div>
         </tab>
         <tab id="tab6" heading="Top 10 komentujących" (selectTab)="handleTabChange($event)">
 

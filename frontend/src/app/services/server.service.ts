@@ -142,6 +142,15 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    getTopUploaders(accessToken: string, limit: number): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/statistics/top-uploaders/${limit}`;
+        return this.http.get(url, { headers });
+    }
+
     addSuperTagToImage(accessToken: string, imageId: number, tagsArray: string[]): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${accessToken}`,
