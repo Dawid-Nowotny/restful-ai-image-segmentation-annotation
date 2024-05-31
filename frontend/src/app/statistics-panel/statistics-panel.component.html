@@ -11,19 +11,21 @@
                 <canvas #popularTagsByMonthChart></canvas>
             </div>
         </tab>
-        <tab id="tab3" heading="Top 10 klas">
+        <tab id="tab3" heading="Top 10 klas" (selectTab)="handleTabChange($event)">
+            <div class="chart-container pt-5">
+                <canvas #topClassesChart></canvas>
+            </div>
+        </tab>
+        <tab id="tab4" heading="Najpopularniejsze klasy w poszczególnych miesiącach" (selectTab)="handleTabChange($event)">
 
         </tab>
-        <tab id="tab4" heading="Najpopularniejsze klasy w poszczególnych miesiącach">
+        <tab id="tab5" heading="Top 10 uploaderów" (selectTab)="handleTabChange($event)">
 
         </tab>
-        <tab id="tab5" heading="Top 10 uploaderów">
+        <tab id="tab6" heading="Top 10 komentujących" (selectTab)="handleTabChange($event)">
 
         </tab>
-        <tab id="tab6" heading="Top 10 komentujących">
-
-        </tab>
-        <tab id="tab7" heading="Top 10 moderatorów">
+        <tab id="tab7" heading="Top 10 moderatorów" (selectTab)="handleTabChange($event)">
 
         </tab>
     </tabset>

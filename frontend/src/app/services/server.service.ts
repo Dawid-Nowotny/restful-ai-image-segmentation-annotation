@@ -132,6 +132,11 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    getTopClasses(limit: number): Observable<any> {
+        const url = `${this.restUrl}/statistics/top-classes/${limit}`;
+        return this.http.get(url);
+    }
+
     addSuperTagToImage(accessToken: string, imageId: number, tagsArray: string[]): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${accessToken}`,
@@ -144,7 +149,6 @@ export class ServerService {
                 tag: tag
             }
         })
-        console.log(tagsInRequest);
 
         const body = {
             request: {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, viewChild } from '@angular/core';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
 import Chart from 'chart.js/auto';
 import { ServerService } from '../services/server.service';
@@ -18,6 +18,11 @@ type PopularTagsByMonthData = {
 	}
 }
 
+type TopClassesData = {
+	class_name: string,
+	count: number,
+}
+
 @Component({
 	selector: 'app-statistics-panel',
 	standalone: true,
@@ -29,6 +34,7 @@ export class StatisticsPanelComponent implements AfterViewInit {
 
 	@ViewChild('topTagsChart') topTagsChartCanvas!: ElementRef<HTMLCanvasElement>;
 	@ViewChild('popularTagsByMonthChart') popularTagsByMonthChartCanvas!: ElementRef<HTMLCanvasElement>;
+	@ViewChild('topClassesChart') topClassesChartCanvas!: ElementRef<HTMLCanvasElement>;
 	chart!: Chart;
 
 	topTagsArray: TopTagData[] = [];
@@ -46,8 +52,8 @@ export class StatisticsPanelComponent implements AfterViewInit {
 		switch(tab.id){
 			case 'tab1': this.createTopTagsChart(); break;
 			case 'tab2': this.createPopularTagsByMonthChart(); break;
+			case 'tab3': this.createTopClassesChart(); break;
 		}
-		// this.createPopularTagsByMonthChart();
 	}
 
 	createTopTagsChart() {
@@ -68,8 +74,20 @@ export class StatisticsPanelComponent implements AfterViewInit {
 			next: (response: any) => {
 				let labels = response.map((tag: any, index: number) => [tag.month, `tag: ${tag.top_tag.tag}`]);
 				let data = response.map((tag: any) => tag.top_tag.count);
-				let dataLabels = response.map((tag: any) => tag.top_tag.tag);
 				this.createChart(this.popularTagsByMonthChartCanvas, "Popularne tagi w poszczególnych miesiącach", labels, data);
+			},
+			error: (error: Error) => {
+				console.log(error);
+			}
+		})
+	}
+
+	createTopClassesChart() {
+		this.serverService.getTopClasses(10).subscribe({
+			next: (response: any) => {
+				let labels = response.map((imageClass: TopClassesData) => imageClass.class_name);
+				let data = response.map((imageClass: TopClassesData) => imageClass.count);
+				this.createChart(this.topClassesChartCanvas, "Top 10 klas", labels, data);
 			},
 			error: (error: Error) => {
 				console.log(error);
