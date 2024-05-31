@@ -1,21 +1,29 @@
 <div class="justify-content-center px-5 py-4">
 
     <tabset [justified]="true">
-        <tab heading="Top 10 tagów" id="tab1">
+        <tab id="tab1" heading="Top 10 tagów" id="tab1" (selectTab)="handleTabChange($event)">
             <div class="chart-container pt-5">
-                <canvas #myCanvas></canvas>
+                <canvas #topTagsChart></canvas>
             </div>
         </tab>
-        <tab heading="Najpopularniejszy tag tego miesiąca">
+        <tab id="tab2" heading="Popularne tagi w poszczególnych miesiącach" (selectTab)="handleTabChange($event)">
+            <div class="chart-container pt-5">
+                <canvas #popularTagsByMonthChart></canvas>
+            </div>
+        </tab>
+        <tab id="tab3" heading="Top 10 klas">
 
         </tab>
-        <tab heading="Top 10 klas">
+        <tab id="tab4" heading="Najpopularniejsze klasy w poszczególnych miesiącach">
 
         </tab>
-        <tab heading="Najpopularniejsze klasy tego miesiąca">
+        <tab id="tab5" heading="Top 10 uploaderów">
 
         </tab>
-        <tab heading="Top 10 uploaderów">
+        <tab id="tab6" heading="Top 10 komentujących">
+
+        </tab>
+        <tab id="tab7" heading="Top 10 moderatorów">
 
         </tab>
     </tabset>
