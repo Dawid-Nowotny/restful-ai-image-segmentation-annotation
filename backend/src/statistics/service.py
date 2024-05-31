@@ -47,7 +47,7 @@ class ImageStatsServices:
 
         return top_classes
     
-    def get_popular_classes_by_month(self, db: Session) -> List[Dict[str, Any]]:
+    def get_popular_classes_by_month(self, db: Session) -> Dict[str, Any]:
         classes_by_month = defaultdict(Counter)
         result = []
 
@@ -62,7 +62,7 @@ class ImageStatsServices:
                 result.append({
                     "year": year,
                     "month": MONTHS[month],
-                    "top_class": {"class_name": most_common_class, "count": count}
+                    "top_classes": {"class_name": most_common_class, "count": count}
                 })
 
         return result

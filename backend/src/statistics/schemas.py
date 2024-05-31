@@ -17,7 +17,7 @@ class TopClassResponse(BaseModel):
 class MonthlyClassResponse(BaseModel):
     year: int
     month: str
-    top_classes: List[Dict[str, Any]]
+    top_classes: Dict[str, Any]
 
 class TopUploaderResponse(BaseModel):
     username: str
