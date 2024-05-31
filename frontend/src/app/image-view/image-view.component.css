@@ -1,0 +1,44 @@
+.image-view-ptb {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+@media (max-width: 1199px) {
+    .image-view-ptb {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+}
+
+@media (max-width: 767px) {
+    .image-view-ptb {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+}
+
+.fit-image {
+    max-width: 100%;
+    min-width: 100%;
+    height: auto;
+}
+
+.suggested-annotations-row {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.suggested-annotation-item {
+    margin-right: 10px;
+    background-color: lightgray;
+}
+
+.annotations-div {
+    background-color: lightgray;
+    max-height: 25%;
+}
+
+.custom-row {
+    flex-wrap: nowrap;
+}

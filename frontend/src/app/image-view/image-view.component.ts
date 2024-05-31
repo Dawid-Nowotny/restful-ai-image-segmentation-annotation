@@ -16,6 +16,7 @@ export class ImageViewComponent implements OnInit {
     superTagsAutor: string = '';
     threshold: string = '';
     annotations: string = '';
+    suggestedAnnotations: string[] = [];
     image_id: number = 0;
     imageURL: string | ArrayBuffer | null = null;
     imageBLOB: Blob | null = null;
@@ -35,6 +36,7 @@ export class ImageViewComponent implements OnInit {
       this.getImageAuthor();
       this.getSuperTagsAuthor();
       this.getImageDetections();
+      this.getSuggestedAnnotations();
     }
 
     getImage(): void {
@@ -81,12 +83,23 @@ export class ImageViewComponent implements OnInit {
         next: (result: any) => {
           this.threshold = result.threshold;
           this.annotations = result.coordinates_classes;
-          console.log(result)
         },
         error: (error: Error) => {
           console.error("Error fetching detections", error);
         }
       })
+    }
+
+    getSuggestedAnnotations() {
+      this.serverService.getSuggestAnnotations(this.image_id).subscribe({
+        next: (result: any) => {
+          console.log(result);
+          this.suggestedAnnotations = result.annotations;
+        },
+        error: (error: Error) => {
+          console.error('Error fetching suggested annotations', error);
+        }
+      });
     }
 
     async changeImage(): Promise<void> {

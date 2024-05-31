@@ -96,6 +96,11 @@ export class ServerService {
         return this.http.get(url)
     }
 
+    getSuggestAnnotations(image_id: number) {
+        const url = `${this.restUrl}/images/suggest-annotations/${image_id}`;
+        return this.http.get(url)
+    }
+
     getImagesNumber(){
         const url = `${this.restUrl}/images/get-images-number`;
         return this.http.get(url);
