@@ -41,7 +41,7 @@ async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
         "token_type": "bearer"
     }
 
-@router.put("/update-user")
+@router.patch("/update-user")
 async def update_user(
     current_user: Annotated[User, Depends(UserServices.get_current_active_user)],
     user_data_update: UserUpdateSchema,
