@@ -5,6 +5,9 @@ class UserCreateSchema(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6,max_length=32)
 
+class UserUpdateSchema(UserCreateSchema):
+    old_password: str
+
 class UserOut(BaseModel):
     id: int
     username: str

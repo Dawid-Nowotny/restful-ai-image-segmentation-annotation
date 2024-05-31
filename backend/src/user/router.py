@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
 from .service import *
-from .schemas import UserCreateSchema, UserOut, VerifyTotpRequest, DisableTOTPRequest
+from .schemas import UserCreateSchema, UserUpdateSchema, UserOut, VerifyTotpRequest, DisableTOTPRequest
 from get_db import get_db
 
 router = APIRouter()
@@ -44,11 +44,12 @@ async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
 @router.put("/update-user")
 async def update_user(
     current_user: Annotated[User, Depends(UserServices.get_current_active_user)],
-    user_data_update: UserCreateSchema,
+    user_data_update: UserUpdateSchema,
     db: Session= Depends(get_db),
     ):
     user_service = UserServices()
     
+    user_service.check_password(current_user, user_data_update.old_password)
     user_service.check_username_email_availability_for_current_user(user_data_update, current_user, db)
     user = await user_service.update_user(current_user, user_data_update, db)
     access_token = user_service.create_access_token(data={"sub": user.username})
