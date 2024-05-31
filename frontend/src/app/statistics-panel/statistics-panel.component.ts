@@ -4,6 +4,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
 import { ServerService } from '../services/server.service';
 import { LoggedUserService } from '../services/logged-user.service';
+import { CommonModule } from '@angular/common';
 
 type TopTagData = {
 	tag: string,
@@ -51,7 +52,7 @@ type TopModeratorsData = {
 @Component({
 	selector: 'app-statistics-panel',
 	standalone: true,
-	imports: [TabsModule],
+	imports: [CommonModule, TabsModule],
 	templateUrl: './statistics-panel.component.html',
 	styleUrl: './statistics-panel.component.css'
 })
@@ -67,7 +68,7 @@ export class StatisticsPanelComponent implements AfterViewInit {
 
 	chart!: Chart;
 
-	constructor(private serverService: ServerService, private loggedUserService: LoggedUserService) {
+	constructor(private serverService: ServerService, public loggedUserService: LoggedUserService) {
 		Chart.register(ChartDataLabels);
 	}
 
