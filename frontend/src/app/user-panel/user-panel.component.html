@@ -24,12 +24,12 @@
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                         <div class="profile mr-3">
-                            <a href="#" class="btn btn-outline-dark btn-lg btn-block btn-lg-sm">Edytuj profil</a>
+                            <a class="btn btn-outline-dark btn-lg btn-block btn-lg-sm" (click)="openModalProfileEdit()">Edytuj profil</a>
                         </div>
                     </li>
                     <li class="list-inline-item">
                       <div class="profile mr-3">
-                          <a class="btn btn-outline-dark btn-lg btn-block btn-lg-sm" (click)="openModal()">2FA</a>
+                          <a class="btn btn-outline-dark btn-lg btn-block btn-lg-sm" (click)="openModalTOTP()">2FA</a>
                       </div>
                   </li>
                     <li class="list-inline-item">
@@ -62,3 +62,4 @@
 
   <!-- Modal -->
 <app-totp-user-panel-modal></app-totp-user-panel-modal>
+<app-profile-edit-modal></app-profile-edit-modal>

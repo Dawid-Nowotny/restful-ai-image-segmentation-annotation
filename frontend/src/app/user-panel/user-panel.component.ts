@@ -6,12 +6,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoggedUserService } from '../services/logged-user.service';
 import { TotpUserPanelModalComponent } from '../totp-user-panel-modal/totp-user-panel-modal.component';
 import { ImageFileData, ImageService } from '../services/image.service';
+import { ProfileEditModalComponent } from '../profile-edit-modal/profile-edit-modal.component';
 
 
 @Component({
   selector: 'app-user-panel',
   standalone: true,
-  imports: [CommonModule, TotpUserPanelModalComponent],
+  imports: [CommonModule, TotpUserPanelModalComponent, ProfileEditModalComponent],
   templateUrl: './user-panel.component.html',
   styleUrl: './user-panel.component.css'
 })
@@ -26,6 +27,7 @@ export class UserPanelComponent {
   isLoggedUser: boolean = false;
   errorMessage: string | undefined;
   @ViewChild(TotpUserPanelModalComponent) totpUserPanelModalModalComponent!: TotpUserPanelModalComponent;
+  @ViewChild(ProfileEditModalComponent) profileEditModalComponent!: ProfileEditModalComponent;
 	imagesArray: ImageFileData[] = [];
   baseUrlToImageDetails: string = "image-view";
 
@@ -69,9 +71,13 @@ export class UserPanelComponent {
     })
   }
 
-  openModal(){
+  openModalTOTP(){
     this.totpUserPanelModalModalComponent.openModal();
 }
+
+  openModalProfileEdit(){
+    this.profileEditModalComponent.openModal();
+  }
 
   getImages(username: string, startId: number, endId: number) {
     this.serverService.getUserImages(username, startId, endId).subscribe({
