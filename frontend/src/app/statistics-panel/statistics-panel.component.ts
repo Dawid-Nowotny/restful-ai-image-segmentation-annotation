@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, viewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
@@ -38,6 +38,16 @@ type TopUploadersData = {
 	upload_count: number,
 }
 
+type TopCommentersData = {
+	username: string,
+	comment_count: number,
+}
+
+type TopModeratorsData = {
+	username: string,
+	moderated_count: number,
+}
+
 @Component({
 	selector: 'app-statistics-panel',
 	standalone: true,
@@ -52,6 +62,8 @@ export class StatisticsPanelComponent implements AfterViewInit {
 	@ViewChild('topClassesChart') topClassesChartCanvas!: ElementRef<HTMLCanvasElement>;
 	@ViewChild('popularClassesByMonthChart') popularClassesByMonthChartCanvas!: ElementRef<HTMLCanvasElement>;
 	@ViewChild('topUploadersChart') topUploadersChartCanvas!: ElementRef<HTMLCanvasElement>;
+	@ViewChild('topCommentersChart') topCommentersChartCanvas!: ElementRef<HTMLCanvasElement>;
+	@ViewChild('topModeratorsChart') topModeratorsChartCanvas!: ElementRef<HTMLCanvasElement>;
 
 	chart!: Chart;
 
@@ -70,6 +82,8 @@ export class StatisticsPanelComponent implements AfterViewInit {
 			case 'tab3': this.createTopClassesChart(); break;
 			case 'tab4': this.createPopularClassesByMonthChart(); break;
 			case 'tab5': this.createTopUploadersChart(); break;
+			case 'tab6': this.createTopCommentersChart(); break;
+			case 'tab7': this.createTopModeratorsChart(); break;
 		}
 	}
 
@@ -124,6 +138,9 @@ export class StatisticsPanelComponent implements AfterViewInit {
 					data
 				);
 			},
+			error: (error: Error) => {
+				console.log(error);
+			}
 		})
 	}
 
@@ -134,7 +151,36 @@ export class StatisticsPanelComponent implements AfterViewInit {
 				let data = response.map((uploader: TopUploadersData) => uploader.upload_count);
 				this.createChart(this.topUploadersChartCanvas, "Top 10 uploaderów", labels, data);
 			},
+			error: (error: Error) => {
+				console.log(error);
+			}
 
+		})
+	}
+
+	createTopCommentersChart() {
+		this.serverService.getTopCommenters(this.loggedUserService.getAccessToken(), 10).subscribe({
+			next: (response: TopCommentersData[]) => {
+				let labels = response.map((uploader: TopCommentersData) => uploader.username);
+				let data = response.map((uploader: TopCommentersData) => uploader.comment_count);
+				this.createChart(this.topCommentersChartCanvas, "Top 10 komentujących", labels, data);
+			},
+			error: (error: Error) => {
+				console.log(error);
+			}
+		})
+	}
+
+	createTopModeratorsChart() {
+		this.serverService.getTopModerators(this.loggedUserService.getAccessToken(), 10).subscribe({
+			next: (response: TopModeratorsData[]) => {
+				let labels = response.map((moderator: TopModeratorsData) => moderator.username);
+				let data = response.map((moderator: TopModeratorsData) => moderator.moderated_count);
+				this.createChart(this.topModeratorsChartCanvas, "Top 10 moderatorów", labels, data);
+			},
+			error: (error: Error) => {
+				console.log(error);
+			}
 		})
 	}
 

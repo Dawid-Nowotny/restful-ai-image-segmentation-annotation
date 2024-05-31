@@ -151,6 +151,24 @@ export class ServerService {
         return this.http.get(url, { headers });
     }
 
+    getTopCommenters(accessToken: string, limit: number): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/statistics/top-commenters/${limit}`;
+        return this.http.get(url, { headers });
+    }
+
+    getTopModerators(accessToken: string, limit: number): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/statistics/moderated-images/${limit}`;
+        return this.http.get(url, { headers });
+    }
+
     addSuperTagToImage(accessToken: string, imageId: number, tagsArray: string[]): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${accessToken}`,

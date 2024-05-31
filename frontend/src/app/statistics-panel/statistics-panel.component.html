@@ -27,10 +27,14 @@
             </div>
         </tab>
         <tab id="tab6" heading="Top 10 komentujących" (selectTab)="handleTabChange($event)">
-
+            <div class="chart-container pt-5">
+                <canvas #topCommentersChart></canvas>
+            </div>
         </tab>
         <tab id="tab7" heading="Top 10 moderatorów" (selectTab)="handleTabChange($event)">
-
+            <div class="chart-container pt-5">
+                <canvas #topModeratorsChart></canvas>
+            </div>
         </tab>
     </tabset>
 </div>
