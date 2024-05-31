@@ -137,6 +137,11 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    getPopularClassesByMonth(): Observable<any> {
+        const url = `${this.restUrl}/statistics/popular-classes-by-month`;
+        return this.http.get(url);
+    }
+
     addSuperTagToImage(accessToken: string, imageId: number, tagsArray: string[]): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${accessToken}`,

@@ -17,7 +17,9 @@
             </div>
         </tab>
         <tab id="tab4" heading="Najpopularniejsze klasy w poszczególnych miesiącach" (selectTab)="handleTabChange($event)">
-
+            <div class="chart-container pt-5">
+                <canvas #popularClassesByMonthChart></canvas>
+            </div>
         </tab>
         <tab id="tab5" heading="Top 10 uploaderów" (selectTab)="handleTabChange($event)">
 

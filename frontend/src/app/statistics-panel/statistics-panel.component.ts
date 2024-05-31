@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, viewChild } from '@angular/core';
-import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
-import { ServerService } from '../services/server.service';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
+import { ServerService } from '../services/server.service';
 
 type TopTagData = {
 	tag: string,
@@ -23,6 +23,15 @@ type TopClassesData = {
 	count: number,
 }
 
+type PopularClassesByMonthData = {
+	year: number,
+	month: string,
+	top_classes: {
+		class_name: string,
+		count: number,
+	}
+}
+
 @Component({
 	selector: 'app-statistics-panel',
 	standalone: true,
@@ -35,6 +44,8 @@ export class StatisticsPanelComponent implements AfterViewInit {
 	@ViewChild('topTagsChart') topTagsChartCanvas!: ElementRef<HTMLCanvasElement>;
 	@ViewChild('popularTagsByMonthChart') popularTagsByMonthChartCanvas!: ElementRef<HTMLCanvasElement>;
 	@ViewChild('topClassesChart') topClassesChartCanvas!: ElementRef<HTMLCanvasElement>;
+	@ViewChild('popularClassesByMonthChart') popularClassesByMonthChartCanvas!: ElementRef<HTMLCanvasElement>;
+
 	chart!: Chart;
 
 	topTagsArray: TopTagData[] = [];
@@ -49,10 +60,11 @@ export class StatisticsPanelComponent implements AfterViewInit {
 	}
 
 	handleTabChange(tab: TabDirective) {
-		switch(tab.id){
+		switch (tab.id) {
 			case 'tab1': this.createTopTagsChart(); break;
 			case 'tab2': this.createPopularTagsByMonthChart(); break;
 			case 'tab3': this.createTopClassesChart(); break;
+			case 'tab4': this.createPopularClassesByMonthChart(); break;
 		}
 	}
 
@@ -72,7 +84,7 @@ export class StatisticsPanelComponent implements AfterViewInit {
 	createPopularTagsByMonthChart() {
 		this.serverService.getPopularTagsByMonth().subscribe({
 			next: (response: any) => {
-				let labels = response.map((tag: any, index: number) => [tag.month, `tag: ${tag.top_tag.tag}`]);
+				let labels = response.map((tag: any) => [tag.month, `tag: ${tag.top_tag.tag}`]);
 				let data = response.map((tag: any) => tag.top_tag.count);
 				this.createChart(this.popularTagsByMonthChartCanvas, "Popularne tagi w poszczególnych miesiącach", labels, data);
 			},
@@ -95,13 +107,28 @@ export class StatisticsPanelComponent implements AfterViewInit {
 		})
 	}
 
+	createPopularClassesByMonthChart() {
+		this.serverService.getPopularClassesByMonth().subscribe({
+			next: (response: PopularClassesByMonthData[]) => {
+				let labels: any = response.map(imageClass => [imageClass.month, `klasa: ${imageClass.top_classes.class_name}`]);
+				let data = response.map((imageClass: PopularClassesByMonthData) => imageClass.top_classes.count);
+				this.createChart(
+					this.popularClassesByMonthChartCanvas,
+					"Popularne klasy w poszczególnych miesiącach",
+					labels,
+					data
+				);
+			},
+		})
+	}
+
 	createChart(
-		chartElementRef: ElementRef<HTMLCanvasElement>, 
+		chartElementRef: ElementRef<HTMLCanvasElement>,
 		title: string,
-		labels: string[], 
-		data: number[], 
+		labels: string[],
+		data: number[],
 	) {
-		if(this.chart){
+		if (this.chart) {
 			this.chart.destroy();
 		}
 
