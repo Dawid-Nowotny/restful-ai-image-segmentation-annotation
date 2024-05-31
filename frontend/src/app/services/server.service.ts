@@ -122,6 +122,11 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    getTopTags(limit: number): Observable<any> {
+        const url = `${this.restUrl}/statistics/top-tags/${limit}`;
+        return this.http.get(url);
+    }
+
     addSuperTagToImage(accessToken: string, imageId: number, tagsArray: string[]): Observable<any> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${accessToken}`,
