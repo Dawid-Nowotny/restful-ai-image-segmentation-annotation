@@ -93,7 +93,6 @@ export class ImageViewComponent implements OnInit {
     getSuggestedAnnotations() {
       this.serverService.getSuggestAnnotations(this.image_id).subscribe({
         next: (result: any) => {
-          console.log(result);
           this.suggestedAnnotations = result.annotations;
         },
         error: (error: Error) => {

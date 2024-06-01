@@ -27,11 +27,16 @@
     display: flex;
     overflow-x: auto;
     white-space: nowrap;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .suggested-annotation-item {
-    margin-right: 10px;
     background-color: lightgray;
+}
+
+.suggested-annotation-item + .suggested-annotation-item {
+    margin-left: 10px;
 }
 
 .annotations-div {
@@ -39,6 +44,20 @@
     max-height: 25%;
 }
 
-.custom-row {
-    flex-wrap: nowrap;
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+  
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+   
+::-webkit-scrollbar-thumb {
+    background: darkgray; 
+    border-radius: 10px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: gray; 
 }
