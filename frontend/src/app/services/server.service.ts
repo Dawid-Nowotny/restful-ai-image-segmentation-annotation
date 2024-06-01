@@ -42,6 +42,12 @@ export class ServerService {
         return this.http.get(url);
     }
 
+    updateUser(userDataUpdate: any, JWTToken: string): Observable<any> {
+        const headers = new HttpHeaders().set('Authorization', `Bearer ${JWTToken}`);
+        const url = `${this.restUrl}/user/update-user`;
+        return this.http.patch(url, userDataUpdate, { headers });
+    }    
+    
     generateQrCode(accessToken: string): Observable<Blob> {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${accessToken}`
