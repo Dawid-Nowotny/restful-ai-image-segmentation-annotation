@@ -1,77 +1,71 @@
 <div class="container mt-4">
 
-    <div class="row py-2">
+    <div class="py-2 d-flex">
         <!-- Threshold filter -->
-        <div class="col">
-            <div class="dropdown">
-                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    Wartość progowa: {{filterData.thresholdFrom}} - {{filterData.thresholdTo}}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
-                    <li>
-                        <div class="row mx-2 my-2">
-                            <div class="col">
-                                <input type="number" class="form-control form-control-sm" placeholder="od"
-                                    [(ngModel)]="filterData.thresholdFrom">
-                            </div>
-                            <div class="col">
-                                <input type="number" class="form-control form-control-sm" placeholder="do"
-                                    [(ngModel)]="filterData.thresholdTo">
-                            </div>
+        <div class="dropdown px-2">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Wartość progowa: {{filterData.thresholdFrom}} - {{filterData.thresholdTo}}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
+                <li>
+                    <div class="row mx-2 my-2">
+                        <div class="col">
+                            <input type="number" class="form-control form-control-sm" placeholder="od"
+                                [(ngModel)]="filterData.thresholdFrom">
                         </div>
-                    </li>
-                    <div class="row justify-content-center mx-4 mb-2">
-                        <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
+                        <div class="col">
+                            <input type="number" class="form-control form-control-sm" placeholder="do"
+                                [(ngModel)]="filterData.thresholdTo">
+                        </div>
                     </div>
-                </ul>
-            </div>
+                </li>
+                <div class="row justify-content-center mx-4 mb-2">
+                    <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
+                </div>
+            </ul>
         </div>
 
         <!-- Tags filter -->
-        <div class="col">
-            <div class="dropdown">
-                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    Tagi:
-                </button>
-                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
-                    <li>
-                        <div class="row mx-2 my-2">
-                            <div class="col">
-                                <input type="text" class="form-control form-control-sm" placeholder="tagi"
-                                    [(ngModel)]="filterTagsInput">
-                            </div>
+        <div class="dropdown px-2">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Tagi:
+            </button>
+            <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
+                <li>
+                    <div class="row mx-2 my-2">
+                        <div class="col">
+                            <input type="text" class="form-control form-control-sm" placeholder="tagi"
+                                [(ngModel)]="filterTagsInput">
                         </div>
-                    </li>
-                    <div class="row justify-content-center mx-4 mb-2">
-                        <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
                     </div>
-                </ul>
-            </div>
+                </li>
+                <div class="row justify-content-center mx-4 mb-2">
+                    <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
+                </div>
+            </ul>
         </div>
 
         <!-- Classes filter -->
-        <div class="col">
-            <div class="dropdown">
-                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    Klasy:
-                </button>
-                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
-                    <li>
-                        <div class="row mx-2 my-2">
-                            <div class="col">
-                                <input type="text" class="form-control form-control-sm" placeholder="klasy"
-                                    [(ngModel)]="filterClassesInput">
-                            </div>
+        <div class="dropdown px-2">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Klasy:
+            </button>
+            <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
+                <li>
+                    <div class="row mx-2 my-2">
+                        <div class="col">
+                            <input type="text" class="form-control form-control-sm" placeholder="klasy"
+                                [(ngModel)]="filterClassesInput">
                         </div>
-                    </li>
-                    <div class="row justify-content-center mx-4 mb-2">
-                        <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
                     </div>
-                </ul>
-            </div>
+                </li>
+                <div class="row justify-content-center mx-4 mb-2">
+                    <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
+                </div>
+            </ul>
         </div>
     </div>
     <div class="row justify-content-center px-2">
