@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ServerService } from '../services/server.service';
 
 @Component({
     selector: 'app-image-view',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './image-view.component.html',
     styleUrl: './image-view.component.css'
 })
@@ -17,6 +18,7 @@ export class ImageViewComponent implements OnInit {
     threshold: string = '';
     annotations: string = '';
     suggestedAnnotations: string[] = [];
+    commentForm: FormGroup;
     image_id: number = 0;
     imageURL: string | ArrayBuffer | null = null;
     imageBLOB: Blob | null = null;
@@ -25,7 +27,11 @@ export class ImageViewComponent implements OnInit {
     image: string | ArrayBuffer | null = null;
     buttonLabel: string = 'Wyświetl segmentację';
 
-    constructor(private route: ActivatedRoute, private serverService: ServerService) { }
+    constructor(private route: ActivatedRoute, private serverService: ServerService) {
+      this.commentForm = new FormGroup({
+        comment: new FormControl('', [Validators.required, Validators.pattern(/\S+/)])
+      });
+    }
 
     ngOnInit() {
       this.route.params.subscribe(params => {
@@ -99,6 +105,23 @@ export class ImageViewComponent implements OnInit {
           console.error('Error fetching suggested annotations', error);
         }
       });
+    }
+
+    clickSuggestedAnnotation(annotation: string) {
+      let newValue = '';
+      let oldValue = this.commentForm.controls['comment'].value;
+      if (oldValue.trim().length != 0)
+        oldValue += ', ';
+      newValue = oldValue + annotation;
+
+      this.commentForm.controls['comment'].setValue(newValue);
+    }
+
+    addComment() {
+      if (this.commentForm.valid) {
+        console.log(this.commentForm.controls['comment'].value);
+        this.commentForm.reset();
+      }
     }
 
     async changeImage(): Promise<void> {

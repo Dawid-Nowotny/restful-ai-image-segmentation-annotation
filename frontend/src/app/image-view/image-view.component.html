@@ -33,18 +33,25 @@
                             <h3><b>Tagi użytkowników</b></h3>
                         </div>
                         <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
-                            <div *ngFor="let annotation of suggestedAnnotations" class="suggested-annotation-item rounded col-auto">
+                            <button *ngFor="let annotation of suggestedAnnotations" class="suggested-annotation-item rounded col-auto"
+                                (click)="clickSuggestedAnnotation(annotation)">
                                 {{ annotation }}
-                            </div>
+                            </button>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                <input type="text" class="form-control" placeholder="Dodaj tagi">
+                        <form [formGroup]="commentForm" (ngSubmit)="addComment()">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Dodaj komentarz" formControlName="comment" [ngClass]="{'is-invalid': commentForm.controls['comment'].invalid && (commentForm.controls['comment'].dirty || commentForm.controls['comment'].touched)}">
+                                    <div *ngIf="commentForm.controls['comment'].invalid" class="invalid-feedback">
+                                        <div *ngIf="commentForm.controls['comment'].errors?.['required']">Pole jest wymagane.</div>
+                                        <div *ngIf="commentForm.controls['comment'].errors?.['pattern']">Pole nie może zawierać tylko białych znaków.</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-success btn-rg" [disabled]="commentForm.invalid">Dodaj</button>
+                                </div>
                             </div>
-                            <div class="col-auto">
-                                <button class="btn btn-success btn-rg">Dodaj</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

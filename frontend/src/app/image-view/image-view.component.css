@@ -33,6 +33,17 @@
 
 .suggested-annotation-item {
     background-color: lightgray;
+    border: 0px;
+}
+
+.suggested-annotation-item:hover {
+    background-color: rgb(185, 185, 185);
+    border: 0px;
+}
+
+.suggested-annotation-item:active {
+    background-color: rgb(165, 165, 165);
+    border: 0px;
 }
 
 .suggested-annotation-item + .suggested-annotation-item {
