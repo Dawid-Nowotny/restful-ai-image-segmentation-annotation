@@ -67,8 +67,12 @@
                 </div>
             </ul>
         </div>
+
+        <div *ngIf="useFilters" class="px-2">
+            <button class="btn btn-danger" (click)="cleanFilters()"> Usuń filtry</button>
+        </div>
     </div>
-    <div class="row justify-content-center px-2">
+    <div class="row justify-content-center px-4">
         <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
             {{ errorMessage }}
         </div>

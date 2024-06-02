@@ -124,4 +124,17 @@ export class ImageGalleryComponent implements OnInit {
 		this.errorMessage = "";
 	}
 
+	cleanFilters() {
+		this.useFilters = false;
+		this.getImages(0, 9);
+		this.filterTagsInput = '';
+		this.filterClassesInput = '';
+		this.filterData = {
+			thresholdFrom: 0.1,
+			thresholdTo: 1.0,
+			tags: [],
+			classes: []
+		}
+	}
+
 }
