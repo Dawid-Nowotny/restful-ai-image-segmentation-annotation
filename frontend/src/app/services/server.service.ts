@@ -102,6 +102,25 @@ export class ServerService {
         return this.http.get(url, { responseType: "arraybuffer" });
     }
 
+    getFilteredImagesAsZip(
+        startId: number, 
+        endId: number,
+        thresholdFrom: number, 
+        thresholdTo: number, 
+        tags: string[], 
+        classes: string[]
+    ) {
+
+        console.log(thresholdFrom, thresholdTo);
+
+        let thresholdParam = `threshold_range=${thresholdFrom}%2C${thresholdTo}`;
+        let tagsParam = tags.length > 0 ? `tags=${tags}` : "";
+        let classesParam = classes.length > 0 ? `classes=${classes}` : "";
+
+        const url = `${this.restUrl}/images/get-filtered-images/%7Bfilters%7D/${startId}/${endId}?${thresholdParam}&${tagsParam}&${classesParam}`;
+        return this.http.get(url, { responseType: "arraybuffer" });
+    }
+
     getSegmentedImage(image_id: number): Observable<Blob> {
         const url = `${this.restUrl}/images/get-segmented-image/${image_id}`;
         return this.http.get(url, { responseType: 'blob' })

@@ -34,7 +34,6 @@ def get_top_classes(limit: int = Path(..., gt=0), db: Session = Depends(get_db))
 def get_popular_classes_by_month(db: Session = Depends(get_db)):
     image_stats_service = ImageStatsServices()
     popular_classes = image_stats_service.get_popular_classes_by_month(db)
-    print(popular_classes)
     return popular_classes
 
 @router.get("/top-uploaders/{limit}", response_model=List[TopUploaderResponse])
