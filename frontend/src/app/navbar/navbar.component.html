@@ -14,6 +14,9 @@
                     <li class="nav-item">
                         <a class="nav-link" routerLink="/admin/make-moderators">Moderatorzy</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/statistics">Statystyki</a>
+                    </li>
                 </ul>
             </div>
             <div>
@@ -36,22 +39,30 @@
                     <li class="nav-item">
                         <a class="nav-link" routerLink="/register">Rejestracja</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/statistics">Statystyki</a>
+                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Dropdown
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">aaa</a></li>
                             <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
-    
+
             <div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <ul class="navbar-nav d-none d-lg-block">
@@ -68,8 +79,10 @@
 
         <ol *ngIf="loggedUserService.getRole() === 'User' || loggedUserService.getRole() === ''" class="breadcrumb">
             <li class="breadcrumb-item"><a routerLink="/">Strona główna</a></li>
-            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/login')"><a routerLink="/login">Logowanie</a></li>
-            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/register')"><a routerLink="/register">Rejestracja</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/login')"><a routerLink="/login">Logowanie</a>
+            </li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/register')"><a
+                    routerLink="/register">Rejestracja</a></li>
         </ol>
     </div>
 </nav>
