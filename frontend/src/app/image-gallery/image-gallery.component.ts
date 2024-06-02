@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PageChangedEvent, PaginationModule } from 'ngx-bootstrap/pagination';
 import { ImageFileData, ImageService } from '../services/image.service';
 import { ServerService } from '../services/server.service';
-import { FormsModule } from '@angular/forms';
 
 type FilterData = {
 	thresholdFrom: number,
@@ -36,6 +36,7 @@ export class ImageGalleryComponent implements OnInit {
 		classes: []
 	}
 	@Input() baseUrlToImageDetails: string = "";
+	errorMessage: string = "";
 
 	ngOnInit(): void {
 		this.getImagesNumber();
@@ -69,6 +70,12 @@ export class ImageGalleryComponent implements OnInit {
 				this.imagesArray = this.imageService.getImagesArrayFromZip(blob);
 			},
 			error: (error: HttpErrorResponse) => {
+				switch(error.status) {
+					case 400:
+						this.errorMessage = "Wartości zakresu muszą mieścić się w przedziale od 0.01 do 1"; break;
+					case 404:
+						this.errorMessage = "Nie znaleziono obrazów spełniających podane kryteria filtrowania."; break;
+				}
 				console.log(error);
 			}
 		})
@@ -86,7 +93,10 @@ export class ImageGalleryComponent implements OnInit {
 	}
 
 	applyFilters() {
+		this.resetMessages();
+
 		this.useFilters = true;
+		this.imagesArray = [];
 		this.filterData.tags = this.filterTagsInput.trim().replaceAll(' ', '').split(',').filter(tag => tag !== '');
 		this.filterData.classes = this.filterClassesInput.trim().replaceAll(' ', '').split(',').filter(tag => tag !== '');
 		this.getFilteredImages(
@@ -108,6 +118,10 @@ export class ImageGalleryComponent implements OnInit {
 
 	navigateToImageDetails(routeParam: string) {
 		this.router.navigate([`${this.baseUrlToImageDetails}/`, routeParam]);
+	}
+
+	resetMessages() {
+		this.errorMessage = "";
 	}
 
 }

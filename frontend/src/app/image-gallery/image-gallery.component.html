@@ -12,11 +12,11 @@
                     <li>
                         <div class="row mx-2 my-2">
                             <div class="col">
-                                <input type="text" class="form-control form-control-sm" placeholder="od"
+                                <input type="number" class="form-control form-control-sm" placeholder="od"
                                     [(ngModel)]="filterData.thresholdFrom">
                             </div>
                             <div class="col">
-                                <input type="text" class="form-control form-control-sm" placeholder="do"
+                                <input type="number" class="form-control form-control-sm" placeholder="do"
                                     [(ngModel)]="filterData.thresholdTo">
                             </div>
                         </div>
@@ -72,6 +72,11 @@
                     </div>
                 </ul>
             </div>
+        </div>
+    </div>
+    <div class="row justify-content-center px-2">
+        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            {{ errorMessage }}
         </div>
     </div>
     <div *ngIf="!useFilters" class="row justify-content-center text-center">
