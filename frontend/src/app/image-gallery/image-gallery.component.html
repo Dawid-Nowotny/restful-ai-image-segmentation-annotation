@@ -1,27 +1,56 @@
 <div class="container mt-4">
 
-    <div class="py-2">
-        <div class="dropdown">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-              Wartość progowa: {{filterData.thresholdFrom}} - {{filterData.thresholdTo}}
-            </button>
-            <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
-              <li>
-                <div class="row mx-2 my-2">
-                  <div class="col">
-                    <input type="text" class="form-control form-control-sm" placeholder="od" [(ngModel)]="filterData.thresholdFrom">
-                  </div>
-                  <div class="col">
-                    <input type="text" class="form-control form-control-sm" placeholder="do" [(ngModel)]="filterData.thresholdTo">
-                  </div>
-                </div>
-              </li>
-              <div class="row justify-content-center mx-4 mb-2">
-                <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
-              </div>
-            </ul>
-          </div>
-          
+    <div class="row py-2">
+        <!-- Threshold filter -->
+        <div class="col">
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Wartość progowa: {{filterData.thresholdFrom}} - {{filterData.thresholdTo}}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
+                    <li>
+                        <div class="row mx-2 my-2">
+                            <div class="col">
+                                <input type="text" class="form-control form-control-sm" placeholder="od"
+                                    [(ngModel)]="filterData.thresholdFrom">
+                            </div>
+                            <div class="col">
+                                <input type="text" class="form-control form-control-sm" placeholder="do"
+                                    [(ngModel)]="filterData.thresholdTo">
+                            </div>
+                        </div>
+                    </li>
+                    <div class="row justify-content-center mx-4 mb-2">
+                        <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
+                    </div>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tags filter -->
+        <div class="col">
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Tagi:
+                </button>
+                <ul class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
+                    <li>
+                        <div class="row mx-2 my-2">
+                            <div class="col">
+                                <input type="text" class="form-control form-control-sm" placeholder="tagi"
+                                    [(ngModel)]="filterTagsInput">
+                            </div>
+                        </div>
+                    </li>
+                    <div class="row justify-content-center mx-4 mb-2">
+                        <button class="btn btn-success btn-sm btn-rg" (click)="applyFilters()">Filtruj</button>
+                    </div>
+                </ul>
+            </div>
+        </div>
+
     </div>
     <div *ngIf="!useFilters" class="row justify-content-center text-center">
         <pagination class="justify-content-center text-primary" [customPreviousTemplate]="previousTemplate"
