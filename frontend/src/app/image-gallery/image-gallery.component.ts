@@ -88,8 +88,14 @@ export class ImageGalleryComponent implements OnInit {
 	applyFilters() {
 		this.useFilters = true;
 		this.filterData.tags = this.filterTagsInput.trim().replaceAll(' ', '').split(',').filter(tag => tag !== '');
-		console.log(this.filterData);
-		this.getFilteredImages(0, 100, this.filterData.thresholdFrom, this.filterData.thresholdTo, this.filterData.tags, []);
+		this.filterData.classes = this.filterClassesInput.trim().replaceAll(' ', '').split(',').filter(tag => tag !== '');
+		this.getFilteredImages(
+			0, 100,
+			this.filterData.thresholdFrom,
+			this.filterData.thresholdTo,
+			this.filterData.tags,
+			this.filterData.classes
+		);
 	}
 
 	handlePageChange(event: PageChangedEvent) {
