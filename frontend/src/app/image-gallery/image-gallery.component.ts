@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { PageChangedEvent, PaginationModule } from 'ngx-bootstrap/pagination';
 import { ImageFileData, ImageService } from '../services/image.service';
 import { ServerService } from '../services/server.service';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 type FilterData = {
 	thresholdFrom: number,
@@ -17,7 +18,7 @@ type FilterData = {
 @Component({
 	selector: 'app-image-gallery',
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaginationModule],
+	imports: [CommonModule, FormsModule, PaginationModule, TooltipModule],
 	templateUrl: './image-gallery.component.html',
 	styleUrl: './image-gallery.component.css'
 })
@@ -125,6 +126,7 @@ export class ImageGalleryComponent implements OnInit {
 	}
 
 	cleanFilters() {
+		this.resetMessages();
 		this.useFilters = false;
 		this.getImages(0, 9);
 		this.filterTagsInput = '';
@@ -135,6 +137,12 @@ export class ImageGalleryComponent implements OnInit {
 			tags: [],
 			classes: []
 		}
+	}
+
+	filterOnInput(event: any, inputValue: string) {
+		const input = event.target as HTMLInputElement;
+		input.value = input.value.replace(/[^a-zA-Z0-9,]/g, '');
+		inputValue = input.value;
 	}
 
 }

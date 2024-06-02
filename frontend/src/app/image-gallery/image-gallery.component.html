@@ -37,7 +37,9 @@
                     <div class="row mx-2 my-2">
                         <div class="col">
                             <input type="text" class="form-control form-control-sm" placeholder="tagi"
-                                [(ngModel)]="filterTagsInput">
+                                tooltip="Wartości oddziel przecinkami" [(ngModel)]="filterTagsInput"
+                                (input)="filterOnInput($event, filterTagsInput) ">
+
                         </div>
                     </div>
                 </li>
@@ -58,7 +60,8 @@
                     <div class="row mx-2 my-2">
                         <div class="col">
                             <input type="text" class="form-control form-control-sm" placeholder="klasy"
-                                [(ngModel)]="filterClassesInput">
+                                tooltip="Wartości oddziel przecinkami" [(ngModel)]="filterClassesInput"
+                                (input)="filterOnInput($event, filterClassesInput)">
                         </div>
                     </div>
                 </li>
