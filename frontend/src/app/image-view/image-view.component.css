@@ -1,0 +1,74 @@
+.image-view-ptb {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+@media (max-width: 1199px) {
+    .image-view-ptb {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+}
+
+@media (max-width: 767px) {
+    .image-view-ptb {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+}
+
+.fit-image {
+    max-width: 100%;
+    min-width: 100%;
+    height: auto;
+}
+
+.suggested-annotations-row {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.suggested-annotation-item {
+    background-color: lightgray;
+    border: 0px;
+}
+
+.suggested-annotation-item:hover {
+    background-color: rgb(185, 185, 185);
+    border: 0px;
+}
+
+.suggested-annotation-item:active {
+    background-color: rgb(165, 165, 165);
+    border: 0px;
+}
+
+.suggested-annotation-item + .suggested-annotation-item {
+    margin-left: 10px;
+}
+
+.annotations-div {
+    background-color: lightgray;
+    max-height: 25%;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+  
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+   
+::-webkit-scrollbar-thumb {
+    background: darkgray; 
+    border-radius: 10px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: gray; 
+}

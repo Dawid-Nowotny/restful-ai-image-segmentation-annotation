@@ -132,6 +132,26 @@ export class ServerService {
         return this.http.get(url, { responseType: 'blob' })
     }
 
+    getImageAuthor(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-uploader/${image_id}`;
+        return this.http.get(url)
+    }
+
+    getSuperTagsAuthor(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-super-tag-author/${image_id}`;
+        return this.http.get(url)
+    }
+
+    getImageDetections(image_id: number) {
+        const url = `${this.restUrl}/images/get-image-detections/${image_id}`;
+        return this.http.get(url)
+    }
+
+    getSuggestAnnotations(image_id: number) {
+        const url = `${this.restUrl}/images/suggest-annotations/${image_id}`;
+        return this.http.get(url)
+    }
+
     getImageSuggestedAnnotations(imageId: number): Observable<any> {
         const url = `${this.restUrl}/images/suggest-annotations/${imageId}`;
         return this.http.get(url);
@@ -258,6 +278,4 @@ export class ServerService {
         const url = `${this.restUrl}/admin/make-moderator/${username}`;
         return this.http.put(url, {}, { headers });
     }
-
-
 }

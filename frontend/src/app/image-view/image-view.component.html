@@ -1,7 +1,7 @@
 <main>
-    <div class="section-ptb">
+    <div class="container-fluid image-view-ptb">
         <div class="row justify-content-center">
-            <div class="col-lg-9 col-md-12 col-sm-12 rounded" style="background-color: rgb(231, 231, 231);">
+            <div class="col-xxl-9 col-xl-10 col-lg-11 col-md-12 col-sm-12 rounded" style="background-color: rgb(231, 231, 231);">
                 <div class="row p-3">
                     <div class="col-md-8 ps-0">
                         <img [src]="image" class="fit-image rounded">
@@ -15,12 +15,13 @@
                                 <button class="btn btn-success btn-rg" (click)="downloadImage()">Zapisz obraz</button>
                             </div>
                         </div>
-                        <div class="rounded mt-3 p-3" style="background-color: lightgray;">
-                            Adnotacje
+                        <div class="rounded mt-3 p-3 overflow-auto annotations-div">
+                            Próg detekcji: {{ threshold }}<br>
+                            Klasy: {{ annotations | json }}
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-6">
-                                <h5 class="mb-0">{{ imageAutor }}</h5>
+                                <h5 class="mb-0">{{ imageAuthor }}</h5>
                                 <p class="small">Autor zdjęcia</p>
                             </div>
                             <div class="col-md-6" *ngIf="superTagsAutor != ''">
@@ -31,16 +32,26 @@
                         <div>
                             <h3><b>Tagi użytkowników</b></h3>
                         </div>
-                        <div>
+                        <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
+                            <button *ngFor="let annotation of suggestedAnnotations" class="suggested-annotation-item rounded col-auto"
+                                (click)="clickSuggestedAnnotation(annotation)">
+                                {{ annotation }}
+                            </button>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <input type="text" class="form-control" placeholder="Dodaj tagi">
+                        <form [formGroup]="commentForm" (ngSubmit)="addComment()">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Dodaj komentarz" formControlName="comment" [ngClass]="{'is-invalid': commentForm.controls['comment'].invalid && (commentForm.controls['comment'].dirty || commentForm.controls['comment'].touched)}">
+                                    <div *ngIf="commentForm.controls['comment'].invalid" class="invalid-feedback">
+                                        <div *ngIf="commentForm.controls['comment'].errors?.['required']">Pole jest wymagane.</div>
+                                        <div *ngIf="commentForm.controls['comment'].errors?.['pattern']">Pole nie może zawierać tylko białych znaków.</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-success btn-rg" [disabled]="commentForm.invalid">Dodaj</button>
+                                </div>
                             </div>
-                            <div class="col-auto" >
-                                <button class="btn btn-success btn-rg">Dodaj</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

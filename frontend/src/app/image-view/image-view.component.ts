@@ -1,19 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ServerService } from '../services/server.service';
 
 @Component({
     selector: 'app-image-view',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './image-view.component.html',
     styleUrl: './image-view.component.css'
 })
 
 export class ImageViewComponent implements OnInit {
-    imageAutor: string = '';
+    imageAuthor: string = '';
     superTagsAutor: string = '';
+    threshold: string = '';
+    annotations: string = '';
+    suggestedAnnotations: string[] = [];
+    commentForm: FormGroup;
     image_id: number = 0;
     imageURL: string | ArrayBuffer | null = null;
     imageBLOB: Blob | null = null;
@@ -22,19 +27,26 @@ export class ImageViewComponent implements OnInit {
     image: string | ArrayBuffer | null = null;
     buttonLabel: string = 'Wyświetl segmentację';
 
-    constructor(private route: ActivatedRoute, private serverService: ServerService) { }
+    constructor(private route: ActivatedRoute, private serverService: ServerService) {
+      this.commentForm = new FormGroup({
+        comment: new FormControl('', [Validators.required, Validators.pattern(/\S+/)])
+      });
+    }
 
     ngOnInit() {
       this.route.params.subscribe(params => {
           this.image_id = params['id'];
       })
 
-      this.getImages(this.image_id);
-      this.getImageAndSuperTagsAuthors(this.image_id);
+      this.getImage();
+      this.getImageAuthor();
+      this.getSuperTagsAuthor();
+      this.getImageDetections();
+      this.getSuggestedAnnotations();
     }
 
-    getImages(imageId: number): void {
-      this.serverService.getImage(imageId).subscribe({
+    getImage(): void {
+      this.serverService.getImage(this.image_id).subscribe({
         next: (blob: Blob) => {
           this.imageBLOB = blob;
           const reader = new FileReader();
@@ -48,64 +60,130 @@ export class ImageViewComponent implements OnInit {
           console.error('Error fetching image:', error);
         }
       });
+    }
 
-      this.serverService.getSegmentedImage(imageId).subscribe({
-        next: (blob: Blob) => {
-          this.segmentedImageBLOB = blob;
-          const reader = new FileReader();
-          reader.onload = () => this.segmentedImageURL = reader.result;
-          reader.readAsDataURL(blob);
+    getImageAuthor() {
+      this.serverService.getImageAuthor(this.image_id).subscribe({
+        next: (result: any) => {
+          this.imageAuthor = result.image_uploader;
         },
         error: (error: Error)=> {
-          console.error('Error fetching segmented image:', error);
+          console.error('Error fetching image author', error);
         }
       });
     }
 
-    getImageAndSuperTagsAuthors(imageId: number) {
-      this.serverService.getImageAndSuperTagsAuthors(imageId).subscribe({
+    getSuperTagsAuthor() {
+      this.serverService.getSuperTagsAuthor(this.image_id).subscribe({
         next: (result: any) => {
-          this.imageAutor = result.image_uploader;
           this.superTagsAutor = result.super_tag_author;
         },
-        error: (error: Error)=> {
-          console.error('Error fetching authors', error);
+        error: (error: Error) => {
+          console.error('Error fetching super tags author', error);
         }
       });
     }
 
-    changeImage(): void {
+    getImageDetections() {
+      this.serverService.getImageDetections(this.image_id).subscribe({
+        next: (result: any) => {
+          this.threshold = result.threshold;
+          this.annotations = result.coordinates_classes;
+        },
+        error: (error: Error) => {
+          console.error("Error fetching detections", error);
+        }
+      })
+    }
+
+    getSuggestedAnnotations() {
+      this.serverService.getSuggestAnnotations(this.image_id).subscribe({
+        next: (result: any) => {
+          this.suggestedAnnotations = result.annotations;
+        },
+        error: (error: Error) => {
+          console.error('Error fetching suggested annotations', error);
+        }
+      });
+    }
+
+    clickSuggestedAnnotation(annotation: string) {
+      let oldValue = this.commentForm.controls['comment'].value;
+      if (oldValue.trim().length != 0)
+        oldValue += ', ';
+      let newValue = oldValue + annotation;
+
+      this.commentForm.controls['comment'].setValue(newValue);
+    }
+
+    addComment() {
+      if (this.commentForm.valid) {
+        let comment: string = this.commentForm.controls['comment'].value.trim();
+        let tags = this.prepareTagsForAdd(comment);
+        console.log(tags);
+        
+        this.commentForm.reset();
+        this.commentForm.controls['comment'].setValue('');
+      }
+    }
+
+    prepareTagsForAdd(comment: string): string[] {
+      let tags = comment.split(/[,;]+/);
+      tags = tags.filter(tag => tag.trim().length > 0);
+      tags = tags.map(tag => tag.trim());
+
+      return tags;
+    }
+
+    async changeImage(): Promise<void> {
       if (this.image == this.imageURL) {
+        if (this.segmentedImageURL == null) {
+          await this.getSegmentedImage();
+        }
         this.image = this.segmentedImageURL;
         this.buttonLabel = 'Wyświetl oryginał';
-      }
-      else {
+      } else {
         this.image = this.imageURL;
         this.buttonLabel = 'Wyświetl segmentację';
       }
     }
 
-    downloadImage(): void {
-      let blob: Blob | null = null;
-      let fileName: string = '';
+    getSegmentedImage(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        this.serverService.getSegmentedImage(this.image_id).subscribe({
+          next: (blob: Blob) => {
+            this.segmentedImageBLOB = blob;
+            const reader = new FileReader();
+            reader.onload = () => {
+              this.segmentedImageURL = reader.result;
+              resolve();
+            };
+            reader.readAsDataURL(blob);
+          },
+          error: (error: Error) => {
+            console.error('Error fetching segmented image:', error);
+            reject(error);
+          }
+        });
+      });
+    }
 
+    downloadImage(): void {
       if (this.image == this.imageURL && this.imageBLOB) {
-        blob = this.imageBLOB;
-        fileName = `${this.image_id}.jpg`;
-      }
-      else if (this.image == this.segmentedImageURL && this.segmentedImageBLOB) {
-        blob = this.segmentedImageBLOB;
-        fileName = `${this.image_id}-segmented.jpg`;
-      }
-      else {
+        const link =  window.URL.createObjectURL(this.imageBLOB);
+        this.triggerDownload(link, `${this.image_id}.jpg`);
+      } else if (this.image == this.segmentedImageURL && this.segmentedImageBLOB) {
+        const link =  window.URL.createObjectURL(this.segmentedImageBLOB);
+        this.triggerDownload(link, `${this.image_id}-segmented.jpg`);
+      } else {
         console.error('Nie można zapisać obrazu');
-        return;
       }
-    
-      const link = window.URL.createObjectURL(blob);
+    }
+
+    triggerDownload(link: string, filename: string) {
       const a = document.createElement('a');
       a.href = link;
-      a.download = fileName;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
