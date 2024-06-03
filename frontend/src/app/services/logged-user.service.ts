@@ -46,6 +46,29 @@ export class LoggedUserService {
 		return this.localStorageService.getItem('role') ?? "";
 	}
 
+	getLoggedUserData(): LoggedUserData {
+		return {
+			accessToken: this.getAccessToken(),
+			id: this.getId(),
+			username: this.getUsername(),
+			email: this.getEmail(),
+			role: this.getRole(),
+			totp_enabled: this.isTotpEnabled() ?? false
+		}
+	}
+
+	setUsername(username: string): void {
+		this.localStorageService.setItem('username', username);
+	}
+
+	setEmail(email: string): void {
+		this.localStorageService.setItem('email', email);
+	}
+
+	setAccessToken(accessToken: string): void {
+		this.localStorageService.setItem('access_token', accessToken);
+	}
+
 	isTotpEnabled(): boolean | null {
 		let isTotpEnabledAsString = this.localStorageService.getItem('totp_enabled');
 
@@ -53,10 +76,14 @@ export class LoggedUserService {
 			return null;
 		}
 
-		return Boolean(isTotpEnabledAsString);
+		return isTotpEnabledAsString === 'true';
 	}
 
 	clearLoggedUserData(): void {
 		this.localStorageService.clear();
+	}
+
+	logOut(): void {
+		this.clearLoggedUserData();
 	}
 }

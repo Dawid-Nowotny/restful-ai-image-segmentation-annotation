@@ -1,5 +1,6 @@
 :host ::ng-deep .nav-tabs .nav-link {
     color: black;
+    
 }
 
 ::ng-deep .nav-tabs {
