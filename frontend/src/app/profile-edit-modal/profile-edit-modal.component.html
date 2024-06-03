@@ -1,0 +1,44 @@
+<div class="modal" tabindex="-1" [ngClass]="{'show': isModalOpen}" [ngStyle]="{'display': isModalOpen ? 'block' : 'none'}" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edycja profilu</h5>
+            </div>
+            <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div>
+                    {{ errorMessage }}
+                </div>
+            </div>
+            <div *ngIf="successMessage" class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                <div>
+                    {{ successMessage }}
+                </div>
+            </div>
+            <form class="row g-3 mx-3 my-2"> 
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-user"></i></span>
+                    <input type="text" [(ngModel)]="username" [ngModelOptions]="{ standalone: true }" class="form-control" placeholder="Nazwa użytkownika" aria-label="Nazwa użytkownika" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-at"></i></span>
+                    <input type="text" [(ngModel)]="email" [ngModelOptions]="{ standalone: true }" class="form-control" placeholder="E-mail" aria-label="E-mail" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" [(ngModel)]="password" [ngModelOptions]="{ standalone: true }" class="form-control" placeholder="Nowe hasło" aria-label="Nowe hasło" aria-describedby="basic-addon1">
+                </div>
+                <p>Podaj aktualne hasło w celu zatwierdzenia zmian:</p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" [(ngModel)]="old_password" [ngModelOptions]="{ standalone: true }" class="form-control" placeholder="Hasło" aria-label="Hasło" aria-describedby="basic-addon1">
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="confirm()">Potwierdź</button>
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Wyjdź</button>
+            </div>
+        </div>
+    </div>
+</div>

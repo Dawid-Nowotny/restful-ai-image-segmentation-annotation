@@ -10,10 +10,10 @@ from jose import JWTError, jwt
 import io
 
 from datetime import datetime, timedelta, timezone
-from typing import Annotated, Tuple
+from typing import Annotated
 
 from .jwt_config import SECRET_KEY, ALGORITHM
-from .schemas import TokenData
+from .schemas import TokenData, UserUpdateSchema
 
 try:
     from models import User, Image
@@ -63,6 +63,36 @@ class UserServices:
         db.refresh(user)
         return user
     
+    def check_username_email_availability_for_current_user(self, user_data_update: UserUpdateSchema, current_user: User, db: Session) -> None:
+        if (
+            (user_data_update.username is None or user_data_update.username == current_user.username)
+            and (user_data_update.email is None or user_data_update.email == current_user.email)
+            and (user_data_update.password is None or current_user.verify_password(user_data_update.password))
+        ):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nie wprowadzono żadnych zmian")
+
+        username_exists = db.query(User).filter(User.username == user_data_update.username, User.id != current_user.id).first()
+        if username_exists:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nazwa użytkownika zajęta")
+
+        email_exists = db.query(User).filter(User.email == user_data_update.email, User.id != current_user.id).first()
+        if email_exists:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="E-mail zajęty")
+
+    async def update_user(self, current_user: User, user_data_update: UserUpdateSchema, db: Session) -> User:
+        if user_data_update.username:
+            current_user.username = user_data_update.username
+
+        if user_data_update.email:
+            current_user.email = user_data_update.email
+
+        if user_data_update.password:
+            current_user.set_password(user_data_update.password)
+
+        db.commit()
+        db.refresh(current_user)
+        return current_user
+
     def get_user_by_username(self, username: str, db: Session) -> User:
         user = db.query(User).filter(User.username == username).first()
         

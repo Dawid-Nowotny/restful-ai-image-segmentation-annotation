@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
 from .service import *
-from .schemas import UserCreateSchema, UserOut, VerifyTotpRequest, DisableTOTPRequest
+from .schemas import UserCreateSchema, UserUpdateSchema, UserOut, VerifyTotpRequest, DisableTOTPRequest
 from get_db import get_db
 
 router = APIRouter()
@@ -21,7 +21,11 @@ def login(
     if user.secret_key is not None:
         totp_en = True
 
-    return {"access_token": access_token, "token_type": "bearer", "totp_enabled": totp_en}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer", 
+        "totp_enabled": totp_en
+    }
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
@@ -32,7 +36,30 @@ async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
     user = await user_service.create_user(user.username, user.email, user.password, db)
     access_token = user_service.create_access_token(data={"sub": user.username})
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer"
+    }
+
+@router.patch("/update-user")
+async def update_user(
+    current_user: Annotated[User, Depends(UserServices.get_current_active_user)],
+    user_data_update: UserUpdateSchema,
+    db: Session= Depends(get_db),
+    ):
+    user_service = UserServices()
+    
+    user_service.check_password(current_user, user_data_update.old_password)
+    user_service.check_username_email_availability_for_current_user(user_data_update, current_user, db)
+    user = await user_service.update_user(current_user, user_data_update, db)
+    access_token = user_service.create_access_token(data={"sub": user.username})
+
+    return {
+        "username": user.username,
+        "email": user.email,
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
 @router.get("/me", response_model=UserOut)
 async def read_users_me(

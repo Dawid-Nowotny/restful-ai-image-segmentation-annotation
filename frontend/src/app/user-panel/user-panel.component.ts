@@ -6,12 +6,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoggedUserService } from '../services/logged-user.service';
 import { TotpUserPanelModalComponent } from '../totp-user-panel-modal/totp-user-panel-modal.component';
 import { ImageFileData, ImageService } from '../services/image.service';
+import { ProfileEditModalComponent } from '../profile-edit-modal/profile-edit-modal.component';
+import { PageChangedEvent, PaginationModule } from 'ngx-bootstrap/pagination';
 
 
 @Component({
   selector: 'app-user-panel',
   standalone: true,
-  imports: [CommonModule, TotpUserPanelModalComponent],
+  imports: [CommonModule, TotpUserPanelModalComponent, ProfileEditModalComponent, PaginationModule],
   templateUrl: './user-panel.component.html',
   styleUrl: './user-panel.component.css'
 })
@@ -20,13 +22,16 @@ export class UserPanelComponent {
 
   currentComponent: string | null = null;
   username: string = "";
+  usernameFromRoute: string | null = null;
   role: string = "";
   image_count: number = 0;
   isAuthorizationEnabled: boolean | null = null;
   isLoggedUser: boolean = false;
   errorMessage: string | undefined;
   @ViewChild(TotpUserPanelModalComponent) totpUserPanelModalModalComponent!: TotpUserPanelModalComponent;
+  @ViewChild(ProfileEditModalComponent) profileEditModalComponent!: ProfileEditModalComponent;
 	imagesArray: ImageFileData[] = [];
+	itemsPerPage: number = 6;
   baseUrlToImageDetails: string = "image-view";
 
   constructor(private route: ActivatedRoute,
@@ -36,20 +41,19 @@ export class UserPanelComponent {
               private imageService: ImageService) { }
 
   ngOnInit() {
-    const usernameFromRoute = this.route.snapshot.paramMap.get('username');
+    this.usernameFromRoute = this.route.snapshot.paramMap.get('username');
     const loggedUser = this.loggedUserService.getUsername();
     this.isAuthorizationEnabled = this.loggedUserService.isTotpEnabled();
     
-    if(usernameFromRoute)
-      this.getImages(usernameFromRoute, 0, 6);
+    if(this.usernameFromRoute)
+		  this.getImages(this.usernameFromRoute, 0, this.itemsPerPage);
 
-    if (usernameFromRoute === loggedUser) {
+    if (this.usernameFromRoute === loggedUser) {
       this.isLoggedUser = true;
     }
-    this.getProfileInfo(usernameFromRoute);
+    this.getProfileInfo(this.usernameFromRoute);
       
   }
-
 
   private getProfileInfo(usernameFromRoute: any) {
     this.serverService.getProfileInfo(usernameFromRoute).subscribe({
@@ -69,9 +73,13 @@ export class UserPanelComponent {
     })
   }
 
-  openModal(){
+  openModalTOTP(){
     this.totpUserPanelModalModalComponent.openModal();
 }
+
+  openModalProfileEdit(){
+    this.profileEditModalComponent.openModal();
+  }
 
   getImages(username: string, startId: number, endId: number) {
     this.serverService.getUserImages(username, startId, endId).subscribe({
@@ -84,6 +92,12 @@ export class UserPanelComponent {
       }
     })
   }
+
+	handlePageChange(event: PageChangedEvent) {
+		let currentPage = event.page;
+    if(this.usernameFromRoute)
+		  this.getImages(this.usernameFromRoute, currentPage * this.itemsPerPage - this.itemsPerPage, currentPage * this.itemsPerPage);
+	}
 
   navigateToImageDetails(routeParam: string) {
 		this.router.navigate([`${this.baseUrlToImageDetails}/` , routeParam]);

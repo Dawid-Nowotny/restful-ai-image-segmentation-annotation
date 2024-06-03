@@ -24,12 +24,12 @@
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                         <div class="profile mr-3">
-                            <a href="#" class="btn btn-outline-dark btn-lg btn-block btn-lg-sm">Edytuj profil</a>
+                            <a class="btn btn-outline-dark btn-lg btn-block btn-lg-sm" (click)="openModalProfileEdit()">Edytuj profil</a>
                         </div>
                     </li>
                     <li class="list-inline-item">
                       <div class="profile mr-3">
-                          <a class="btn btn-outline-dark btn-lg btn-block btn-lg-sm" (click)="openModal()">2FA</a>
+                          <a class="btn btn-outline-dark btn-lg btn-block btn-lg-sm" (click)="openModalTOTP()">2FA</a>
                       </div>
                   </li>
                     <li class="list-inline-item">
@@ -45,9 +45,12 @@
         <div class="py-4 px-4">
           <div class="d-flex align-items-center justify-content-between mb-3">
               <h5 class="mb-0">Ostatnie zdjęcia</h5>
-              <a href="#" class="btn btn-link text-muted">Pokaż więcej</a>
           </div>
           <div class="row" id="image-list">
+            <div class="row justify-content-center text-center">
+                <pagination class="justify-content-center text-primary" [customPreviousTemplate]="previousTemplate" [customNextTemplate]="nextTemplate"
+                    [totalItems]="image_count" [itemsPerPage]="itemsPerPage" (pageChanged)="handlePageChange($event)"></pagination>
+            </div>
             <div class="col-md-4" *ngFor="let image of imagesArray;">
                 <div class="image-container" (click)="navigateToImageDetails(image.id)">
                     <img [src]="image.url" [alt]="image.id" class="img-fluid">
@@ -62,3 +65,12 @@
 
   <!-- Modal -->
 <app-totp-user-panel-modal></app-totp-user-panel-modal>
+<app-profile-edit-modal></app-profile-edit-modal>
+
+<ng-template #previousTemplate let-disabled="disabled" let-currentPage="currentPage">
+    Poprzednia
+</ng-template>
+
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    Następna
+</ng-template>
