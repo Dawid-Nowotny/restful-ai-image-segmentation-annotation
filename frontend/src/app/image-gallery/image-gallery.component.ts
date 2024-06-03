@@ -41,7 +41,7 @@ export class ImageGalleryComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.getImagesNumber();
-		this.getImages(0, 9);
+		this.getImages(0, this.itemsPerPage);
 	}
 
 	constructor(private router: Router, private serverService: ServerService, private imageService: ImageService) { }
@@ -113,7 +113,7 @@ export class ImageGalleryComponent implements OnInit {
 		let currentPage = event.page;
 
 		if (!this.useFilters) {
-			this.getImages(currentPage * 10 - 10, currentPage * 10 - 1);
+			this.getImages(currentPage * this.itemsPerPage - this.itemsPerPage, currentPage * this.itemsPerPage);
 		}
 	}
 
