@@ -108,20 +108,31 @@ export class ImageViewComponent implements OnInit {
     }
 
     clickSuggestedAnnotation(annotation: string) {
-      let newValue = '';
       let oldValue = this.commentForm.controls['comment'].value;
       if (oldValue.trim().length != 0)
         oldValue += ', ';
-      newValue = oldValue + annotation;
+      let newValue = oldValue + annotation;
 
       this.commentForm.controls['comment'].setValue(newValue);
     }
 
     addComment() {
       if (this.commentForm.valid) {
-        console.log(this.commentForm.controls['comment'].value);
+        let comment: string = this.commentForm.controls['comment'].value.trim();
+        let tags = this.prepareTagsForAdd(comment);
+        console.log(tags);
+        
         this.commentForm.reset();
+        this.commentForm.controls['comment'].setValue('');
       }
+    }
+
+    prepareTagsForAdd(comment: string): string[] {
+      let tags = comment.split(/[,;]+/);
+      tags = tags.filter(tag => tag.trim().length > 0);
+      tags = tags.map(tag => tag.trim());
+
+      return tags;
     }
 
     async changeImage(): Promise<void> {
