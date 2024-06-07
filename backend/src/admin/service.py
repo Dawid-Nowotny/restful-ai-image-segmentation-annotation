@@ -1,7 +1,10 @@
 from fastapi import HTTPException
 from typing import List
 
-from models import User, Image
+try:
+    from models import User, Image
+except ImportError:
+    from src.models import User, Image
 
 class AdminServices:
     def check_if_admin(self, user) -> None:
