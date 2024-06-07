@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from .service import ImageServices, SegmentationServices, AiAnnotationServices
 from .schemas import ImageData, ImageFilterParams
 from .utils import convert_to_json
+from models import User
 from get_db import get_db
 
 from user.service import UserServices
@@ -13,12 +14,14 @@ router = APIRouter()
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
 async def upload(
     image_data: ImageData = Depends(), 
-    file: UploadFile = File(...), 
+    file: UploadFile = File(...),
+    current_user: User = Depends(UserServices.get_current_user),
     db: Session = Depends(get_db)
     ):
     image_service = ImageServices()
     segmentation_services = SegmentationServices()
 
+    image_service.rename_file(file)
     binary_pred = file.file.read()
     file.file.seek(0)
     binary_seg_output = file.file.read()
@@ -31,9 +34,9 @@ async def upload(
     segmented_image = segmentation_services.get_segmented_image(binary_seg_output, masks, pred_boxes, pred_class)
     segmentation_data = convert_to_json(pred_boxes, pred_class)
 
-    await image_service.add_image_to_database(db, segmented_image, segmentation_data, image_data, file)
+    await image_service.add_image_to_database(db, segmented_image, segmentation_data, image_data, current_user.id, file)
 
-    return {"saved_image": file.filename}
+    return {"message": "Dodano obrazek"}
 
 @router.get("/get-image/{id}")
 def get_image(id: int = Path(..., ge=0), db: Session = Depends(get_db)):
