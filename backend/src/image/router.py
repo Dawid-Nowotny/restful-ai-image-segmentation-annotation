@@ -1,8 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, Depends, Path, Response, status
 from sqlalchemy.orm import Session
 
-from .service import ImageServices, SegmentationServices, AiAnnotationServices
-from .schemas import ImageData, ImageFilterParams
+from .service import ImageServices, SegmentationServices, AiAnnotationServices, CommentServices
+from .schemas import ImageData, ImageFilterParams, TagIdRequest, CommentRequest
 from .utils import convert_to_json
 from models import User
 from get_db import get_db
@@ -165,3 +165,18 @@ def get_image_detections(image_id: int = Path(..., ge=0), db: Session = Depends(
         "threshold": threshold,
         "coordinates_classes": coordinates_classes
     }
+
+@router.post("/add-tags-to-image", status_code=status.HTTP_201_CREATED)
+async def add_tags_to_image(
+    request: TagIdRequest,
+    comment_data: CommentRequest,
+    current_user: User = Depends(UserServices.get_current_user),
+    db: Session = Depends(get_db)
+    ):
+    comment_service = CommentServices()
+
+    tags = [await comment_service.create_tag(tag_data.tag, db) for tag_data in comment_data.tags]
+
+    await comment_service.create_comment(request.image_id, current_user, comment_data, tags, db)
+
+    return {"message": "Komentarz został dodany do obrazka"}

@@ -15,6 +15,9 @@ class CommentRequest(BaseModel):
     super_tag: bool
     tags: List[TagRequest]
 
+class TagIdRequest(BaseModel):
+    image_id: int
+
 class ImageFilterParams(BaseModel):
     threshold_range: Optional[str] = Field(Query(None))
     tags: Optional[List[str]] = Field(Query(None))

@@ -2,8 +2,11 @@ from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
-from .service import *
+from typing import Annotated
+
+from .service import UserServices, TOTPServices
 from .schemas import UserCreateSchema, UserUpdateSchema, UserOut, VerifyTotpRequest, DisableTOTPRequest
+from models import User
 from get_db import get_db
 
 router = APIRouter()
