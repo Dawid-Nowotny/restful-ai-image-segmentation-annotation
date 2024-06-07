@@ -18,7 +18,7 @@ from .schemas import TokenData, UserUpdateSchema
 try:
     from models import User, Image
     from get_db import get_db
-except:
+except ModuleNotFoundError:
     from src.models import User, Image
     from src.get_db import get_db
 

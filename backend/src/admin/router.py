@@ -6,7 +6,7 @@ from .schemas import ModeratorResponse, UserResponse, SuperTagIdRequest
 
 from models import User
 from get_db import get_db
-from .service import *
+from .service import AdminServices, ModeratorServices
 
 from user.service import UserServices
 from image.service import ImageServices, CommentServices

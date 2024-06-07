@@ -16,10 +16,12 @@ import json
 from datetime import date
 from typing import IO, Tuple, List
 from io import BytesIO
+import os
+import uuid
 
 try:
     from models import Image, Tag, User, Comment
-except:
+except ModuleNotFoundError:
     from src.models import Image, Tag, User, Comment
 from .schemas import ImageData, ImageFilterParams
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
@@ -145,7 +147,7 @@ class ImageServices:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak koordynatów klas")
         return result[0]
 
-    async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, image: UploadFile = File(...)) -> None:
+    async def add_image_to_database(self, db: Session, segmented_image: PILImage.Image, segmentation_data: str, image_data: ImageData, uploader_id: int, image: UploadFile = File(...)) -> None:
         image_bytes = BytesIO()
         segmented_image.save(image_bytes, format="JPEG")
 
@@ -155,8 +157,8 @@ class ImageServices:
             coordinates_classes=json.loads(segmentation_data),
             threshold=image_data.threshold,
             upload_date=date.today(),
-            uploader_id=image_data.uploader_id,
-            moderator_id=image_data.moderator_id,
+            uploader_id=uploader_id,
+            moderator_id=None,
         )
 
         db.add(db_image)
@@ -199,6 +201,10 @@ class ImageServices:
                     status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                     detail="Przesłany plik jest za duży. Limit wynosi 5MB",
                 )
+            
+    def rename_file(self, file: UploadFile) -> str:
+        random_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"
+        file.filename = random_filename
 
 class SegmentationServices:
     def __get_model(self, device) -> torch.nn.Module:

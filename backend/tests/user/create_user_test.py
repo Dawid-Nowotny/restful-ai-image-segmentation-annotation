@@ -7,12 +7,16 @@ from src.user.service import UserServices
 def mock_db():
     return MagicMock()
 
-@pytest.mark.asyncio
-async def test_create_user(mock_db):
-    username = "test_user"
-    email = "test@example.com"
-    password = "test_password"
+@pytest.fixture
+def mock_db():
+    return MagicMock()
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("username, email, password, expected_role", [
+    ("test_user", "test@example.com", "test_password", "User"),
+    ("admin_user", "admin@example.com", "admin_password", "User"),
+])
+async def test_create_user(mock_db, username, email, password, expected_role):
     user_services = UserServices()
 
     user = await user_services.create_user(username, email, password, mock_db)
@@ -23,5 +27,5 @@ async def test_create_user(mock_db):
 
     assert user.username == username
     assert user.email == email
-    assert user.role == "User"
+    assert user.role == expected_role
     assert user.verify_password(password)

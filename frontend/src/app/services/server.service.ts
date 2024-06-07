@@ -88,9 +88,12 @@ export class ServerService {
         return this.http.post(url, data, httpOptions);
     }
 
-    postImage(data: any): Observable<any> {
+    postImage(data: any, accessToken: string): Observable<any> {
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`
+        });
         const url = `${this.restUrl}/images/upload`;
-        return this.http.post(url, data);
+        return this.http.post(url, data, { headers });
     }
 
     getImage(id: number){

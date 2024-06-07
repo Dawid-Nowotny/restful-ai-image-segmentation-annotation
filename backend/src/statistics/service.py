@@ -5,7 +5,10 @@ from collections import Counter, defaultdict
 from typing import List, Dict, Any
 
 from .constants import MONTHS
-from models import User, Image, Tag, Comment
+try:
+    from models import User, Image, Tag, Comment
+except ImportError:
+    from src.models import User, Image, Tag, Comment
 
 class ImageStatsServices:
     def get_top_tags(self, limit: int, db: Session) -> List[Dict[str, int]]:
