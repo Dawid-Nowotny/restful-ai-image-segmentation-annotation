@@ -21,7 +21,7 @@ import uuid
 
 try:
     from models import Image, Tag, User, Comment
-except:
+except ModuleNotFoundError:
     from src.models import Image, Tag, User, Comment
 from .schemas import ImageData, ImageFilterParams
 from .constants import FILE_SIZE, LABELS_URL, TRANSFORMS, COCO_INSTANCE_CATEGORY_NAMES
