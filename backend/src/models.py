@@ -11,13 +11,6 @@ except:
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-image_likes = Table(
-    "ImageLikes",
-    Base.metadata,
-    Column("image_id", ForeignKey("Image.id",  name="image_likes_image_id"), primary_key=True),
-    Column("user_id", ForeignKey("User.id", name="image_likes_user_id"), primary_key=True),
-)
-
 comment_likes = Table(
     "CommentLikes",
     Base.metadata,
@@ -62,7 +55,6 @@ class Image(Base):
     comments: Mapped[List["Comment"]] = relationship(back_populates="image")
     uploader: Mapped["User"] = relationship(back_populates="images", foreign_keys=[uploader_id])
     moderator: Mapped["User"] = relationship(back_populates="images", foreign_keys=[moderator_id])
-    image_users_likes: Mapped[List["User"]] = relationship(secondary=image_likes, back_populates="user_images_likes")
 
 class User(Base):
     __tablename__ = "User"
@@ -76,7 +68,6 @@ class User(Base):
     comments: Mapped[List["Comment"]] = relationship(back_populates="user")
     images: Mapped[List["Image"]] = relationship(back_populates="uploader", foreign_keys="[Image.uploader_id]")
     user_comments_likes: Mapped[List["Comment"]] = relationship(secondary=comment_likes, back_populates="comment_users_likes")
-    user_images_likes: Mapped[List["Image"]] = relationship(secondary=image_likes, back_populates="image_users_likes")
 
     def set_password(self, password):
         self.password_hash = pwd_context.hash(password)
