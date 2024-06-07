@@ -77,11 +77,9 @@ export class ImageUploadComponent {
 
         const formData = new FormData();
         formData.append("file", this.uploadImageData.file);
-        formData.append("uploader_id", this.uploadImageData.uploaderId.toString());
-        formData.append("moderator_id", "");
         formData.append("threshold", this.uploadImageData.threshold.toString());
 
-        this.serverService.postImage(formData).subscribe(
+        this.serverService.postImage(formData, this.loggedUserService.getAccessToken()).subscribe(
             {
                 next: (response: any) => {
                     this.successMessage = "Zdjęcie zostało dodane!";
