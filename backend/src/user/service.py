@@ -1,6 +1,6 @@
 import pyotp
 import pyqrcode
-from fastapi import HTTPException, Depends, Request, status
+from fastapi import HTTPException, Depends, Response, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -10,9 +10,9 @@ from jose import JWTError, jwt
 import io
 
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Literal
 
-from .jwt_config import SECRET_KEY, ALGORITHM
+from .jwt_config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
 from .schemas import TokenData, UserUpdateSchema
 
 try:
@@ -109,18 +109,46 @@ class UserServices:
         user = db.query(User).filter(User.username == username).first()
         return user
     
-    def create_access_token(self, data: dict, expires_delta: timedelta | None = None) -> str:
+    @staticmethod
+    def verify_token(token: str):
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            exp = payload.get("exp")
+            if exp is None or datetime.fromtimestamp(exp, tz=timezone.utc) < datetime.now(tz=timezone.utc):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token has expired",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            return payload
+        except JWTError as e:
+            if e.args[0] == "Signature has expired":
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token has expired",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+    @staticmethod
+    def generate_token(data: dict, token_type: Literal["access", "refresh"]) -> str:
         to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.now(timezone.utc) + expires_delta
+        if token_type == "access":
+            expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         else:
-            expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+            expires_delta = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
+
+        expire = datetime.now(timezone.utc) + expires_delta
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return encoded_jwt
 
     @staticmethod
-    def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
+    def get_current_user(request: Request, response: Response, db: Session = Depends(get_db)) -> User:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -135,13 +163,24 @@ class UserServices:
                 raise credentials_exception
             token_data = TokenData(username=username)
         except JWTError:
-            raise credentials_exception
-        
+            try:
+                refresh_token = request.cookies.get("refresh_token")
+                payload = UserServices.verify_token(refresh_token)
+                username: str = payload.get("sub")
+                if username is None:
+                    raise credentials_exception
+                token_data = TokenData(username=username)
+
+                new_access_token = UserServices.generate_token(data={"sub": username}, token_type="access")
+                response.set_cookie(key="access_token", value=f"{new_access_token}", httponly=True, samesite="none", secure=True)
+            except JWTError:
+                raise credentials_exception
+
         user = UserServices.__get_user_by_username(token_data.username, db)
-        
+
         if user is None:
             raise credentials_exception
-        
+
         return user
     
     @staticmethod
