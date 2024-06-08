@@ -27,13 +27,9 @@ export class ServerService {
     }
 
     getLoggedUserCredentials(JWTToken: string): Observable<any> {
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${JWTToken}`,
-            'Content-Type': 'application/json'
-        });
         const url = `${this.restUrl}/user/me`;
 
-        return this.http.get(url, { headers });
+        return this.http.get(url);
     }
 
     /** GET PROFILE INFO */

@@ -13,6 +13,7 @@ router = APIRouter()
 
 @router.post("/login")
 def login(
+    response: Response,
     login_info: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
     ):
     user_service = UserServices()
@@ -24,6 +25,7 @@ def login(
     if user.secret_key is not None:
         totp_en = True
 
+    response.set_cookie(key="access_token",value=f"Bearer {access_token}", httponly=True, samesite="none", secure=True);  
     return {
         "access_token": access_token, 
         "token_type": "bearer", 

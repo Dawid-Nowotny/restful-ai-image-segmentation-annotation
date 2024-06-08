@@ -17,6 +17,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_credentials=True
 )
 
 app.include_router(image_router.router, prefix="/images", tags=["Image"])
