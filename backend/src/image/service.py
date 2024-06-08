@@ -127,13 +127,6 @@ class ImageServices:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Brak autora supertagów")
         return result[0]
     
-    def get_image_moderator(self, image_id: int, db: Session) -> User:
-        image = self.get_single_image(image_id, db)
-
-        if not image.moderator:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono moderatora dla danego zdjecia")
-        return image.moderator
-    
     def get_image_threshold(self, image_id: int, db: Session) -> json:
         result = db.query(Image.threshold).filter(Image.id == image_id).first()
         
