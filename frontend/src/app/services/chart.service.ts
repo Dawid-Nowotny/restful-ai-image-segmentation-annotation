@@ -117,7 +117,7 @@ export class ChartService {
     }
 
     createTopUploadersChart(chartElementRef: ElementRef<HTMLCanvasElement>) {
-        this.serverService.getTopUploaders(this.loggedUserService.getAccessToken(), 10).subscribe({
+        this.serverService.getTopUploaders(10).subscribe({
             next: (response: TopUploadersData[]) => {
                 let labels = response.map((uploader: TopUploadersData) => uploader.username);
                 let data = response.map((uploader: TopUploadersData) => uploader.upload_count);
@@ -130,7 +130,7 @@ export class ChartService {
     }
 
     createTopCommentersChart(chartElementRef: ElementRef<HTMLCanvasElement>) {
-		this.serverService.getTopCommenters(this.loggedUserService.getAccessToken(), 10).subscribe({
+		this.serverService.getTopCommenters(10).subscribe({
 			next: (response: TopCommentersData[]) => {
 				let labels = response.map((uploader: TopCommentersData) => uploader.username);
 				let data = response.map((uploader: TopCommentersData) => uploader.comment_count);
@@ -143,7 +143,7 @@ export class ChartService {
 	}
 
 	createTopModeratorsChart(chartElementRef: ElementRef<HTMLCanvasElement>) {
-		this.serverService.getTopModerators(this.loggedUserService.getAccessToken(), 10).subscribe({
+		this.serverService.getTopModerators(10).subscribe({
 			next: (response: TopModeratorsData[]) => {
 				let labels = response.map((moderator: TopModeratorsData) => moderator.username);
 				let data = response.map((moderator: TopModeratorsData) => moderator.moderated_count);

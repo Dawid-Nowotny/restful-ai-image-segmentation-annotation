@@ -41,7 +41,7 @@ export class AdminMakeModeratorComponent implements OnInit{
 	}
 
 	assignModeratorRole(username: string){
-		this.serverService.assignModeratorRole(this.loggedUserService.getAccessToken(), username).subscribe({
+		this.serverService.assignModeratorRole(username).subscribe({
 			next: (response: any) => {
 				this.getUsers();
 				this.successMessage = response.message + ` (${username})`;

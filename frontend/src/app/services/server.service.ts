@@ -26,7 +26,7 @@ export class ServerService {
         return this.http.post(url, body, { headers });
     }
 
-    getLoggedUserCredentials(JWTToken: string): Observable<any> {
+    getLoggedUserCredentials(): Observable<any> {
         const url = `${this.restUrl}/user/me`;
 
         return this.http.get(url);
@@ -39,37 +39,28 @@ export class ServerService {
     }
 
     updateUser(userDataUpdate: any, JWTToken: string): Observable<any> {
-        const headers = new HttpHeaders().set('Authorization', `Bearer ${JWTToken}`);
         const url = `${this.restUrl}/user/update-user`;
-        return this.http.patch(url, userDataUpdate, { headers });
+        return this.http.patch(url, userDataUpdate);
     }    
     
-    generateQrCode(accessToken: string): Observable<Blob> {
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`
-        });
+    generateQrCode(): Observable<Blob> {
         const url = `${this.restUrl}/user/generate-qr`;
 
-        return this.http.post(url, null, { headers, responseType: 'blob' });
+        return this.http.post(url, null, { responseType: 'blob' });
     }
 
     verifyTOTP(data: any): Observable<any> {
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${data.accessToken}`,
-            'Content-Type': 'application/json'
-        });
         const url = `${this.restUrl}/user/verify-code`;
         
         const body = {
             token: data.verificationCode
         }
 
-        return this.http.post(url, body, { headers });
+        return this.http.post(url, body);
     }
 
-    disableTOTP(password: string, accessToken: string): Observable<any> {
+    disableTOTP(password: string): Observable<any> {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         });
         const url = `${this.restUrl}/user/disable-totp`;
@@ -84,12 +75,9 @@ export class ServerService {
         return this.http.post(url, data, httpOptions);
     }
 
-    postImage(data: any, accessToken: string): Observable<any> {
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`
-        });
+    postImage(data: any): Observable<any> {
         const url = `${this.restUrl}/images/upload`;
-        return this.http.post(url, data, { headers });
+        return this.http.post(url, data);
     }
 
     getImage(id: number){
@@ -186,36 +174,32 @@ export class ServerService {
         return this.http.get(url);
     }
 
-    getTopUploaders(accessToken: string, limit: number): Observable<any> {
+    getTopUploaders(limit: number): Observable<any> {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         });
         const url = `${this.restUrl}/statistics/top-uploaders/${limit}`;
         return this.http.get(url, { headers });
     }
 
-    getTopCommenters(accessToken: string, limit: number): Observable<any> {
+    getTopCommenters(limit: number): Observable<any> {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         });
         const url = `${this.restUrl}/statistics/top-commenters/${limit}`;
         return this.http.get(url, { headers });
     }
 
-    getTopModerators(accessToken: string, limit: number): Observable<any> {
+    getTopModerators(limit: number): Observable<any> {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         });
         const url = `${this.restUrl}/statistics/moderated-images/${limit}`;
         return this.http.get(url, { headers });
     }
 
-    addSuperTagToImage(accessToken: string, imageId: number, tagsArray: string[]): Observable<any> {
+    addSuperTagToImage(imageId: number, tagsArray: string[]): Observable<any> {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         });
         const url = `${this.restUrl}/admin/add-super-tag/`;
@@ -260,18 +244,16 @@ export class ServerService {
         
     }
 
-    assignModeratorToImage(accessToken: string, imageId: number, username: string) {
+    assignModeratorToImage(imageId: number, username: string) {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         });
         const url = `${this.restUrl}/admin/assign-moderator/${imageId}/${username}`;
         return this.http.put(url, {}, { headers });
     }
 
-    assignModeratorRole(accessToken: string, username: string) {
+    assignModeratorRole(username: string) {
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
         });
         const url = `${this.restUrl}/admin/make-moderator/${username}`;

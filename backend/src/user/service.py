@@ -1,6 +1,6 @@
 import pyotp
 import pyqrcode
-from fastapi import HTTPException, Depends, status
+from fastapi import HTTPException, Depends, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -120,13 +120,15 @@ class UserServices:
         return encoded_jwt
 
     @staticmethod
-    def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+    def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
         try:
+            token = request.cookies.get("access_token")
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             username: str = payload.get("sub")
             if username is None:

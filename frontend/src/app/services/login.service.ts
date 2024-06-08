@@ -37,7 +37,7 @@ export class LoginService {
 	}
 
     getLoggedUserDetails: (accessToken: string) => void = (accessToken) => {
-        this.serverService.getLoggedUserCredentials(accessToken).subscribe(
+        this.serverService.getLoggedUserCredentials().subscribe(
             {
                 next: (userDataResponse: any) => {
                     this.loggedUserService.saveLoggedUserData({
