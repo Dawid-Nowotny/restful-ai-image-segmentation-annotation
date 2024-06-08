@@ -41,6 +41,10 @@ async def register(response: Response, user: UserCreateSchema, db: Session = Dep
 
     response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True);  
 
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(response: Response):
+    response.delete_cookie(key="access_token", path="/")
+
 @router.patch("/update-user")
 async def update_user(
     current_user: Annotated[User, Depends(UserServices.get_current_active_user)],
