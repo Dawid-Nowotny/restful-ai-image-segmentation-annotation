@@ -41,7 +41,6 @@ export class LoginService {
             {
                 next: (userDataResponse: any) => {
                     this.loggedUserService.saveLoggedUserData({
-                        accessToken: accessToken,
                         id: userDataResponse.id,
                         username: userDataResponse.username,
                         email: userDataResponse.email,

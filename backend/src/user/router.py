@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -43,7 +43,7 @@ async def register(response: Response, user: UserCreateSchema, db: Session = Dep
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(response: Response):
-    response.delete_cookie(key="access_token", path="/")
+    response.delete_cookie(key="access_token", httponly=True, samesite="none", secure=True)
 
 @router.patch("/update-user")
 async def update_user(

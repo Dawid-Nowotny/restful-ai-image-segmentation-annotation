@@ -115,7 +115,6 @@ export class AdminImageViewComponent implements OnInit {
 
 	assignModerator() {
 		this.resetMessages();
-		let accessToken = this.loggedUserService.getAccessToken();
 
 		this.serverService.assignModeratorToImage(this.id, this.selectedModerator).subscribe({
 			next: (response: any) => {

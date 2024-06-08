@@ -26,6 +26,11 @@ export class ServerService {
         return this.http.post(url, body, { headers });
     }
 
+    postLogout(): Observable<any> {
+        const url = `${this.restUrl}/user/logout`;
+        return this.http.post(url, {});
+    }
+
     getLoggedUserCredentials(): Observable<any> {
         const url = `${this.restUrl}/user/me`;
 
@@ -38,7 +43,7 @@ export class ServerService {
         return this.http.get(url);
     }
 
-    updateUser(userDataUpdate: any, JWTToken: string): Observable<any> {
+    updateUser(userDataUpdate: any): Observable<any> {
         const url = `${this.restUrl}/user/update-user`;
         return this.http.patch(url, userDataUpdate);
     }    

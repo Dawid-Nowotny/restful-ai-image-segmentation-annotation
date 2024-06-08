@@ -63,7 +63,6 @@ export class RegisterComponent {
                     {
                         next: (userDataResponse: any) => {
                             this.loggedUserService.saveLoggedUserData({
-                                accessToken: registerResponse.access_token,
                                 id: userDataResponse.id,
                                 username: userDataResponse.username,
                                 email: userDataResponse.email,

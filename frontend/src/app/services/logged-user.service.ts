@@ -1,8 +1,9 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
+import { ServerService } from './server.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 type LoggedUserData = {
-	accessToken: string,
 	id: number,
 	username: string,
 	email: string,
@@ -15,19 +16,17 @@ type LoggedUserData = {
 })
 export class LoggedUserService {
 
-	constructor(private localStorageService: LocalStorageService) { }
+	constructor(
+		private localStorageService: LocalStorageService,
+		private serverService: ServerService
+	) { }
 
 	saveLoggedUserData(LoggedUserData: LoggedUserData): void {
-		this.localStorageService.setItem('access_token', LoggedUserData.accessToken);
 		this.localStorageService.setItem('id', LoggedUserData.id.toString());
 		this.localStorageService.setItem('username', LoggedUserData.username);
 		this.localStorageService.setItem('email', LoggedUserData.email);
 		this.localStorageService.setItem('role', LoggedUserData.role);
 		this.localStorageService.setItem('totp_enabled', LoggedUserData.totp_enabled.toString());
-	}
-
-	getAccessToken(): string {
-		return this.localStorageService.getItem('access_token') ?? "";
 	}
 
 	getId(): number {
@@ -48,7 +47,6 @@ export class LoggedUserService {
 
 	getLoggedUserData(): LoggedUserData {
 		return {
-			accessToken: this.getAccessToken(),
 			id: this.getId(),
 			username: this.getUsername(),
 			email: this.getEmail(),
@@ -63,10 +61,6 @@ export class LoggedUserService {
 
 	setEmail(email: string): void {
 		this.localStorageService.setItem('email', email);
-	}
-
-	setAccessToken(accessToken: string): void {
-		this.localStorageService.setItem('access_token', accessToken);
 	}
 
 	isTotpEnabled(): boolean | null {
@@ -85,5 +79,15 @@ export class LoggedUserService {
 
 	logOut(): void {
 		this.clearLoggedUserData();
+
+		this.serverService.postLogout().subscribe({
+			next: (response: any) => {
+				console.log("logged out");	
+			},
+			error: (error: HttpErrorResponse) => {
+				console.log(error);
+			}
+		})
+
 	}
 }
