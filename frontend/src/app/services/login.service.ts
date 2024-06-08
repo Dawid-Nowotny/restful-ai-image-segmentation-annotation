@@ -37,11 +37,10 @@ export class LoginService {
 	}
 
     getLoggedUserDetails: (accessToken: string) => void = (accessToken) => {
-        this.serverService.getLoggedUserCredentials(accessToken).subscribe(
+        this.serverService.getLoggedUserCredentials().subscribe(
             {
                 next: (userDataResponse: any) => {
                     this.loggedUserService.saveLoggedUserData({
-                        accessToken: accessToken,
                         id: userDataResponse.id,
                         username: userDataResponse.username,
                         email: userDataResponse.email,
@@ -65,6 +64,8 @@ export class LoginService {
             this.router.navigate(['/admin']);
         } else if (role === 'User') {
             this.router.navigate(['/']);
+        } else if (role === 'Moderator') {
+            this.router.navigate(['/admin']);
         }
     }
 

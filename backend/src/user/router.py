@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -13,6 +13,7 @@ router = APIRouter()
 
 @router.post("/login")
 def login(
+    response: Response,
     login_info: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
     ):
     user_service = UserServices()
@@ -24,14 +25,13 @@ def login(
     if user.secret_key is not None:
         totp_en = True
 
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True);  
     return {
-        "access_token": access_token, 
-        "token_type": "bearer", 
         "totp_enabled": totp_en
     }
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
+@router.post("/register", status_code=status.HTTP_204_NO_CONTENT)
+async def register(response: Response, user: UserCreateSchema, db: Session = Depends(get_db)):
     user_service = UserServices()
 
     user_service.check_if_user_exists(user.username, user.email, db)
@@ -39,10 +39,11 @@ async def register(user: UserCreateSchema, db: Session = Depends(get_db)):
     user = await user_service.create_user(user.username, user.email, user.password, db)
     access_token = user_service.create_access_token(data={"sub": user.username})
 
-    return {
-        "access_token": access_token, 
-        "token_type": "bearer"
-    }
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True);  
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(response: Response):
+    response.delete_cookie(key="access_token", httponly=True, samesite="none", secure=True)
 
 @router.patch("/update-user")
 async def update_user(

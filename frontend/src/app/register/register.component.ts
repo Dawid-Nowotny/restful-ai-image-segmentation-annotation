@@ -59,11 +59,10 @@ export class RegisterComponent {
         this.serverService.postRegister(data).subscribe({
             next: (registerResponse: any) => {
 
-                this.serverService.getLoggedUserCredentials(registerResponse.access_token).subscribe(
+                this.serverService.getLoggedUserCredentials().subscribe(
                     {
                         next: (userDataResponse: any) => {
                             this.loggedUserService.saveLoggedUserData({
-                                accessToken: registerResponse.access_token,
                                 id: userDataResponse.id,
                                 username: userDataResponse.username,
                                 email: userDataResponse.email,

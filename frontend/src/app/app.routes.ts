@@ -26,7 +26,7 @@ export const routes: Routes = [
         component: AdminMainPageComponent,
         canActivate: [hasRoleGuard],
         data: {
-            roles: ['Admin']
+            roles: ['Admin', 'Moderator']
         }
     },
     {
@@ -34,7 +34,7 @@ export const routes: Routes = [
         component: AdminImageViewComponent,
         canActivate: [hasRoleGuard],
         data: {
-            roles: ['Admin']
+            roles: ['Admin', 'Moderator']
         }
     },
     {

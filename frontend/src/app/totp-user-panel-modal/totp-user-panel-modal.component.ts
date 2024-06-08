@@ -50,9 +50,8 @@ export class TotpUserPanelModalComponent {
     }
 
     private enable2FA() {
-        const accessToken = this.loggedUserService.getAccessToken();
         
-        this.serverService.generateQrCode(accessToken).subscribe({
+        this.serverService.generateQrCode().subscribe({
             next: (response: Blob) => {
                 const objectURL = URL.createObjectURL(response);
                 this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
@@ -68,9 +67,8 @@ export class TotpUserPanelModalComponent {
     }
 
     private disable2FA(password: string) {
-        const accessToken = this.loggedUserService.getAccessToken();
         
-        this.serverService.disableTOTP(password, accessToken).subscribe({
+        this.serverService.disableTOTP(password).subscribe({
             next: (response: any) => {
                 console.log('2FA disabled', response);
                 this.isAuthorizationEnabled = false;

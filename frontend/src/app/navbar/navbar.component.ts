@@ -70,6 +70,7 @@ export class NavbarComponent implements OnInit, AfterViewInit {
     }
 
     logOut(){
+        console.log("bebe")
         this.loggedUserService.logOut();
     }
 }
