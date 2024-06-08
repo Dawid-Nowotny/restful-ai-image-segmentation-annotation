@@ -65,6 +65,8 @@ export class LoginService {
             this.router.navigate(['/admin']);
         } else if (role === 'User') {
             this.router.navigate(['/']);
+        } else if (role === 'Moderator') {
+            this.router.navigate(['/admin']);
         }
     }
 
