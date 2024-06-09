@@ -110,7 +110,7 @@ class UserServices:
         return user
     
     @staticmethod
-    def verify_token(token: str):
+    def verify_token(token: str) -> None:
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             exp = payload.get("exp")
