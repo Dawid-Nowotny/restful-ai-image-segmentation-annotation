@@ -1,1 +1,2 @@
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:admin@localhost/raisa"
+CSRF_SECRET = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcxNzY3NzQwNSwiaWF0IjoxNzE3Njc3NDA1fQ.dBxxeommI9S-xpLj9gw3kDZwl0dnwD_dDB8lJSeRkhc"
