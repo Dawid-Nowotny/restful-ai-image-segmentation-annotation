@@ -20,12 +20,14 @@ def login(
     totp_en = False
 
     user = user_service.authenticate_user(login_info.username, login_info.password, db)
-    access_token = user_service.create_access_token(data={"sub": user.username})
+    access_token = user_service.generate_token(data={"sub": user.username}, token_type="access")
+    refresh_token = user_service.generate_token(data={"sub": user.username}, token_type="refresh")
 
     if user.secret_key is not None:
         totp_en = True
 
-    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True);  
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="none", secure=True)
     return {
         "totp_enabled": totp_en
     }
@@ -37,16 +39,20 @@ async def register(response: Response, user: UserCreateSchema, db: Session = Dep
     user_service.check_if_user_exists(user.username, user.email, db)
 
     user = await user_service.create_user(user.username, user.email, user.password, db)
-    access_token = user_service.create_access_token(data={"sub": user.username})
+    access_token = user_service.generate_token(data={"sub": user.username}, token_type="access")
+    refresh_token = user_service.generate_token(data={"sub": user.username}, token_type="refresh")
 
-    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True);  
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="none", secure=True)
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(response: Response):
     response.delete_cookie(key="access_token", httponly=True, samesite="none", secure=True)
+    response.delete_cookie(key="refresh_token", httponly=True, samesite="none", secure=True)
 
 @router.patch("/update-user")
 async def update_user(
+    response: Response,
     current_user: Annotated[User, Depends(UserServices.get_current_active_user)],
     user_data_update: UserUpdateSchema,
     db: Session= Depends(get_db),
@@ -56,13 +62,15 @@ async def update_user(
     user_service.check_password(current_user, user_data_update.old_password)
     user_service.check_username_email_availability_for_current_user(user_data_update, current_user, db)
     user = await user_service.update_user(current_user, user_data_update, db)
-    access_token = user_service.create_access_token(data={"sub": user.username})
+    access_token = user_service.generate_token(data={"sub": user.username}, token_type="access")
+    refresh_token = user_service.generate_token(data={"sub": user.username}, token_type="refresh")
+
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="none", secure=True)
 
     return {
         "username": user.username,
         "email": user.email,
-        "access_token": access_token,
-        "token_type": "bearer"
     }
 
 @router.get("/me", response_model=UserOut)
