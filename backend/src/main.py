@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette_csrf import CSRFMiddleware
 
@@ -9,21 +9,21 @@ from statistics import router as statistics_router
 
 from config import CSRF_SECRET
 
-app = FastAPI()
+app = FastAPI(root_path='/api')
 
-origins = [
-    "http://localhost:4200",
-]
+# origins = [
+#     "http://localhost:4200",
+# ]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    allow_credentials=True
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+#     allow_credentials=True
+# )
 
-app.add_middleware(CSRFMiddleware, secret=CSRF_SECRET, cookie_samesite="none", cookie_secure=True)
+app.add_middleware(CSRFMiddleware, secret=CSRF_SECRET)
 
 app.include_router(image_router.router, prefix="/images", tags=["Image"])
 app.include_router(user_router.router, prefix="/user", tags=["User"])
