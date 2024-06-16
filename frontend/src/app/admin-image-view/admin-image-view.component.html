@@ -9,7 +9,7 @@
                     <div class="col-md-4 pe-0">
                         <div>
                             <tabset>
-                                <tab heading="Moderator" id="tab1">
+                                <tab *ngIf="this.loggedUserService.getRole() === 'Admin'" heading="Moderator" id="tab1">
                                     <div class="rounded mt-3" style="background-color: light;">
 
                                         <div class="row text-center px-5">
