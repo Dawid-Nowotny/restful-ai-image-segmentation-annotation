@@ -41,6 +41,19 @@ async def make_moderator(
 
     return {"message": "Rola moderatora została pomyślnie nadana"}
 
+@router.put("/remove-moderator-role/{username}")
+async def remove_moderator_role(
+    username: str,
+    current_user: User = Depends(UserServices.get_current_user),
+    db: Session = Depends(get_db)
+    ):
+    admin_service = AdminServices()
+
+    admin_service.check_if_admin(current_user)
+    await admin_service.remove_moderator_role(username, db)
+
+    return {"message": "Rola moderatora została pomyślnie usunięta"}
+
 @router.put("/assign-moderator/{image_id}/{username}")
 async def assign_moderator_to_image(
     username: str,

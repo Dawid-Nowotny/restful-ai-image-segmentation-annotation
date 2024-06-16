@@ -32,6 +32,19 @@ class AdminServices:
         db.commit()
         db.refresh(user)
 
+    async def remove_moderator_role(self, username, db) -> None:
+        user = db.query(User).filter(User.username == username).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="Użytkownik nie został znaleziony")
+
+        if user.role == "User":
+            raise HTTPException(status_code=400, detail="Użytkownik nie jest moderatorem")
+
+        user.role = "User"
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
     async def assign_moderator_to_image(self, image_id, moderator_username, db) -> None:
         image = db.query(Image).filter(Image.id == image_id).first()
         if not image:
