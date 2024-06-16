@@ -11,19 +11,7 @@ from config import CSRF_SECRET
 
 app = FastAPI(root_path='/api')
 
-# origins = [
-#     "http://localhost:4200",
-# ]
-
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-#     allow_credentials=True
-# )
-
-app.add_middleware(CSRFMiddleware, secret=CSRF_SECRET)
+app.add_middleware(CSRFMiddleware, secret=CSRF_SECRET, cookie_samesite="strict", cookie_secure=True)
 
 app.include_router(image_router.router, prefix="/images", tags=["Image"])
 app.include_router(user_router.router, prefix="/user", tags=["User"])
