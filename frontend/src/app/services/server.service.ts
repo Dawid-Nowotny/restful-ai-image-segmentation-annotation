@@ -11,7 +11,7 @@ const httpOptions = {
 })
 
 export class ServerService {
-    private restUrl = 'http://127.0.0.1:8000';
+    private restUrl = 'http://localhost:9000/api';
     constructor(private http: HttpClient) { }
 
     /** POST LOGIN */

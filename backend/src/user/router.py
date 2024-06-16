@@ -26,8 +26,8 @@ def login(
     if user.secret_key is not None:
         totp_en = True
 
-    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True)
-    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="strict", secure=True)
+    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="strict", secure=True)
     return {
         "totp_enabled": totp_en
     }
@@ -42,13 +42,13 @@ async def register(response: Response, user: UserCreateSchema, db: Session = Dep
     access_token = user_service.generate_token(data={"sub": user.username}, token_type="access")
     refresh_token = user_service.generate_token(data={"sub": user.username}, token_type="refresh")
 
-    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True)
-    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="strict", secure=True)
+    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="strict", secure=True)
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(response: Response):
-    response.delete_cookie(key="access_token", httponly=True, samesite="none", secure=True)
-    response.delete_cookie(key="refresh_token", httponly=True, samesite="none", secure=True)
+    response.delete_cookie(key="access_token", httponly=True, samesite="strict", secure=True)
+    response.delete_cookie(key="refresh_token", httponly=True, samesite="strict", secure=True)
 
 @router.patch("/update-user")
 async def update_user(
@@ -65,8 +65,8 @@ async def update_user(
     access_token = user_service.generate_token(data={"sub": user.username}, token_type="access")
     refresh_token = user_service.generate_token(data={"sub": user.username}, token_type="refresh")
 
-    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="none", secure=True)
-    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="access_token",value=f"{access_token}", httponly=True, samesite="strict", secure=True)
+    response.set_cookie(key="refresh_token",value=f"{refresh_token}", httponly=True, samesite="strict", secure=True)
 
     return {
         "username": user.username,

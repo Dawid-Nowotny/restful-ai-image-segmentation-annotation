@@ -1,0 +1,9 @@
+:9000 {
+    handle {
+        reverse_proxy localhost:4200
+    }
+
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+}

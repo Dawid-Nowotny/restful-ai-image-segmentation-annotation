@@ -172,7 +172,7 @@ class UserServices:
                 token_data = TokenData(username=username)
 
                 new_access_token = UserServices.generate_token(data={"sub": username}, token_type="access")
-                response.set_cookie(key="access_token", value=f"{new_access_token}", httponly=True, samesite="none", secure=True)
+                response.set_cookie(key="access_token", value=f"{new_access_token}", httponly=True, samesite="strict", secure=True)
             except JWTError:
                 raise credentials_exception
 
