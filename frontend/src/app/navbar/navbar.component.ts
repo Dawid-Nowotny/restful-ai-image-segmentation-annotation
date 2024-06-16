@@ -31,8 +31,6 @@ export class NavbarComponent implements OnInit, AfterViewInit {
                 this.currentComponent = this.getCurrentComponentName();
 
             });
-
-
     }
 
     ngAfterViewInit(): void {
@@ -70,7 +68,6 @@ export class NavbarComponent implements OnInit, AfterViewInit {
     }
 
     logOut(){
-        console.log("bebe")
         this.loggedUserService.logOut();
     }
 }

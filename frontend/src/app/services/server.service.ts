@@ -46,8 +46,8 @@ export class ServerService {
     updateUser(userDataUpdate: any): Observable<any> {
         const url = `${this.restUrl}/user/update-user`;
         return this.http.patch(url, userDataUpdate);
-    }    
-    
+    }
+
     generateQrCode(): Observable<Blob> {
         const url = `${this.restUrl}/user/generate-qr`;
 
@@ -56,7 +56,7 @@ export class ServerService {
 
     verifyTOTP(data: any): Observable<any> {
         const url = `${this.restUrl}/user/verify-code`;
-        
+
         const body = {
             token: data.verificationCode
         }
@@ -85,15 +85,15 @@ export class ServerService {
         return this.http.post(url, data);
     }
 
-    getImage(id: number){
+    getImage(id: number) {
         const url = `${this.restUrl}/images/get-image/${id}`;
-        return this.http.get(url, {responseType: "blob"});
+        return this.http.get(url, { responseType: "blob" });
     }
 
     getUserImages(username: string, startId: number, endId: number) {
         const url = `${this.restUrl}/images/get-user-images/${username}/images/${startId}/${endId}`;
-        return this.http.get(url, {  responseType: 'arraybuffer' });
-      }
+        return this.http.get(url, { responseType: 'arraybuffer' });
+    }
 
     getImagesAsZip(startId: number, endId: number) {
         const url = `${this.restUrl}/images/get-images/${startId}/${endId}`;
@@ -101,11 +101,11 @@ export class ServerService {
     }
 
     getFilteredImagesAsZip(
-        startId: number, 
+        startId: number,
         endId: number,
-        thresholdFrom: number, 
-        thresholdTo: number, 
-        tags: string[], 
+        thresholdFrom: number,
+        thresholdTo: number,
+        tags: string[],
         classes: string[]
     ) {
 
@@ -154,7 +154,7 @@ export class ServerService {
         return this.http.get(url)
     }
 
-    getImageSuperTags(imageId: number): Observable<any>{
+    getImageSuperTags(imageId: number): Observable<any> {
         const url = `${this.restUrl}/images/get-image-super-tags/${imageId}`;
         return this.http.get(url);
     }
@@ -225,10 +225,10 @@ export class ServerService {
             }
         }
 
-        return this.http.post(url, body, { headers }); 
+        return this.http.post(url, body, { headers });
     }
 
-    getImagesNumber(){
+    getImagesNumber() {
         const url = `${this.restUrl}/images/get-images-number`;
         return this.http.get(url);
     }
@@ -243,10 +243,12 @@ export class ServerService {
         return this.http.get(url);
     }
 
+
+
     getImageModerator(imageId: number): Observable<any> {
         const url = `${this.restUrl}/images/get-image-moderator/${imageId}`;
         return this.http.get(url);
-        
+
     }
 
     assignModeratorToImage(imageId: number, username: string) {
@@ -257,11 +259,14 @@ export class ServerService {
         return this.http.put(url, {}, { headers });
     }
 
-    assignModeratorRole(username: string) {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-        });
+    assignModeratorRole(username: string): Observable<any> {
         const url = `${this.restUrl}/admin/make-moderator/${username}`;
-        return this.http.put(url, {}, { headers });
+        return this.http.put(url, {});
+    }
+
+    removeModeratorRole(username: string): Observable<any> {
+        const url = `${this.restUrl}/admin/remove-moderator-role/${username}`;
+        return this.http.put(url, {});
+
     }
 }

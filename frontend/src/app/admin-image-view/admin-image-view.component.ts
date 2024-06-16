@@ -46,7 +46,7 @@ export class AdminImageViewComponent implements OnInit {
 	constructor(
 		private route: ActivatedRoute,
 		private serverService: ServerService,
-		private loggedUserService: LoggedUserService,
+		public loggedUserService: LoggedUserService,
 		private modalService: BsModalService
 	) {
 		this.imageSuperTags = {
