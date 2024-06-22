@@ -228,6 +228,31 @@ export class ServerService {
         return this.http.post(url, body, { headers });
     }
 
+    addCommentToImage(imageId: number, tagsArray: string[]) {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/images/add-comment-to-image/`;
+
+        const tagsInRequest = tagsArray.map(tag => {
+            return {
+                tag: tag
+            }
+        })
+
+        const body = {
+            request: {
+                image_id: imageId,
+            },
+            comment_data: {
+                super_tag: false,
+                tags: tagsInRequest
+            }
+        }
+        
+        return this.http.post(url, body, { headers });
+    }
+
     getImagesNumber() {
         const url = `${this.restUrl}/images/get-images-number`;
         return this.http.get(url);

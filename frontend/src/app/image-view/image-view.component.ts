@@ -19,13 +19,14 @@ export class ImageViewComponent implements OnInit {
     annotations: string = '';
     suggestedAnnotations: string[] = [];
     commentForm: FormGroup;
-    image_id: number = 0;
+    imageID: number = 0;
     imageURL: string | ArrayBuffer | null = null;
     imageBLOB: Blob | null = null;
     segmentedImageURL: string | ArrayBuffer | null = null;
     segmentedImageBLOB: Blob | null = null;
     image: string | ArrayBuffer | null = null;
     buttonLabel: string = 'Wyświetl segmentację';
+    message: string = '';
 
     constructor(private route: ActivatedRoute, private serverService: ServerService) {
       this.commentForm = new FormGroup({
@@ -35,7 +36,7 @@ export class ImageViewComponent implements OnInit {
 
     ngOnInit() {
       this.route.params.subscribe(params => {
-          this.image_id = params['id'];
+          this.imageID = params['id'];
       })
 
       this.getImage();
@@ -46,7 +47,7 @@ export class ImageViewComponent implements OnInit {
     }
 
     getImage(): void {
-      this.serverService.getImage(this.image_id).subscribe({
+      this.serverService.getImage(this.imageID).subscribe({
         next: (blob: Blob) => {
           this.imageBLOB = blob;
           const reader = new FileReader();
@@ -63,7 +64,7 @@ export class ImageViewComponent implements OnInit {
     }
 
     getImageAuthor() {
-      this.serverService.getImageAuthor(this.image_id).subscribe({
+      this.serverService.getImageAuthor(this.imageID).subscribe({
         next: (result: any) => {
           this.imageAuthor = result.image_uploader;
         },
@@ -74,7 +75,7 @@ export class ImageViewComponent implements OnInit {
     }
 
     getSuperTagsAuthor() {
-      this.serverService.getSuperTagsAuthor(this.image_id).subscribe({
+      this.serverService.getSuperTagsAuthor(this.imageID).subscribe({
         next: (result: any) => {
           this.superTagsAutor = result.super_tag_author;
         },
@@ -85,7 +86,7 @@ export class ImageViewComponent implements OnInit {
     }
 
     getImageDetections() {
-      this.serverService.getImageDetections(this.image_id).subscribe({
+      this.serverService.getImageDetections(this.imageID).subscribe({
         next: (result: any) => {
           this.threshold = result.threshold;
           this.annotations = result.coordinates_classes;
@@ -97,7 +98,7 @@ export class ImageViewComponent implements OnInit {
     }
 
     getSuggestedAnnotations() {
-      this.serverService.getSuggestAnnotations(this.image_id).subscribe({
+      this.serverService.getSuggestAnnotations(this.imageID).subscribe({
         next: (result: any) => {
           this.suggestedAnnotations = result.annotations;
         },
@@ -124,6 +125,16 @@ export class ImageViewComponent implements OnInit {
         
         this.commentForm.reset();
         this.commentForm.controls['comment'].setValue('');
+
+        this.serverService.addCommentToImage(this.imageID, tags).subscribe({
+          next: (result: any) => {
+            this.message = result.message;
+            console.log(this.message);
+          },
+          error: (error: Error) => {
+            console.error('Error adding comment', error);
+          }
+        });
       }
     }
 
@@ -150,7 +161,7 @@ export class ImageViewComponent implements OnInit {
 
     getSegmentedImage(): Promise<void> {
       return new Promise((resolve, reject) => {
-        this.serverService.getSegmentedImage(this.image_id).subscribe({
+        this.serverService.getSegmentedImage(this.imageID).subscribe({
           next: (blob: Blob) => {
             this.segmentedImageBLOB = blob;
             const reader = new FileReader();
@@ -171,10 +182,10 @@ export class ImageViewComponent implements OnInit {
     downloadImage(): void {
       if (this.image == this.imageURL && this.imageBLOB) {
         const link =  window.URL.createObjectURL(this.imageBLOB);
-        this.triggerDownload(link, `${this.image_id}.jpg`);
+        this.triggerDownload(link, `${this.imageID}.jpg`);
       } else if (this.image == this.segmentedImageURL && this.segmentedImageBLOB) {
         const link =  window.URL.createObjectURL(this.segmentedImageBLOB);
-        this.triggerDownload(link, `${this.image_id}-segmented.jpg`);
+        this.triggerDownload(link, `${this.imageID}-segmented.jpg`);
       } else {
         console.error('Nie można zapisać obrazu');
       }

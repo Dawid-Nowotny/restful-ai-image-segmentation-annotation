@@ -166,7 +166,7 @@ def get_image_detections(image_id: int = Path(..., ge=0), db: Session = Depends(
         "coordinates_classes": coordinates_classes
     }
 
-@router.post("/add-tags-to-image", status_code=status.HTTP_201_CREATED)
+@router.post("/add-comment-to-image", status_code=status.HTTP_201_CREATED)
 async def add_tags_to_image(
     request: TagIdRequest,
     comment_data: CommentRequest,
