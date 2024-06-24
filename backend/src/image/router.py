@@ -167,7 +167,7 @@ def get_image_detections(image_id: int = Path(..., ge=0), db: Session = Depends(
     }
 
 @router.post("/add-comment-to-image", status_code=status.HTTP_201_CREATED)
-async def add_tags_to_image(
+async def add_comment_to_image(
     request: TagIdRequest,
     comment_data: CommentRequest,
     current_user: User = Depends(UserServices.get_current_user),
@@ -180,3 +180,10 @@ async def add_tags_to_image(
     await comment_service.create_comment(request.image_id, current_user, comment_data, tags, db)
 
     return {"message": "Komentarz został dodany do obrazka"}
+
+@router.get("/get-image-comments/{image_id}")
+def get_image_comments(image_id: int = Path(..., ge=0), db: Session = Depends(get_db)):
+    comment_service = CommentServices()
+    comments_with_tags = comment_service.get_comments_with_tags_by_image_id(image_id, db)
+
+    return comments_with_tags

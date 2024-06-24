@@ -303,3 +303,20 @@ class CommentServices:
 
         if supertag_comments:
             raise HTTPException(status_code=400, detail="To zdjęcie już ma supertagi")
+   
+    def get_comments_with_tags_by_image_id(self, image_id: int, db: Session):
+        comments = db.query(Comment).filter(Comment.image_id == image_id).all()
+        
+        if not comments:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono komentarzy dla danego obrazu")
+        
+        result = []
+        for comment in comments:
+            tags = [tag.tag for tag in comment.tags]
+            result.append({
+                "comment_id": comment.id,
+                "username": comment.user.username,
+                "tags": tags
+            })
+        
+        return result
