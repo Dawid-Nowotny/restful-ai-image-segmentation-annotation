@@ -4,6 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ServerService } from '../services/server.service';
 
+interface Comment {
+  comment_id: number;
+  username: string;
+  tags: string[];
+}
+
 @Component({
     selector: 'app-image-view',
     standalone: true,
@@ -27,6 +33,7 @@ export class ImageViewComponent implements OnInit {
     image: string | ArrayBuffer | null = null;
     buttonLabel: string = 'Wyświetl segmentację';
     message: string = '';
+    comments: Comment[] = [];
 
     constructor(private route: ActivatedRoute, private serverService: ServerService) {
       this.commentForm = new FormGroup({
@@ -43,6 +50,7 @@ export class ImageViewComponent implements OnInit {
       this.getImageAuthor();
       this.getSuperTagsAuthor();
       this.getImageDetections();
+      this.getImageComments();
       this.getSuggestedAnnotations();
     }
 
@@ -98,12 +106,23 @@ export class ImageViewComponent implements OnInit {
     }
 
     getSuggestedAnnotations() {
-      this.serverService.getSuggestAnnotations(this.imageID).subscribe({
+      this.serverService.getImageSuggestedAnnotations(this.imageID).subscribe({
         next: (result: any) => {
           this.suggestedAnnotations = result.annotations;
         },
         error: (error: Error) => {
           console.error('Error fetching suggested annotations', error);
+        }
+      });
+    }
+
+    getImageComments() {
+      this.serverService.getImageComments(this.imageID).subscribe({
+        next: (result: any) => {
+          this.comments = result.comments;
+        },
+        error: (error: Error) => {
+          console.error('Error fetching image comments', error);
         }
       });
     }
@@ -121,7 +140,6 @@ export class ImageViewComponent implements OnInit {
       if (this.commentForm.valid) {
         let comment: string = this.commentForm.controls['comment'].value.trim();
         let tags = this.prepareTagsForAdd(comment);
-        console.log(tags);
         
         this.commentForm.reset();
         this.commentForm.controls['comment'].setValue('');

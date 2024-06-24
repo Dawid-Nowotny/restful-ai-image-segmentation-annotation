@@ -31,6 +31,14 @@
                         </div>
                         <div>
                             <h3><b>Tagi użytkowników</b></h3>
+                            <div *ngFor="let comment of comments" class="overflow-auto">
+                                {{ comment.username }}
+                                <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-3">
+                                    <div *ngFor="let tag of comment.tags" class="suggested-annotation-item rounded col-auto">
+                                        {{ tag }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
                             <button *ngFor="let annotation of suggestedAnnotations" class="suggested-annotation-item rounded col-auto"

@@ -186,4 +186,4 @@ def get_image_comments(image_id: int = Path(..., ge=0), db: Session = Depends(ge
     comment_service = CommentServices()
     comments_with_tags = comment_service.get_comments_with_tags_by_image_id(image_id, db)
 
-    return comments_with_tags
+    return {"comments": comments_with_tags}
