@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminAssignModeratorComponent } from './admin-make-moderator.component';
+import { AdminMakeModeratorComponent } from './admin-make-moderator.component';
 
 describe('AdminAssignModeratorComponent', () => {
-	let component: AdminAssignModeratorComponent;
-	let fixture: ComponentFixture<AdminAssignModeratorComponent>;
+	let component: AdminMakeModeratorComponent;
+	let fixture: ComponentFixture<AdminMakeModeratorComponent>;
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			imports: [AdminAssignModeratorComponent]
+			imports: [AdminMakeModeratorComponent]
 		})
 			.compileComponents();
 
-		fixture = TestBed.createComponent(AdminAssignModeratorComponent);
+		fixture = TestBed.createComponent(AdminMakeModeratorComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
 	});

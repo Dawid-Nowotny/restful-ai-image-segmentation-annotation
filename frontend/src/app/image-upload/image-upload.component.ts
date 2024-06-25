@@ -81,7 +81,7 @@ export class ImageUploadComponent {
 
         this.serverService.postImage(formData).subscribe(
             {
-                next: (response: any) => {
+                next: () => {
                     this.successMessage = "Zdjęcie zostało dodane!";
                     this.submitted = false;
                     this.submitDisabled = false;

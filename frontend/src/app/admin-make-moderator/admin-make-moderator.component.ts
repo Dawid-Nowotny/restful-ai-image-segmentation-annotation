@@ -25,7 +25,7 @@ export class AdminMakeModeratorComponent implements OnInit{
 	errorMessage: string = '';
 	
 
-	constructor(private serverService: ServerService, private loggedUserService: LoggedUserService) {}
+	constructor(private serverService: ServerService) {}
 
 	ngOnInit(): void {
 		this.getUsers();
@@ -80,12 +80,12 @@ export class AdminMakeModeratorComponent implements OnInit{
 		})
 	}
 
-	handleSelectUserTab(event: any){
+	handleSelectUserTab(){
 		this.resetMessages();
 		this.getUsers();
 	}
 
-	handleSelectModeratorTab(event:any){
+	handleSelectModeratorTab(){
 		this.resetMessages();
 		this.getModerators();
 	}

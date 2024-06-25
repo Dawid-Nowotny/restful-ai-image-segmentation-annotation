@@ -10,7 +10,7 @@ import { AdminMainPageComponent } from './admin-main-page/admin-main-page.compon
 import { AdminImageViewComponent } from './admin-image-view/admin-image-view.component';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { hasRoleGuard } from './guards/has-role.guard';
-import { AdminMakeModeratorComponent } from './admin-assign-moderator/admin-make-moderator.component';
+import { AdminMakeModeratorComponent } from './admin-make-moderator/admin-make-moderator.component';
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 
 export const routes: Routes = [

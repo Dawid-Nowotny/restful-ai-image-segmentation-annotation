@@ -26,7 +26,7 @@ export class LoginService {
 		}
         console.log()
 		this.serverService.verifyTOTP(data).subscribe({
-			next: (response: any) => {
+			next: () => {
 				this.getLoggedUserDetails(this.accessToken);
 			},
 			error: (error: HttpErrorResponse) => {
@@ -36,7 +36,7 @@ export class LoginService {
 		})
 	}
 
-    getLoggedUserDetails: (accessToken: string) => void = (accessToken) => {
+    getLoggedUserDetails: (accessToken: string) => void = () => {
         this.serverService.getLoggedUserCredentials().subscribe(
             {
                 next: (userDataResponse: any) => {

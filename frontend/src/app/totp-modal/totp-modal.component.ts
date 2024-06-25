@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ServerService } from '../services/server.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { LoginService } from '../services/login.service';
 
 @Component({
