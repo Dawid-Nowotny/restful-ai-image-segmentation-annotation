@@ -50,7 +50,11 @@
 }
 
 .container-main {
-    padding: 60px 100px;
+    padding: 40px 100px;
+}
+
+.container-footer {
+    padding: 40px 100px;
 }
   
 @media (max-width: 1499px) {
@@ -65,6 +69,10 @@
     .container-main {
         padding: 10px 30px;
     }
+
+    .container-footer {
+        padding: 50px 30px;
+    }
 }
 
 @media (max-width: 1199px) {
@@ -78,6 +86,10 @@
 
     .container-main {
         padding: 10px 12px;
+    }
+
+    .container-footer {
+        padding: 30px 12px;
     }
 }
 
