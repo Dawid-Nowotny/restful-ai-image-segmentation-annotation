@@ -99,6 +99,11 @@ a:hover {
     font-size: 24px; 
     font-weight: bold; 
     padding-right: 40px;
+    color: rgba(25, 135, 84, 1) !important;
+}
+
+.navbar-brand-text:hover {
+    color: rgb(8, 68, 40) !important;
 }
 
 .container-pt {
