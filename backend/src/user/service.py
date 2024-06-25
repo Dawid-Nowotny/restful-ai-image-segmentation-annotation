@@ -93,7 +93,8 @@ class UserServices:
         db.refresh(current_user)
         return current_user
 
-    def get_user_by_username(self, username: str, db: Session) -> User:
+    @staticmethod
+    def get_user_by_username(username: str, db: Session) -> User:
         user = db.query(User).filter(User.username == username).first()
         
         if not user:
@@ -103,11 +104,6 @@ class UserServices:
     def count_user_images(self, user: User, db: Session) -> int:
         images_count = db.query(func.count(Image.id)).filter(Image.uploader_id == user.id).scalar()
         return images_count
-    
-    @staticmethod
-    def __get_user_by_username(username, db: Session) -> User: 
-        user = db.query(User).filter(User.username == username).first()
-        return user
     
     @staticmethod
     def verify_token(token: str) -> None:
@@ -176,7 +172,7 @@ class UserServices:
             except JWTError:
                 raise credentials_exception
 
-        user = UserServices.__get_user_by_username(token_data.username, db)
+        user = UserServices.get_user_by_username(token_data.username, db)
 
         if user is None:
             raise credentials_exception
