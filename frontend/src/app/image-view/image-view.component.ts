@@ -147,6 +147,7 @@ export class ImageViewComponent implements OnInit {
         this.serverService.addCommentToImage(this.imageID, tags).subscribe({
           next: (result: any) => {
             this.message = result.message;
+            this.getImageComments();
             console.log(this.message);
           },
           error: (error: Error) => {
