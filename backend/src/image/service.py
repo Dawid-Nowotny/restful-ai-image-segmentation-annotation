@@ -195,7 +195,7 @@ class ImageServices:
                     detail="Przesłany plik jest za duży. Limit wynosi 5MB",
                 )
             
-    def rename_file(self, file: UploadFile) -> str:
+    def rename_file(self, file: UploadFile) -> None:
         random_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"
         file.filename = random_filename
 

@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-#from .config import SQLALCHEMY_DATABASE_URL
+try:
+    from config import SQLALCHEMY_DATABASE_URL
+except ModuleNotFoundError:
+    from .config import SQLALCHEMY_DATABASE_URL
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:admin@localhost/raisa"
 
