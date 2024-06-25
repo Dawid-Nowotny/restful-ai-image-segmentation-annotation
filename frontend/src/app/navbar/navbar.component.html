@@ -48,12 +48,16 @@
 <nav aria-label="breadcrumb">
     <div class="container-fluid container-breadcrumb navbar navbar-expand-lg bg-success text-white">
 
-        <ol *ngIf="loggedUserService.getRole() === 'User' || loggedUserService.getRole() === ''" class="breadcrumb">
+        <ol class="breadcrumb">
             <li class="breadcrumb-item"><a routerLink="/">Strona główna</a></li>
-            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/login')"><a routerLink="/login">Logowanie</a>
-            </li>
-            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/register')"><a
-                    routerLink="/register">Rejestracja</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/login')"><a routerLink="/login">Logowanie</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/register')"><a routerLink="/register">Rejestracja</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/statistics')"><a routerLink="/statistics">Statystyki</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/image-upload')"><a routerLink="/image-upload">Dodaj zdjęcie</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/admin/make-moderators')"><a routerLink="/admin/make-moderators">Moderatorzy</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/admin') && !isCurrentComponent('/admin/make-moderators')"><a routerLink="/admin">Panel moderatora</a></li>
+            <li class="breadcrumb-item" *ngIf="isCurrentComponent('/user')"><a [routerLink]="['/user/', loggedUserService.getUsername()]">Użytkownik</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/user')"><a [routerLink]="['/user/', loggedUserService.getUsername()]">{{loggedUserService.getUsername()}}</a></li>
         </ol>
     </div>
 </nav>
