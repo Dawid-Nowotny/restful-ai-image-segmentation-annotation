@@ -139,23 +139,18 @@ export class ServerService {
         return this.http.get(url)
     }
 
-    getSuggestAnnotations(image_id: number) {
-        const url = `${this.restUrl}/images/suggest-annotations/${image_id}`;
-        return this.http.get(url)
-    }
-
     getImageSuggestedAnnotations(imageId: number): Observable<any> {
         const url = `${this.restUrl}/images/suggest-annotations/${imageId}`;
         return this.http.get(url);
     }
 
-    getImageAndSuperTagsAuthors(image_id: number) {
-        const url = `${this.restUrl}/images/get-image-data/${image_id}`;
-        return this.http.get(url)
-    }
-
     getImageSuperTags(imageId: number): Observable<any> {
         const url = `${this.restUrl}/images/get-image-super-tags/${imageId}`;
+        return this.http.get(url);
+    }
+
+    getImageComments(imageId: number): Observable<any> {
+        const url = `${this.restUrl}/images/get-image-comments/${imageId}`;
         return this.http.get(url);
     }
 
@@ -225,6 +220,31 @@ export class ServerService {
             }
         }
 
+        return this.http.post(url, body, { headers });
+    }
+
+    addCommentToImage(imageId: number, tagsArray: string[]) {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json'
+        });
+        const url = `${this.restUrl}/images/add-comment-to-image/`;
+
+        const tagsInRequest = tagsArray.map(tag => {
+            return {
+                tag: tag
+            }
+        })
+
+        const body = {
+            request: {
+                image_id: imageId,
+            },
+            comment_data: {
+                super_tag: false,
+                tags: tagsInRequest
+            }
+        }
+        
         return this.http.post(url, body, { headers });
     }
 
