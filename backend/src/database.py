@@ -6,8 +6,6 @@ try:
 except ModuleNotFoundError:
     from .config import SQLALCHEMY_DATABASE_URL
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:admin@localhost/raisa"
-
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
 )
