@@ -1,35 +1,38 @@
 <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid container-navbar d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-            <a class="navbar-brand-text mb-0" href="#">Navbar</a>
+            <a class="navbar-brand-text mb-0" href="/"><i class="fa-solid fa-camera-retro"></i> RAISA</a>
         </div>
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav">
                 <!-- All -->
-                <li class="nav-item">
+                <li class="nav-item btn ">
+                    <a class="nav-link" routerLink="/">Strona główna</a>
+                </li>
+                <li class="nav-item btn ">
                     <a class="nav-link" routerLink="/statistics">Statystyki</a>
                 </li>
-                <!-- Admin & Moderator -->
-                <li class="nav-item" *ngIf="loggedUserService.getRole() === 'Admin' || loggedUserService.getRole() === 'Moderator'">
-                    <a class="nav-link" routerLink="/admin">Panel główny</a>
-                </li>
                 <!-- Admin -->
-                <li class="nav-item" *ngIf="loggedUserService.getRole() === 'Admin'">
+                <li class="nav-item btn " *ngIf="loggedUserService.getRole() === 'Admin'">
                     <a class="nav-link" routerLink="/admin/make-moderators">Moderatorzy</a>
                 </li>
+                <!-- Admin & Moderator -->
+                <li class="nav-item btn " *ngIf="loggedUserService.getRole() === 'Admin' || loggedUserService.getRole() === 'Moderator'">
+                    <a class="nav-link" routerLink="/admin">Panel moderatora</a>
+                </li>
                 <!-- NotLogged -->
-                <li class="nav-item" *ngIf="loggedUserService.getRole() == ''">
+                <li class="nav-item btn " *ngIf="loggedUserService.getRole() == ''">
                     <a class="nav-link" routerLink="/login">Logowanie</a>
                 </li>
-                <li class="nav-item" *ngIf="loggedUserService.getRole() == ''">
+                <li class="nav-item btn " *ngIf="loggedUserService.getRole() == ''">
                     <a class="nav-link" routerLink="/register">Rejestracja</a>
                 </li>
                 <!-- Logged -->
-                <li class="nav-item" *ngIf="loggedUserService.getRole() === 'Admin' || loggedUserService.getRole() === 'Moderator' || loggedUserService.getRole() === 'User'">
+                <li class="nav-item btn " *ngIf="loggedUserService.getRole() === 'Admin' || loggedUserService.getRole() === 'Moderator' || loggedUserService.getRole() === 'User'">
                     <a class="nav-link" [routerLink]="['/user/', loggedUserService.getUsername()]">Panel użytkownika</a>
                 </li>
-                <li class="nav-item" *ngIf="loggedUserService.getRole() === 'Admin' || loggedUserService.getRole() === 'Moderator' || loggedUserService.getRole() === 'User'">
+                <li class="nav-item btn " *ngIf="loggedUserService.getRole() === 'Admin' || loggedUserService.getRole() === 'Moderator' || loggedUserService.getRole() === 'User'">
                     <a class="nav-link" routerLink="/" (click)="logOut()">Wyloguj</a>
                 </li>
             </ul>
