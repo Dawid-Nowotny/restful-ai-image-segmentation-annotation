@@ -14,7 +14,7 @@ import zipfile
 import random
 import json
 from datetime import date
-from typing import IO, Tuple, List
+from typing import IO, Tuple, List, Dict, Union
 from io import BytesIO
 import os
 import uuid
@@ -304,7 +304,7 @@ class CommentServices:
         if supertag_comments:
             raise HTTPException(status_code=400, detail="To zdjęcie już ma supertagi")
    
-    def get_comments_with_tags_by_image_id(self, image_id: int, db: Session):
+    def get_comments_with_tags_by_image_id(self, image_id: int, db: Session) -> List[Dict[str, Union[int, str, List[str]]]]:
         comments = db.query(Comment).filter(Comment.image_id == image_id).all()
         
         if not comments:
