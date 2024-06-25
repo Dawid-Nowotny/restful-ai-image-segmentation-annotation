@@ -26,5 +26,5 @@ def test_get_top_uploaders(mock_db):
     for i in range(len(result)):
         assert isinstance(result[i], tuple)
         assert len(result[i]) == 2
-        assert isinstance(result[i][0], str)  # username
-        assert isinstance(result[i][1], int)  # upload_count
+        assert isinstance(result[i][0], str)
+        assert isinstance(result[i][1], int)
