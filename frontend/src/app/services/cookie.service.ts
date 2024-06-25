@@ -19,13 +19,12 @@ export class CookieService {
 
     public parseCookies(cookies = document.cookie) {
         this.cookieStore = {};
-        if (!!cookies === false) { return; }
+        if (!!cookies) { return; }
         const cookiesArr = cookies.split(';');
         for (const cookie of cookiesArr) {
             const cookieArr = cookie.split('=');
             this.cookieStore[cookieArr[0].trim()] = cookieArr[1];
         }
-
     }
 
     get(key: string) {

@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit, AfterViewInit {
         const currentUrl = this.router.url;
         let pageTitle = '';
 
-        this.route.queryParams.subscribe(params => {
+        this.route.queryParams.subscribe(() => {
             if (currentUrl === '/') {
                 pageTitle = 'Strona główna';
             } else if (currentUrl === '/login') {

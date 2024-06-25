@@ -78,7 +78,7 @@ export class ProfileEditModalComponent {
 
 	private updateUser(userDataUpdate: any) {
 		this.serverService.updateUser(userDataUpdate).subscribe({
-			next: (response: any) => {
+			next: () => {
 				this.successMessage = 'Dane zostały zaktualizowane';
 				this.errorMessage = "";
 
