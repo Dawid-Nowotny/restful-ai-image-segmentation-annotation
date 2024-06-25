@@ -14,7 +14,7 @@ import zipfile
 import random
 import json
 from datetime import date
-from typing import IO, Tuple, List, Dict, Union
+from typing import IO, Tuple, List, Dict, Union, Any
 from io import BytesIO
 import os
 import uuid
@@ -42,7 +42,7 @@ class ImageServices:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono moderatora dla danego zdjecia")
         return image.moderator
     
-    def get_image_super_tags(self, image_id: int, db: Session) -> List[Tag]:
+    def get_image_super_tags(self, image_id: int, db: Session) -> dict[str, Any]:
         comments_with_super_tags = db.query(Comment).filter(Comment.image_id == image_id, Comment.super_tag == True).all()
 
         if not comments_with_super_tags:

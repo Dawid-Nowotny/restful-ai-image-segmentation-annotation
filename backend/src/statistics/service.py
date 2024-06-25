@@ -50,7 +50,7 @@ class ImageStatsServices:
 
         return top_classes
     
-    def get_popular_classes_by_month(self, db: Session) -> Dict[str, Any]:
+    def get_popular_classes_by_month(self, db: Session) -> List[Dict[str, dict[str, int | Any] | Any]]:
         classes_by_month = defaultdict(Counter)
         result = []
 
