@@ -56,6 +56,14 @@
 .container-footer {
     padding: 40px 100px;
 }
+
+.filters {
+    display: flex !important;
+    justify-content: center;
+    flex-wrap: nowrap;
+    flex-direction: row-reverse;
+    align-items: center;
+}
   
 @media (max-width: 1499px) {
     .container-navbar {
@@ -72,6 +80,10 @@
 
     .container-footer {
         padding: 50px 30px;
+    }
+
+    .filters {
+        flex-direction: column-reverse;
     }
 }
 
@@ -90,6 +102,10 @@
 
     .container-footer {
         padding: 30px 12px;
+    }
+
+    .filters {
+        flex-direction: column-reverse;
     }
 }
 
@@ -136,4 +152,22 @@ a:hover {
 
 .breadcrumb-item a:hover {
     color: rgb(191, 240, 193) !important;
+}
+
+.page-link.active, .active > .page-link {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.page-link {
+    color: #212529;
+}
+
+.page-link:hover {
+    color: #198754;
+}
+
+.btn-mw {
+    min-width: 170px;
 }
