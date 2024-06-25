@@ -54,6 +54,7 @@
             <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/register')"><a routerLink="/register">Rejestracja</a></li>
             <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/statistics')"><a routerLink="/statistics">Statystyki</a></li>
             <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/image-upload')"><a routerLink="/image-upload">Dodaj zdjęcie</a></li>
+            <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/image-view')"><a>Zdjęcie</a></li>
             <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/admin/make-moderators')"><a routerLink="/admin/make-moderators">Moderatorzy</a></li>
             <li class="breadcrumb-item active" *ngIf="isCurrentComponent('/admin') && !isCurrentComponent('/admin/make-moderators')"><a routerLink="/admin">Panel moderatora</a></li>
             <li class="breadcrumb-item" *ngIf="isCurrentComponent('/user')"><a [routerLink]="['/user/', loggedUserService.getUsername()]">Użytkownik</a></li>
