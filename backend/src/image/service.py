@@ -14,7 +14,7 @@ import zipfile
 import random
 import json
 from datetime import date
-from typing import IO, Tuple, List
+from typing import IO, Tuple, List, Dict, Union, Any
 from io import BytesIO
 import os
 import uuid
@@ -42,7 +42,7 @@ class ImageServices:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nie znaleziono moderatora dla danego zdjecia")
         return image.moderator
     
-    def get_image_super_tags(self, image_id: int, db: Session) -> List[Tag]:
+    def get_image_super_tags(self, image_id: int, db: Session) -> dict[str, Any]:
         comments_with_super_tags = db.query(Comment).filter(Comment.image_id == image_id, Comment.super_tag == True).all()
 
         if not comments_with_super_tags:
@@ -195,7 +195,7 @@ class ImageServices:
                     detail="Przesłany plik jest za duży. Limit wynosi 5MB",
                 )
             
-    def rename_file(self, file: UploadFile) -> str:
+    def rename_file(self, file: UploadFile) -> None:
         random_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"
         file.filename = random_filename
 
@@ -304,7 +304,7 @@ class CommentServices:
         if supertag_comments:
             raise HTTPException(status_code=400, detail="To zdjęcie już ma supertagi")
    
-    def get_comments_with_tags_by_image_id(self, image_id: int, db: Session):
+    def get_comments_with_tags_by_image_id(self, image_id: int, db: Session) -> List[Dict[str, Union[int, str, List[str]]]]:
         comments = db.query(Comment).filter(Comment.image_id == image_id).all()
         
         if not comments:

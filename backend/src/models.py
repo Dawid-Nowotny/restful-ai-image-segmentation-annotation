@@ -1,12 +1,11 @@
 from sqlalchemy import Column, Integer, String, ForeignKey,  JSON, Boolean, Date, LargeBinary, Table, Float
 from passlib.context import CryptContext
-from sqlalchemy.orm import validates, relationship, Mapped
-from validate_email import validate_email as validate_email_format
+from sqlalchemy.orm import relationship, Mapped
 
 from typing import List
 try:
     from database import Base
-except:
+except ModuleNotFoundError:
     from .database import Base
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

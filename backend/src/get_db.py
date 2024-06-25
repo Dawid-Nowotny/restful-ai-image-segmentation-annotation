@@ -1,6 +1,6 @@
 try:
     from database import SessionLocal
-except:
+except ModuleNotFoundError:
     from .database import SessionLocal
 
 def get_db():

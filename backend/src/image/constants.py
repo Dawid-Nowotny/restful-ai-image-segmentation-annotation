@@ -1,6 +1,6 @@
 from torchvision import transforms
 
-FILE_SIZE = 5 * 1024 * 1024  # 5MB
+FILE_SIZE = 5 * 1024 * 1024
 
 LABELS_URL = "https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json"
 
