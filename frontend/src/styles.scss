@@ -48,6 +48,10 @@
 .container-breadcrumb {
     padding: 10px 100px;
 }
+
+.container-main {
+    padding: 60px 100px;
+}
   
 @media (max-width: 1499px) {
     .container-navbar {
@@ -56,6 +60,10 @@
 
     .container-breadcrumb {
         padding: 4px 30px;
+    }
+
+    .container-main {
+        padding: 10px 30px;
     }
 }
 
@@ -66,6 +74,10 @@
 
     .container-breadcrumb {
         padding: 4px 12px;
+    }
+
+    .container-main {
+        padding: 10px 12px;
     }
 }
 
