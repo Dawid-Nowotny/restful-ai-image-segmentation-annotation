@@ -9,25 +9,22 @@ import { ServerService } from './server.service';
 })
 export class LoginService {
 
-    accessToken: string;
     successMessage: string;
     errorMessage: string;
 
     constructor(private serverService: ServerService, private router: Router, private loggedUserService: LoggedUserService) {
-        this.accessToken = "";
         this.successMessage = '';
         this.errorMessage = '';
     }
 
     handleVeryfication(verificationCode: string) {
 		const data = {
-			accessToken: this.accessToken,
 			verificationCode: verificationCode,
 		}
         console.log()
 		this.serverService.verifyTOTP(data).subscribe({
 			next: (response: any) => {
-				this.getLoggedUserDetails(this.accessToken);
+				this.getLoggedUserDetails();
 			},
 			error: (error: HttpErrorResponse) => {
                 this.errorMessage = error.error.detail;
@@ -36,7 +33,7 @@ export class LoginService {
 		})
 	}
 
-    getLoggedUserDetails: (accessToken: string) => void = (accessToken) => {
+    getLoggedUserDetails(){
         this.serverService.getLoggedUserCredentials().subscribe(
             {
                 next: (userDataResponse: any) => {
@@ -67,10 +64,6 @@ export class LoginService {
         } else if (role === 'Moderator') {
             this.router.navigate(['/admin']);
         }
-    }
-
-    saveAccessToken(accessToken: string): void {
-        this.accessToken = accessToken;
     }
 
     resetMessages(): void {
