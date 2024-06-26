@@ -144,4 +144,5 @@ export class ImageGalleryComponent implements OnInit {
 		input.value = input.value.replace(/[^a-zA-Z0-9,]/g, '');
 		inputValue = input.value;
 	}
+
 }

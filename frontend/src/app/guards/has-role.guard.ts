@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { LoggedUserService } from '../services/logged-user.service';
 
-export const hasRoleGuard: CanActivateFn = (route) => {
+export const hasRoleGuard: CanActivateFn = (route, state) => {
 	const router: Router = inject(Router);
 	const userRole: string = inject(LoggedUserService).getRole();
 	const expectedRoles: string[] = route.data['roles'];

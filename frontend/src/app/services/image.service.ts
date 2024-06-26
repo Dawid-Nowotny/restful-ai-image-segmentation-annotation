@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import JSZip from 'jszip';
+import JSZip, { file } from 'jszip';
 
 export type ImageFileData = {
     id: string,
@@ -21,7 +21,7 @@ export class ImageService {
 
         jsZipService.loadAsync(zipBlob).then(async (zip) => {
 
-            await zip.forEach(async (relativePath, file) => {
+            zip.forEach(async (relativePath, file) => {
                 let imageBlob = await file.async('blob');
                 let imageURL = URL.createObjectURL(imageBlob)
                 let imageExtension = this.getExtension(file.name);

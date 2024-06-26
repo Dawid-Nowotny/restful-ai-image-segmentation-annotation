@@ -4,6 +4,21 @@ import { ServerService } from './server.service';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { LoggedUserService } from './logged-user.service';
 
+
+type TopTagData = {
+    tag: string,
+    count: number,
+}
+
+type PopularTagsByMonthData = {
+    year: number,
+    month: string,
+    top_tag: {
+        tag: string,
+        count: number
+    }
+}
+
 type TopClassesData = {
     class_name: string,
     count: number,
@@ -40,7 +55,7 @@ export class ChartService {
 
     chart!: Chart;
 
-    constructor(private serverService: ServerService) {
+    constructor(private serverService: ServerService, private loggedUserService: LoggedUserService) {
         Chart.register(ChartDataLabels);
     }
 

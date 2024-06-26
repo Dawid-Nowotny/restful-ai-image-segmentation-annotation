@@ -1,10 +1,54 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, viewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
-import { ChartService } from '../services/chart.service';
+import { ServerService } from '../services/server.service';
 import { LoggedUserService } from '../services/logged-user.service';
+import { CommonModule } from '@angular/common';
+import { ChartService } from '../services/chart.service';
+
+type TopTagData = {
+	tag: string,
+	count: number,
+}
+
+type PopularTagsByMonthData = {
+	year: number,
+	month: string,
+	top_tag: {
+		tag: string,
+		count: number
+	}
+}
+
+type TopClassesData = {
+	class_name: string,
+	count: number,
+}
+
+type PopularClassesByMonthData = {
+	year: number,
+	month: string,
+	top_classes: {
+		class_name: string,
+		count: number,
+	}
+}
+
+type TopUploadersData = {
+	username: string,
+	upload_count: number,
+}
+
+type TopCommentersData = {
+	username: string,
+	comment_count: number,
+}
+
+type TopModeratorsData = {
+	username: string,
+	moderated_count: number,
+}
 
 @Component({
 	selector: 'app-statistics-panel',

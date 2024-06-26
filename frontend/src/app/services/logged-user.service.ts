@@ -81,7 +81,7 @@ export class LoggedUserService {
 		this.clearLoggedUserData();
 
 		this.serverService.postLogout().subscribe({
-			next: () => {
+			next: (response: any) => {
 				console.log("logged out");	
 			},
 			error: (error: HttpErrorResponse) => {

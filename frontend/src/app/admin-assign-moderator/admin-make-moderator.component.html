@@ -1,6 +1,6 @@
 <div class="container justify-content-center my-5">
     <tabset [justified]="true">
-        <tab heading="Użytkownicy" id="tab1" (selectTab)="handleSelectUserTab()">
+        <tab heading="Użytkownicy" id="tab1" (selectTab)="handleSelectUserTab($event)">
             <h3 class="text-center pt-5">Użytkownicy</h3>
             <hr>
 
@@ -28,7 +28,7 @@
                 </tbody>
             </table>
         </tab>
-        <tab heading="Moderatorzy" id="tab2" (selectTab)="handleSelectModeratorTab()">
+        <tab heading="Moderatorzy" id="tab2" (selectTab)="handleSelectModeratorTab($event)">
             <h3 class="text-center pt-5">Moderatorzy</h3>
             <hr>
 
