@@ -77,7 +77,7 @@ export class ChartService {
             next: (response: any) => {
                 let labels = response.map((tag: any) => [tag.month, `tag: ${tag.top_tag.tag}`]);
                 let data = response.map((tag: any) => tag.top_tag.count);
-                this.createChart(chartElementRef, "Popularne tagi w poszczegórach miesiącach", labels, data);
+                this.createChart(chartElementRef, "Popularne tagi w poszczególnych miesiącach", labels, data);
             },
             error: (error: Error) => {
                 console.log(error);

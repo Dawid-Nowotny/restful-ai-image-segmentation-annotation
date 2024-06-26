@@ -147,9 +147,13 @@ class UserServices:
     def get_current_user(request: Request, response: Response, db: Session = Depends(get_db)) -> User:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
+            detail="Nie jesteś zalogowany",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+        access_token = request.cookies.get("access_token")
+        if not access_token:
+            raise credentials_exception
 
         try:
             token = request.cookies.get("access_token")

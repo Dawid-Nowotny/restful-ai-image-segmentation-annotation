@@ -1,40 +1,43 @@
-<div class="justify-content-center px-5 py-4">
-
-    <tabset [justified]="true">
-        <tab id="tab1" heading="Top 10 tagów" id="tab1" (selectTab)="handleTabChange($event)">
-            <div class="chart-container pt-5">
-                <canvas #topTagsChart width="200" height="400"></canvas>
-            </div>
-        </tab>
-        <tab id="tab2" heading="Popularne tagi w poszczególnych miesiącach" (selectTab)="handleTabChange($event)">
-            <div class="chart-container pt-5">
-                <canvas #popularTagsByMonthChart width="200" height="400"></canvas>
-            </div>
-        </tab>
-        <tab id="tab3" heading="Top 10 klas" (selectTab)="handleTabChange($event)">
-            <div class="chart-container pt-5">
-                <canvas #topClassesChart width="200" height="400"></canvas>
-            </div>
-        </tab>
-        <tab id="tab4" heading="Najpopularniejsze klasy w poszczególnych miesiącach" (selectTab)="handleTabChange($event)">
-            <div class="chart-container pt-5">
-                <canvas #popularClassesByMonthChart width="200" height="400"></canvas>
-            </div>
-        </tab>
-        <tab *ngIf="loggedUserService.getRole() === 'Admin'" id="tab5" heading="Top 10 uploaderów" (selectTab)="handleTabChange($event)">
-            <div class="chart-container pt-5">
-                <canvas #topUploadersChart width="200" height="400"></canvas>
-            </div>
-        </tab>
-        <tab *ngIf="loggedUserService.getRole() === 'Admin'" id="tab6" heading="Top 10 komentujących" (selectTab)="handleTabChange($event)">
-            <div class="chart-container pt-5">
-                <canvas #topCommentersChart width="200" height="400"></canvas>
-            </div>
-        </tab>
-        <tab *ngIf="loggedUserService.getRole() === 'Admin'" id="tab7" heading="Top 10 moderatorów" (selectTab)="handleTabChange($event)">
-            <div class="chart-container pt-5">
-                <canvas #topModeratorsChart width="200" height="400"></canvas>
-            </div>
-        </tab>
-    </tabset>
-</div>
+<main>
+    <div class="container-fluid container-main section-ptb">
+        <div class=" justify-content-center">
+            <tabset [justified]="true">
+                <tab id="tab1" heading="Top 10 tagów" id="tab1" (selectTab)="handleTabChange($event)">
+                    <div class="chart-container pt-5">
+                        <canvas #topTagsChart width="200" height="400"></canvas>
+                    </div>
+                </tab>
+                <tab id="tab2" heading="Popularne tagi w poszczególnych miesiącach" (selectTab)="handleTabChange($event)">
+                    <div class="chart-container pt-5">
+                        <canvas #popularTagsByMonthChart width="200" height="400"></canvas>
+                    </div>
+                </tab>
+                <tab id="tab3" heading="Top 10 klas" (selectTab)="handleTabChange($event)">
+                    <div class="chart-container pt-5">
+                        <canvas #topClassesChart width="200" height="400"></canvas>
+                    </div>
+                </tab>
+                <tab id="tab4" heading="Najpopularniejsze klasy w poszczególnych miesiącach" (selectTab)="handleTabChange($event)">
+                    <div class="chart-container pt-5">
+                        <canvas #popularClassesByMonthChart width="200" height="400"></canvas>
+                    </div>
+                </tab>
+                <tab *ngIf="loggedUserService.getRole() === 'Admin'" id="tab5" heading="Top 10 uploaderów" (selectTab)="handleTabChange($event)">
+                    <div class="chart-container pt-5">
+                        <canvas #topUploadersChart width="200" height="400"></canvas>
+                    </div>
+                </tab>
+                <tab *ngIf="loggedUserService.getRole() === 'Admin'" id="tab6" heading="Top 10 komentujących" (selectTab)="handleTabChange($event)">
+                    <div class="chart-container pt-5">
+                        <canvas #topCommentersChart width="200" height="400"></canvas>
+                    </div>
+                </tab>
+                <tab *ngIf="loggedUserService.getRole() === 'Admin'" id="tab7" heading="Top 10 moderatorów" (selectTab)="handleTabChange($event)">
+                    <div class="chart-container pt-5">
+                        <canvas #topModeratorsChart width="200" height="400"></canvas>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+</main>

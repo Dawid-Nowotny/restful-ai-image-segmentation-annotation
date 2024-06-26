@@ -48,6 +48,34 @@
 .container-breadcrumb {
     padding: 10px 100px;
 }
+
+.container-main {
+    padding: 40px 100px;
+}
+
+.container-footer {
+    padding: 40px 100px;
+}
+
+.filters {
+    display: flex !important;
+    justify-content: center;
+    flex-wrap: nowrap;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+.image-view-users {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-content: flex-end;
+    flex-direction: row;
+}
+
+.rounded-image {
+    border-radius: 5px  0px 0px 5px ;
+}
   
 @media (max-width: 1499px) {
     .container-navbar {
@@ -56,6 +84,27 @@
 
     .container-breadcrumb {
         padding: 4px 30px;
+    }
+
+    .container-main {
+        padding: 10px 30px;
+    }
+
+    .container-footer {
+        padding: 50px 30px;
+    }
+
+    .filters {
+        flex-direction: column-reverse;
+    }
+
+    .image-view-users {
+        align-content: flex-end;
+        flex-direction: row;
+    }
+
+    .rounded-image {
+        border-radius: 5px 5px 0px 0px;
     }
 }
 
@@ -66,6 +115,27 @@
 
     .container-breadcrumb {
         padding: 4px 12px;
+    }
+
+    .container-main {
+        padding: 10px 12px;
+    }
+
+    .container-footer {
+        padding: 30px 12px;
+    }
+
+    .filters {
+        flex-direction: column-reverse;
+    }
+
+    .image-view-users {
+        align-content: flex-end;
+        flex-direction: row;
+    }
+
+    .rounded-image {
+        border-radius: 5px 5px 0px 0px;
     }
 }
 
@@ -96,11 +166,46 @@ a:hover {
 }
 
 .navbar-brand-text {
-    font-size: 24px; 
+    font-size: 32px; 
     font-weight: bold; 
     padding-right: 40px;
+    color: rgba(25, 135, 84, 1) !important;
+}
+
+.navbar-brand-text:hover {
+    color: rgb(8, 68, 40) !important;
 }
 
 .container-pt {
     padding-top: 50px;
+}
+
+.breadcrumb-item a:hover {
+    color: rgb(191, 240, 193) !important;
+}
+
+.page-link.active, .active > .page-link {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.page-link {
+    color: #212529;
+}
+
+.page-link:hover {
+    color: #198754;
+}
+
+.btn-mw {
+    min-width: 170px;
+}
+
+.modal {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.bg-light2 {
+    background-color: rgb(235, 236, 236) !important;
 }

@@ -1,9 +1,7 @@
-<div class="container mt-4">
-
-    <div class="py-2 d-flex">
+    <div class="py-2 filters">
         <!-- Threshold filter -->
-        <div class="dropdown px-2">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+        <div class="dropdown px-2 py-1">
+            <button class="btn btn-outline-success dropdown-toggle btn-mw" type="button" id="dropdownMenuButton"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 Wartość progowa: {{filterData.thresholdFrom}} - {{filterData.thresholdTo}}
             </button>
@@ -27,8 +25,8 @@
         </div>
 
         <!-- Tags filter -->
-        <div class="dropdown px-2">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+        <div class="dropdown px-2 py-1">
+            <button class="btn btn-outline-success dropdown-toggle btn-mw" type="button" id="dropdownMenuButton"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 Tagi:
             </button>
@@ -50,8 +48,8 @@
         </div>
 
         <!-- Classes filter -->
-        <div class="dropdown px-2">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+        <div class="dropdown px-2 py-1">
+            <button class="btn btn-outline-success dropdown-toggle btn-mw" type="button" id="dropdownMenuButton"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 Klasy:
             </button>
@@ -93,7 +91,12 @@
             </div>
         </div>
     </div>
-</div>
+
+    <div *ngIf="!useFilters" class="row justify-content-center text-center">
+        <pagination class="justify-content-center text-primary" [customPreviousTemplate]="previousTemplate"
+            [customNextTemplate]="nextTemplate" [totalItems]="numberOfImages" [itemsPerPage]="itemsPerPage"
+            (pageChanged)="handlePageChange($event)"></pagination>
+    </div>
 
 <ng-template #previousTemplate let-disabled="disabled" let-currentPage="currentPage">
     Poprzednia
