@@ -46,10 +46,9 @@ export class LoginComponent {
             {
                 next: (loginResponse: any) => {
                     if (loginResponse.totp_enabled == true) {
-                        this.loginService.saveAccessToken(loginResponse.access_token);
                         this.totpModalComponent.openModal();
                     } else {
-                        this.loginService.getLoggedUserDetails(loginResponse.access_token);
+                        this.loginService.getLoggedUserDetails();
                     }
                 },
                 error: (error: HttpErrorResponse) => {

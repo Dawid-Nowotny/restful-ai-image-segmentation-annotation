@@ -1,9 +1,5 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
-import { ServerService } from '../services/server.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ImageFileData, ImageService } from '../services/image.service';
+import { Component } from '@angular/core';
 import { ImageGalleryComponent } from '../image-gallery/image-gallery.component';
 
 @Component({

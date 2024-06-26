@@ -25,7 +25,7 @@ export class AdminMakeModeratorComponent implements OnInit{
 	errorMessage: string = '';
 	
 
-	constructor(private serverService: ServerService, private loggedUserService: LoggedUserService) {}
+	constructor(private serverService: ServerService) {}
 
 	ngOnInit(): void {
 		this.getUsers();
