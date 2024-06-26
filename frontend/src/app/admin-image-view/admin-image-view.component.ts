@@ -37,7 +37,7 @@ export class AdminImageViewComponent implements OnInit {
 	
 	ngOnInit(): void {
 		this.id = parseInt(this.route.snapshot.paramMap.get('id') ?? "-1");
-
+		this.getImageSuperTags(this.id);
 		this.fetchImage();
 		this.getImageModerator();
 		this.getModeratorsList();
