@@ -1,68 +1,73 @@
 <main>
-    <div class="container-fluid image-view-ptb">
-        <div class="row justify-content-center">
-            <div class="col-xxl-9 col-xl-10 col-lg-11 col-md-12 col-sm-12 rounded" style="background-color: rgb(231, 231, 231);">
-                <div class="row p-3">
-                    <div class="col-md-8 ps-0">
-                        <img [src]="image" class="fit-image rounded">
+    <div class="container-fluid container-main section-ptb">
+        <div class="justify-content-center rounded bg-light">
+                <div class="row p-0 m-0">
+                    <div class="col-md-8 p-0 m-0">
+                        <img [src]="image" class="fit-image rounded-image">
                     </div>
-                    <div class="col-md-4 pe-0">
-                        <div class="row">
-                            <div class="col">
-                                <button class="btn btn-success btn-rg" (click)="changeImage()">{{ buttonLabel }}</button>
+                    <div class="col-md-4 p-4">
+                        <div>
+                            <div class="image-view-users">
+                                <div class="col-md-6">
+                                    <h4 class="mb-0">{{ imageAuthor }}</h4>
+                                    <p class="small"><i class="fa-solid fa-user"></i> Autor zdjęcia</p>
+                                </div>
+                                <div class="col-md-6" *ngIf="superTagsAutor != ''">
+                                    <h4 class="mb-0">{{ superTagsAutor }}</h4>
+                                    <p class="small"><i class="fa-solid fa-user"></i> Autor supertagów</p>
+                                </div>
                             </div>
-                            <div class="col-auto">
-                                <button class="btn btn-success btn-rg" (click)="downloadImage()">Zapisz obraz</button>
-                            </div>
-                        </div>
-                        <div class="rounded mt-3 p-3 overflow-auto annotations-div">
-                            Próg detekcji: {{ threshold }}<br>
-                            Klasy: {{ annotations | json }}
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <h5 class="mb-0">{{ imageAuthor }}</h5>
-                                <p class="small">Autor zdjęcia</p>
-                            </div>
-                            <div class="col-md-6" *ngIf="superTagsAutor != ''">
-                                <h5 class="mb-0">{{ superTagsAutor }}</h5>
-                                <p class="small">Autor supertagów</p>
+                            <h5>Informacje</h5>
+                            <div class="rounded p-3 overflow-auto bg-light2 mb-3">
+                                Próg detekcji: {{ threshold }}<br>
+                                Klasy: {{ annotations | json }}
                             </div>
                         </div>
                         <div>
-                            <h3><b>Tagi użytkowników</b></h3>
-                            <div *ngFor="let comment of comments" class="overflow-auto">
-                                {{ comment.username }}
-                                <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-3">
-                                    <div *ngFor="let tag of comment.tags" class="suggested-annotation-item rounded col-auto">
-                                        {{ tag }}
+                            <div>
+                                <h5>Tagi użytkowników</h5>
+                                <div class="rounded bg-light2 p-2 mb-2 flex-nowrap overflow-auto " style="max-height: 200px">
+                                <div *ngFor="let comment of comments" class="overflow-auto ps-2">
+                                    {{ comment.username }}
+                                    <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
+                                        <div *ngFor="let tag of comment.tags" class="suggested-annotation-item rounded col-auto">
+                                            {{ tag }}
+                                        </div>
                                     </div>
                                 </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
-                            <button *ngFor="let annotation of suggestedAnnotations" class="suggested-annotation-item rounded col-auto"
-                                (click)="clickSuggestedAnnotation(annotation)">
-                                {{ annotation }}
-                            </button>
-                        </div>
-                        <form [formGroup]="commentForm" (ngSubmit)="addComment()">
-                            <div class="row mt-3">
-                                <div class="col">
-                                    <input type="text" class="form-control" placeholder="Dodaj komentarz" formControlName="comment" [ngClass]="{'is-invalid': commentForm.controls['comment'].invalid && (commentForm.controls['comment'].dirty || commentForm.controls['comment'].touched)}">
-                                    <div *ngIf="commentForm.controls['comment'].invalid" class="invalid-feedback">
-                                        <div *ngIf="commentForm.controls['comment'].errors?.['required']">Pole jest wymagane.</div>
-                                        <div *ngIf="commentForm.controls['comment'].errors?.['pattern']">Pole nie może zawierać tylko białych znaków.</div>
+                            <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-1">
+                                <button *ngFor="let annotation of suggestedAnnotations" class="btn btn-outline-success rounded col-auto px-2 py-0 me-1"
+                                    (click)="clickSuggestedAnnotation(annotation)">
+                                    {{ annotation }}
+                                </button>
+                            </div>
+                            <form [formGroup]="commentForm" (ngSubmit)="addComment()">
+                                <div class="mt-1">
+                                    <div class="col">
+                                        <input type="text" class="form-control" placeholder="Dodaj tag" formControlName="comment" [ngClass]="{'is-invalid': commentForm.controls['comment'].invalid && (commentForm.controls['comment'].dirty || commentForm.controls['comment'].touched)}">
+                                        <div *ngIf="commentForm.controls['comment'].invalid" class="invalid-feedback">
+                                            <div *ngIf="commentForm.controls['comment'].errors?.['required']">Pole jest wymagane.</div>
+                                            <div *ngIf="commentForm.controls['comment'].errors?.['pattern']">Pole nie może zawierać tylko białych znaków.</div>
+                                        </div>
                                     </div>
+                                    <div class="col-auto mt-1">
+                                        <button type="submit" class="btn btn-success btn-rg" [disabled]="commentForm.invalid">Dodaj</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="row pt-3">
+                                <div class="col">
+                                    <button class="btn btn-success btn-rg" (click)="changeImage()">{{ buttonLabel }}</button>
                                 </div>
                                 <div class="col-auto">
-                                    <button type="submit" class="btn btn-success btn-rg" [disabled]="commentForm.invalid">Dodaj</button>
+                                    <button class="btn btn-success btn-rg" (click)="downloadImage()">Zapisz obraz</button>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </main>

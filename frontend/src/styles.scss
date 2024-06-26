@@ -64,6 +64,18 @@
     flex-direction: row-reverse;
     align-items: center;
 }
+
+.image-view-users {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-content: flex-end;
+    flex-direction: row;
+}
+
+.rounded-image {
+    border-radius: 5px  0px 0px 5px ;
+}
   
 @media (max-width: 1499px) {
     .container-navbar {
@@ -84,6 +96,15 @@
 
     .filters {
         flex-direction: column-reverse;
+    }
+
+    .image-view-users {
+        align-content: flex-end;
+        flex-direction: row;
+    }
+
+    .rounded-image {
+        border-radius: 5px 5px 0px 0px;
     }
 }
 
@@ -106,6 +127,15 @@
 
     .filters {
         flex-direction: column-reverse;
+    }
+
+    .image-view-users {
+        align-content: flex-end;
+        flex-direction: row;
+    }
+
+    .rounded-image {
+        border-radius: 5px 5px 0px 0px;
     }
 }
 
