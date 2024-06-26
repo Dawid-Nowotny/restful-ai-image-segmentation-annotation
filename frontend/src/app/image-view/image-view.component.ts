@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
@@ -152,9 +153,8 @@ export class ImageViewComponent implements OnInit {
             this.getImageComments();
             this.successMessage = result.message;
           },
-          error: (error: Error) => {
-            console.error('Error adding comment', error);
-            this.errorMessage = error.message;
+          error: (error: HttpErrorResponse) => {
+            this.errorMessage = error.error.detail;
           }
         });
       }
