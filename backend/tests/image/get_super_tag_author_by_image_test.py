@@ -24,12 +24,11 @@ def test_get_super_tag_author_by_image_success(image_services, mock_db):
     result = image_services.get_super_tag_author_by_image(image_id, mock_db)
 
     mock_db.query.assert_called_once_with(User.username)
-    
     mock_db.query.return_value.join.assert_called_once_with(Comment, ANY)
     mock_db.query.return_value.join.return_value.join.assert_called_once_with(Image, ANY)
-    
-    mock_db.query.return_value.join.return_value.join.return_value.filter.assert_called_once_with(ANY)
-    
+
+    mock_db.query.return_value.join.return_value.join.return_value.filter.assert_called_once_with(ANY, ANY)
+
     mock_query.first.assert_called_once()
     
     assert result == expected_username
