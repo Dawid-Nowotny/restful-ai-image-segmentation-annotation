@@ -36,6 +36,9 @@ export class RegisterComponent {
         if (!this.username || !this.email || !this.password || !this.passwordCheck) {
             this.errorMessage = 'Musisz wypełnić wszystkie dane!';
             return;
+        } else if (this.username.length < 4) {
+            this.errorMessage = 'Nazwa musi być dłuższa niż 4 znaków!';
+            return;
         } else if (!this.isValidEmail(this.email)) {
             this.errorMessage = 'Podaj poprawny adres email!';
             return;
@@ -45,10 +48,11 @@ export class RegisterComponent {
         } else if (this.password !== this.passwordCheck) {
             this.errorMessage = 'Hasła nie są takie same!';
             return;
-        } else if (!this.agreedToTerms) {
+        } 
+        else if (!this.agreedToTerms) {
             this.errorMessage = 'Musisz zaznaczyć wymagane zgody!';
             return;
-        }
+        } 
 
         const data = {
             username: this.username,
