@@ -108,7 +108,7 @@ export class AdminImageViewComponent implements OnInit {
 		this.selectedModerator = selectElement.value;
 	}
 
-	handleTabChange() {
+	handleTabChange(data: TabDirective) {
 		this.resetMessages();
 		this.getImageSuperTags(this.id);
 	}

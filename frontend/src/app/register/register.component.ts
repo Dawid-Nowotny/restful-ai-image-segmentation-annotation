@@ -57,7 +57,7 @@ export class RegisterComponent {
         };
 
         this.serverService.postRegister(data).subscribe({
-            next: () => {
+            next: (registerResponse: any) => {
 
                 this.serverService.getLoggedUserCredentials().subscribe(
                     {
