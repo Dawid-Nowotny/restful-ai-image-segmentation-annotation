@@ -51,8 +51,8 @@
                                             <div *ngIf="imageSuperTags.author.length > 0; else noComments" class="ps-2">
                                                 <p class="p-0 m-0">{{imageSuperTags.author}}</p>
                                                 <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
-                                                    <div class="suggested-annotation-item rounded col-auto">
-                                                        {{imageSuperTags.superTags}}
+                                                    <div class="suggested-annotation-item rounded col-auto" *ngFor="let superTag of imageSuperTags.superTags">
+                                                        {{superTag}}
                                                     </div>
                                                 </div>
                                             </div>

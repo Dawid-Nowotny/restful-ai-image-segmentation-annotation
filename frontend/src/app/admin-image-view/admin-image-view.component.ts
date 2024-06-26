@@ -145,7 +145,6 @@ export class AdminImageViewComponent implements OnInit {
 	}
 
 	addSuperTag() {
-		this.tagsInputField = this.tagsInputField.replaceAll(" ", "").trim();
 		let tagsArray: string[] = this.tagsInputField.split(',');
 		tagsArray = this.filterEmptyArrayElements(tagsArray);
 
@@ -172,7 +171,7 @@ export class AdminImageViewComponent implements OnInit {
 
 	filterOnInput(event: any) {
 		const input = event.target as HTMLInputElement;
-		input.value = input.value.replace(/[^a-zA-Z0-9,]/g, '');
+		input.value = input.value.replace(/[^a-zA-Z0-9, ]/g, '');
 		this.tagsInputField = input.value;
 	}
 
