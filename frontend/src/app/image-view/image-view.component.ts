@@ -34,6 +34,8 @@ export class ImageViewComponent implements OnInit {
     buttonLabel: string = 'Wyświetl segmentację';
     message: string = '';
     comments: Comment[] = [];
+    successMessage: string = '';
+    errorMessage: string = '';
 
     constructor(private route: ActivatedRoute, private serverService: ServerService) {
       this.commentForm = new FormGroup({
@@ -148,10 +150,11 @@ export class ImageViewComponent implements OnInit {
           next: (result: any) => {
             this.message = result.message;
             this.getImageComments();
-            console.log(this.message);
+            this.successMessage = result.message;
           },
           error: (error: Error) => {
             console.error('Error adding comment', error);
+            this.errorMessage = error.message;
           }
         });
       }

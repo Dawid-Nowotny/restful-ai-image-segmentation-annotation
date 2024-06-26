@@ -60,6 +60,12 @@
                                     <div class="col-auto mt-1">
                                         <button type="submit" class="btn btn-success btn-rg" [disabled]="commentForm.invalid">Dodaj</button>
                                     </div>
+                                    <div *ngIf="successMessage" class="alert alert-success mt-2 mb-0" role="alert">
+                                        {{ successMessage }}
+                                    </div>
+                                    <div *ngIf="errorMessage" class="alert alert-danger mt-2 mb-0" role="alert">
+                                        {{ errorMessage }}
+                                    </div>
                                 </div>
                             </form>
                             <div class="row pt-3">
