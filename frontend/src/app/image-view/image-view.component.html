@@ -27,14 +27,19 @@
                             <div>
                                 <h5>Tagi użytkowników</h5>
                                 <div class="rounded bg-light2 p-2 mb-2 flex-nowrap overflow-auto " style="max-height: 200px">
-                                <div *ngFor="let comment of comments" class="overflow-auto ps-2">
-                                    {{ comment.username }}
-                                    <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
-                                        <div *ngFor="let tag of comment.tags" class="suggested-annotation-item rounded col-auto">
-                                            {{ tag }}
+                                    <div *ngIf="comments.length > 0; else noComments">
+                                        <div *ngFor="let comment of comments" class="overflow-auto ps-2">
+                                            {{ comment.username }}
+                                            <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-2">
+                                                    <div *ngFor="let tag of comment.tags" class="suggested-annotation-item rounded col-auto">
+                                                    {{ tag }}
+                                                    </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <ng-template #noComments>
+                                        Brak tagów
+                                    </ng-template>
                                 </div>
                             </div>
                             <div class="row suggested-annotations-row flex-nowrap overflow-auto pb-1">
