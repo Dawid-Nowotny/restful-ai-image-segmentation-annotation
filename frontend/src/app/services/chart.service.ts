@@ -2,8 +2,7 @@ import { ElementRef, Injectable } from '@angular/core';
 import { Chart } from 'chart.js';
 import { ServerService } from './server.service';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { LoggedUserService } from './logged-user.service';
-
+    
 type TopClassesData = {
     class_name: string,
     count: number,

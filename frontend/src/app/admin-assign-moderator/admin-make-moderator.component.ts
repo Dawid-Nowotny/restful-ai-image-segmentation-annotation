@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServerService } from '../services/server.service';
 import { CommonModule } from '@angular/common';
-import { LoggedUserService } from '../services/logged-user.service';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 type UserData = {

@@ -19,9 +19,9 @@ export class ImageService {
         const jsZipService = new JSZip();
         let imagesArray: ImageFileData[] = [];
 
-        jsZipService.loadAsync(zipBlob).then(async (zip) => {
+        jsZipService.loadAsync(zipBlob).then((zip) => {
 
-            await zip.forEach(async (relativePath, file) => {
+            zip.forEach(async (relativePath, file) => {
                 let imageBlob = await file.async('blob');
                 let imageURL = URL.createObjectURL(imageBlob)
                 let imageExtension = this.getExtension(file.name);
