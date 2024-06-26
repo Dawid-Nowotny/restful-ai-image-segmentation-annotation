@@ -92,12 +92,6 @@
         </div>
     </div>
 
-    <div *ngIf="!useFilters" class="row justify-content-center text-center">
-        <pagination class="justify-content-center text-primary" [customPreviousTemplate]="previousTemplate"
-            [customNextTemplate]="nextTemplate" [totalItems]="numberOfImages" [itemsPerPage]="itemsPerPage"
-            (pageChanged)="handlePageChange($event)"></pagination>
-    </div>
-
 <ng-template #previousTemplate let-disabled="disabled" let-currentPage="currentPage">
     Poprzednia
 </ng-template>
