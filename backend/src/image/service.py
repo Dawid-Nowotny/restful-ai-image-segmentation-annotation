@@ -71,15 +71,17 @@ class ImageServices:
     
     def get_filtered_images_by_range(self, filters: ImageFilterParams, start_id: int, end_id: int, db: Session) -> dict:
         query = db.query(Image).options(joinedload(Image.comments).joinedload(Comment.tags))
-        
+
         if filters.threshold_range:
             query = query.filter(Image.threshold.between(*filters.threshold_range))
         
         if filters.tags:
+            filters.tags = filters.tags[0].split(",")
             tag_filters = [Tag.tag.in_(filters.tags)]
             query = query.filter(Image.comments.any(Comment.tags.any(or_(*tag_filters))))
 
         if filters.classes:
+            filters.classes = filters.classes[0].split(",")
             class_filters = [Image.coordinates_classes.op('->>')('pred_class').contains(c) for c in filters.classes]
             query = query.filter(or_(*class_filters))
 
