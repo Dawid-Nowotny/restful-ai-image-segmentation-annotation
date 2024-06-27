@@ -141,7 +141,7 @@ export class ImageGalleryComponent implements OnInit {
 
 	filterOnInput(event: any, inputValue: string) {
 		const input = event.target as HTMLInputElement;
-		input.value = input.value.replace(/[^a-zA-Z0-9,]/g, '');
+		input.value = input.value.replace(/[^a-zA-Z0-9, ]/g, '');
 		inputValue = input.value;
 	}
 
