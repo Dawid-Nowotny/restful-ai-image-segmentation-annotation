@@ -67,7 +67,7 @@ git clone https://github.com/Dawid-Nowotny/restful-ai-image-segmentation-annotat
    alembic upgrade head
    ```
 
-6. Run the application:
+6. Run the application:<br />
    Navigate to directory with main:
    ```bash
    cd src
