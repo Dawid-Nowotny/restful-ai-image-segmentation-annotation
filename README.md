@@ -31,7 +31,7 @@ git clone https://github.com/Dawid-Nowotny/restful-ai-image-segmentation-annotat
 
 #### Backend
 
-1. Create the PostgreSQL Database
+1. Create the PostgreSQL Database<br />
     Create a new PostgreSQL database with the name "raisa". If you prefer a different name for the database, ensure to update the connection string in the config.py file accordingly.
 
 2. Navigate to the backend folder:
